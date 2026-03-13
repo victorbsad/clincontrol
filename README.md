@@ -1,8 +1,8 @@
-# flutter_application_1
+# ClinControl*
 
-A new Flutter project.
+*Nome provisório.
 
-## Getting Started
+## Legenda Padrão do Flutter
 
 This project is a starting point for a Flutter application.
 
