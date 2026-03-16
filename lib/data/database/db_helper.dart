@@ -14,10 +14,10 @@ class DbHelper {
   }
 
   Future<Database> _initDatabase() async {
-    String caminho = join(await getDatabasesPath(), 'clincontrol.db');
+    String path = join(await getDatabasesPath(), 'clincontrol.db');
 
     return await openDatabase(
-      caminho,
+      path,
       version: 1,
       onCreate: (db, version) async {
         await db.execute('''
