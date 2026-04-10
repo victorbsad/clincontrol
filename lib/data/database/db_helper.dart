@@ -226,6 +226,129 @@ class DbHelper {
     });
   }
 
+  Future<void> seedDevelopmentData() async {
+    final db = await database;
+
+    final existingClient = await db.query(
+      'clients',
+      where: 'id = ?',
+      whereArgs: [1],
+      limit: 1,
+    );
+
+    if (existingClient.isEmpty) {
+      await db.insert('clients', {
+        'id': 1,
+        'name': 'Cliente Teste',
+        'phone': '(54) 99999-1234',
+        'notes': 'Seed criada para teste do PDF de anamnese.',
+      });
+    }
+
+    final existingAnamnesis = await db.query(
+      'anamneses',
+      where: 'client_id = ?',
+      whereArgs: [1],
+      limit: 1,
+    );
+
+    if (existingAnamnesis.isNotEmpty) {
+      return;
+    }
+
+    final sampleAnswers = <String, dynamic>{
+      'estadoCivil': 'Solteira',
+      'nacionalidade': 'Brasileira',
+      'endereco': 'Rua das Flores, 123 - Centro',
+      'telefone': '(54) 99999-1234',
+      'whatsapp': '(54) 99999-1234',
+      'email': 'cliente.teste@exemplo.com',
+      'dataNascimento': '1991-07-18',
+      'idade': 34,
+      'profissao': 'Empresária',
+      'motivoVisita': 'Acne e manchas',
+      'tratamentoEstetico': true,
+      'cicatrizacaoQuelóide': false,
+      'cicatrizacaoComentario': 'Cicatrização normal',
+      'usaMedicamento': true,
+      'qualMedicamento': 'Vitamina D',
+      'isotretinoina6m': false,
+      'tratamentoMedico': true,
+      'qualProblemaSaude': 'Acompanhamento dermatológico',
+      'trombose': false,
+      'localTrombose': '',
+      'cirurgia': true,
+      'qualCirurgia': 'Apêndice',
+      'oncologico': false,
+      'infectocontagiosa': false,
+      'qualInfectocontagiosa': '',
+      'esporte': true,
+      'alimentacaoBalanceada': true,
+      'agua2l': true,
+      'quantosLitrosAgua': '2,5 litros',
+      'alcool': false,
+      'frequenciaAlcool': '',
+      'drogas': false,
+      'qualSubstancia': '',
+      'disturbioHormonal': false,
+      'qualDisturbioHormonal': '',
+      'fumaOuFumou': 'Nunca fumou',
+      'tempoTabagismo': '',
+      'dormeBem': true,
+      'horasSono': '7 horas',
+      'intestinoRegular': true,
+      'pressao': false,
+      'pressaoCompensada': '',
+      'diabetes': false,
+      'diabetesCompensada': '',
+      'cardiaco': false,
+      'qualCardiaco': '',
+      'depressao': false,
+      'tratamentoDepressao': false,
+      'epilepsia': false,
+      'placasPinos': false,
+      'ondePlacasPinos': '',
+      'protesesDentarias': false,
+      'lentesContato': true,
+      'acidosPele': true,
+      'qualAcido': 'Ácido glicólico',
+      'cosmeticos': true,
+      'quaisCosmeticos': 'Hidratante facial e sérum antioxidante',
+      'protetorSolar': true,
+      'qualProtetorSolar': 'FPS 70 oil free',
+      'frequenciaProtetorSolar': 'Diariamente',
+      'tomaSol': false,
+      'frequenciaSol': '',
+      'maquiagemDefinitiva': false,
+      'localMaquiagemDefinitiva': '',
+      'toxinaBotulinica': true,
+      'localToxina': 'Testa e glabela',
+      'alergias': 'Frutos do mar e níquel',
+      'gestante': false,
+      'mesesGestacao': '',
+      'filhos': true,
+      'quantidadeFilhos': '2',
+      'cicloRegular': true,
+      'obsCiclo': 'Sem queixas relevantes',
+      'herpes': true,
+      'tempoHerpes': '2 anos',
+      'anticoncepcional': true,
+      'qualAnticoncepcional': 'Pílula combinada',
+      'hormonio': false,
+      'qualHormônio': '',
+      'autorizacaoFoto': true,
+    };
+
+    await insertAnamnesis(
+      Anamnesis(
+        clientId: 1,
+        createdAt: DateTime(2026, 4, 10, 9, 30),
+        updatedAt: DateTime(2026, 4, 10, 9, 30),
+        answers: sampleAnswers,
+      ),
+    );
+  }
+
   Iterable<MapEntry<String, StoredAnamnesisAnswer>> _normalizeAnswers(Map<String, dynamic> answers) sync* {
     for (final entry in answers.entries) {
       final value = entry.value;
