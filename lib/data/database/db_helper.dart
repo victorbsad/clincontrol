@@ -245,17 +245,6 @@ class DbHelper {
       });
     }
 
-    final existingAnamnesis = await db.query(
-      'anamneses',
-      where: 'client_id = ?',
-      whereArgs: [1],
-      limit: 1,
-    );
-
-    if (existingAnamnesis.isNotEmpty) {
-      return;
-    }
-
     final sampleAnswers = <String, dynamic>{
       'estadoCivil': 'Solteira',
       'nacionalidade': 'Brasileira',
@@ -266,8 +255,9 @@ class DbHelper {
       'dataNascimento': '1991-07-18',
       'idade': 34,
       'profissao': 'Empresária',
-      'motivoVisita': 'Acne e manchas',
+      'motivoVisita': 'Acne, Manchas e Linhas de expressão',
       'tratamentoEstetico': true,
+      'qualTratamentoEstetico': 'Limpeza de pele mensal',
       'cicatrizacaoQuelóide': false,
       'cicatrizacaoComentario': 'Cicatrização normal',
       'usaMedicamento': true,
@@ -283,6 +273,7 @@ class DbHelper {
       'infectocontagiosa': false,
       'qualInfectocontagiosa': '',
       'esporte': true,
+      'esporteObs': 'Pilates 3x por semana',
       'alimentacaoBalanceada': true,
       'agua2l': true,
       'quantosLitrosAgua': '2,5 litros',
@@ -297,10 +288,10 @@ class DbHelper {
       'dormeBem': true,
       'horasSono': '7 horas',
       'intestinoRegular': true,
-      'pressao': false,
-      'pressaoCompensada': '',
+      'pressao': 'Hipotensão',
+      'pressaoCompensada': 'compensada',
       'diabetes': false,
-      'diabetesCompensada': '',
+      'diabetesCompensada': 'não se aplica',
       'cardiaco': false,
       'qualCardiaco': '',
       'depressao': false,
@@ -337,7 +328,75 @@ class DbHelper {
       'hormonio': false,
       'qualHormônio': '',
       'autorizacaoFoto': true,
+      'peleOleosaSensivel': true,
+      'peleOleosaResistente': false,
+      'peleOleosaPigmentada': true,
+      'peleOleosaNaoPigmentada': false,
+      'peleOleosaFirme': true,
+      'peleOleosaRugas': false,
+      'peleSecaSensivel': false,
+      'peleSecaResistente': false,
+      'peleSecaPigmentada': false,
+      'peleSecaNaoPigmentada': false,
+      'peleSecaFirme': false,
+      'peleSecaRugas': false,
+      'peleMistaSensivel': false,
+      'peleMistaResistente': true,
+      'peleMistaPigmentada': true,
+      'peleMistaNaoPigmentada': false,
+      'peleMistaFirme': true,
+      'peleMistaRugas': false,
+      'comedao': true,
+      'pustula': false,
+      'papula': true,
+      'nodulo': false,
+      'hiperqueratinizacao': true,
+      'milium': false,
+      'microcisto': false,
+      'acneInflamatoria': false,
+      'acneNaoInflamatoria': true,
+      'telangiectasiaNevo': false,
+      'queratoseActinica': false,
+      'nevoMelanocitico': true,
+      'dermatosePapulosaNigra': false,
+      'papiloma': false,
+      'acrocordon': false,
+      'outrasLesoes': 'Sem outras lesões relevantes',
+      'hiperpigmentacaoInflamatoria': true,
+      'fotoenvelhecimento': true,
+      'melasma': true,
+      'efelides': false,
+      'hiperpigmentacaoOrbicular': true,
+      'hipocromia': false,
+      'discromiaJustificativa': 'Aumento após exposição solar sem reaplicação de protetor',
+      'fototipo': 'III – Moreno Claro – bronzeia moderadamente',
+      'dermatite': false,
+      'psoriase': false,
+      'tratamentoIndicado': 'Protocolo clareador + controle de oleosidade',
+      'numeroSessoes': '8',
+      'sessao1Data': '10/04/2026',
+      'sessao1': 'Avaliação inicial e higienização profunda',
+      'sessao2Data': '17/04/2026',
+      'sessao2': 'Peeling enzimático suave',
+      'sessao3Data': '24/04/2026',
+      'sessao3': 'LED âmbar + máscara calmante',
+      'prescricaoCosmetica': 'Sabonete glicólico noturno, sérum vitamina C manhã e FPS 70 reaplicar 3x/dia',
     };
+
+    final existingAnamnesis = await fetchAnamnesesByClient(1);
+    if (existingAnamnesis.isNotEmpty) {
+      final current = existingAnamnesis.first;
+      await updateAnamnesis(
+        Anamnesis(
+          id: current.id,
+          clientId: 1,
+          createdAt: current.createdAt,
+          updatedAt: DateTime.now(),
+          answers: sampleAnswers,
+        ),
+      );
+      return;
+    }
 
     await insertAnamnesis(
       Anamnesis(
