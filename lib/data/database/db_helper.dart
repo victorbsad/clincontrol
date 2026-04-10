@@ -378,7 +378,7 @@ class DbHelper {
       'hiperpigmentacaoOrbicular': true,
       'hipocromia': false,
       'discromiaJustificativa': 'Aumento após exposição solar sem reaplicação de protetor',
-      'fototipo': 'III – Moreno Claro – bronzeia moderadamente',
+      'fototipo': 'III - Moreno Claro - bronzeia moderadamente',
       'dermatite': false,
       'psoriase': false,
       'tratamentoIndicado': 'Protocolo clareador + controle de oleosidade',

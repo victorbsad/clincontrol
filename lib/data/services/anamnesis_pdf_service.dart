@@ -36,7 +36,7 @@ class AnamnesisPdfService {
           pw.SizedBox(height: 12),
           _buildSection('HISTÓRICO', [
             ..._historicoRows(answers),
-            _line('*Uso de Estrogênio – não pode usar eletrolifting .', _value(answers, 'estrogenioObs')),
+            _line('*Uso de Estrogenio - nao pode usar eletrolifting .', _value(answers, 'estrogenioObs')),
           ]),
           pw.NewPage(),
           pw.SizedBox(height: 12),
@@ -87,7 +87,7 @@ class AnamnesisPdfService {
               answers['hipocromia'],
             ]),
             _line('Por quê? Quanto tempo?', _value(answers, 'discromiaJustificativa')),
-            _line('FOTOTIPO – REATIVIDADE À LUZ ULTRAVIOLETA (Escala Fitzpatrick)', _value(answers, 'fototipo')),
+            _line('FOTOTIPO - REATIVIDADE A LUZ ULTRAVIOLETA (Escala Fitzpatrick)', _value(answers, 'fototipo')),
             _pairLine('OUTROS: DERMATITE', _optionValue(answers['dermatite']), 'PSORIASE', _optionValue(answers['psoriase'])),
             _line('TRATAMENTO INDICADO', _value(answers, 'tratamentoIndicado')),
             _line('NÚMERO DE SESSÕES', _value(answers, 'numeroSessoes')),
@@ -124,8 +124,8 @@ class AnamnesisPdfService {
         children: [
           pw.Text('Ficha de Avaliação Facial', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
           pw.SizedBox(height: 8),
-          pw.Text('Cliente: ${client.name}'),
-          pw.Text('Gerado em: ${anamnesis.createdAt.toLocal()}'),
+          pw.Text(_pdfSafe('Cliente: ${client.name}')),
+          pw.Text(_pdfSafe('Gerado em: ${anamnesis.createdAt.toLocal()}')),
         ],
       ),
     );
@@ -152,7 +152,7 @@ class AnamnesisPdfService {
   pw.Widget _line(String label, String value) {
     return pw.Padding(
       padding: const pw.EdgeInsets.symmetric(vertical: 2),
-      child: pw.Text('$label: ${value.isEmpty ? 'NÃO' : value}', style: const pw.TextStyle(fontSize: 9)),
+      child: pw.Text(_pdfSafe('$label: ${value.isEmpty ? 'NÃO' : value}'), style: const pw.TextStyle(fontSize: 9)),
     );
   }
 
@@ -160,7 +160,7 @@ class AnamnesisPdfService {
     return pw.Padding(
       padding: const pw.EdgeInsets.only(top: 4, bottom: 2),
       child: pw.Text(
-        title,
+        _pdfSafe(title),
         style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
       ),
     );
@@ -301,7 +301,7 @@ class AnamnesisPdfService {
           pw.Padding(
             padding: const pw.EdgeInsets.only(top: 2),
             child: pw.Text(
-              '$commentLabel ${hasComment ? commentValue : 'NÃO INFORMADO'}',
+              _pdfSafe('$commentLabel ${hasComment ? commentValue : 'NÃO INFORMADO'}'),
               style: const pw.TextStyle(fontSize: 9),
             ),
           ),
@@ -348,9 +348,9 @@ class AnamnesisPdfService {
   pw.Widget _tableRow(String session, String date, String treatment) {
     return pw.Row(
       children: [
-        pw.Expanded(child: pw.Text(session, style: const pw.TextStyle(fontSize: 9))),
-        pw.Expanded(child: pw.Text(date.isEmpty ? 'NÃO' : date, style: const pw.TextStyle(fontSize: 9))),
-        pw.Expanded(child: pw.Text(treatment.isEmpty ? 'NÃO' : treatment, style: const pw.TextStyle(fontSize: 9))),
+        pw.Expanded(child: pw.Text(_pdfSafe(session), style: const pw.TextStyle(fontSize: 9))),
+        pw.Expanded(child: pw.Text(_pdfSafe(date.isEmpty ? 'NÃO' : date), style: const pw.TextStyle(fontSize: 9))),
+        pw.Expanded(child: pw.Text(_pdfSafe(treatment.isEmpty ? 'NÃO' : treatment), style: const pw.TextStyle(fontSize: 9))),
       ],
     );
   }
@@ -401,5 +401,19 @@ class AnamnesisPdfService {
   String _formatDate(String value) {
     if (value == 'NÃO') return value;
     return value;
+  }
+
+  String _pdfSafe(String value) {
+    return value
+        .replaceAll('\u00A0', ' ')
+        .replaceAll('–', '-')
+        .replaceAll('—', '-')
+        .replaceAll('“', '"')
+        .replaceAll('”', '"')
+        .replaceAll('’', "'")
+        .replaceAll('•', '-')
+        .replaceAll('☐', '[ ]')
+        .replaceAll('☑', '[x]')
+        .replaceAll('✓', 'v');
   }
 }
