@@ -35,86 +35,7 @@ class AnamnesisPdfService {
           ]),
           pw.SizedBox(height: 12),
           _buildSection('HISTÓRICO', [
-            _subTitle('Já fez algum tratamento estético ou dermatológico?'),
-            _pairLine('Resposta', _yesNoValue(answers['tratamentoEstetico']), 'Qual?', _value(answers, 'qualTratamentoEstetico')),
-            _subTitle('Problema de cicatrização ou Quelóide?'),
-            _pairLine('Resposta', _yesNoValue(answers['cicatrizacaoQuelóide']), 'Comente:', _value(answers, 'cicatrizacaoComentario')),
-            _subTitle('Faz uso de algum medicamento?'),
-            _pairLine('Resposta', _yesNoValue(answers['usaMedicamento']), 'Qual?', _value(answers, 'qualMedicamento')),
-            _subTitle('Usou Isotretinoína (Roacutan) nos últimos 6 meses?'),
-            _pairLine('Resposta', _yesNoValue(answers['isotretinoina6m']), '', _value(answers, 'isotretinoina6mObs')),
-            _subTitle('Tratamento médico ou problema de saúde?'),
-            _pairLine('Resposta', _yesNoValue(answers['tratamentoMedico']), 'Qual?', _value(answers, 'qualProblemaSaude')),
-            _subTitle('Apresenta trombose ou tromboflebite?'),
-            _pairLine('Resposta', _yesNoValue(answers['trombose']), 'Local?', _value(answers, 'localTrombose')),
-            _subTitle('Já fez alguma cirurgia?'),
-            _pairLine('Resposta', _yesNoValue(answers['cirurgia']), 'Qual?', _value(answers, 'qualCirurgia')),
-            _subTitle('Antecedentes oncológicos?'),
-            _pairLine('Resposta', _yesNoValue(answers['oncologico']), '', _value(answers, 'oncologicoObs')),
-            _subTitle('Doença infectocontagiosa?'),
-            _pairLine('Resposta', _yesNoValue(answers['infectocontagiosa']), 'Qual?', _value(answers, 'qualInfectocontagiosa')),
-            _subTitle('Pratica algum esporte?'),
-            _pairLine('Resposta', _yesNoValue(answers['esporte']), '', _value(answers, 'esporteObs')),
-            _subTitle('Alimentação balanceada?'),
-            _pairLine('Resposta', _yesNoValue(answers['alimentacaoBalanceada']), '', _value(answers, 'alimentacaoObs')),
-            _subTitle('Ingere no mínimo 2 litros de água por dia?'),
-            _pairLine('Resposta', _yesNoValue(answers['agua2l']), 'Quantos litros?', _value(answers, 'quantosLitrosAgua')),
-            _subTitle('Faz uso de bebida alcoólica?'),
-            _pairLine('Resposta', _yesNoValue(answers['alcool']), 'Frequência?', _value(answers, 'frequenciaAlcool')),
-            _subTitle('Faz uso de substâncias químicas ou entorpecentes?'),
-            _pairLine('Resposta', _yesNoValue(answers['drogas']), 'Qual?', _value(answers, 'qualSubstancia')),
-            _subTitle('Distúrbio hormonal'),
-            _pairLine('Resposta', _yesNoValue(answers['disturbioHormonal']), 'Qual?', _value(answers, 'qualDisturbioHormonal')),
-            _subTitle('Fuma ou Fumou'),
-            _pairLine('Fuma', _value(answers, 'fumaOuFumou'), 'Quanto tempo?', _value(answers, 'tempoTabagismo')),
-            _subTitle('Dorme bem?'),
-            _pairLine('Resposta', _yesNoValue(answers['dormeBem']), 'Horas de sono:', _value(answers, 'horasSono')),
-            _subTitle('Funcionamento intestinal regular?'),
-            _pairLine('Resposta', _yesNoValue(answers['intestinoRegular']), '', _value(answers, 'intestinoObs')),
-            _subTitle('Hipertensão ou Hipotensão?'),
-            _pairLine('Resposta', _value(answers, 'pressao'), 'compensada ou descompensada?', _value(answers, 'pressaoCompensada')),
-            _subTitle('Diabetes?'),
-            _pairLine('Resposta', _yesNoValue(answers['diabetes']), 'compensada ou descompensada?', _value(answers, 'diabetesCompensada')),
-            _subTitle('Tem problemas cardíacos?'),
-            _pairLine('Resposta', _yesNoValue(answers['cardiaco']), 'Qual?', _value(answers, 'qualCardiaco')),
-            _subTitle('Depressão?'),
-            _pairLine('Resposta', _yesNoValue(answers['depressao']), 'Faz tratamento?', _value(answers, 'tratamentoDepressao')),
-            _subTitle('Portador de Epilepsia?'),
-            _pairLine('Resposta', _yesNoValue(answers['epilepsia']), '', _value(answers, 'epilepsiaObs')),
-            _subTitle('Possui placas e pinos metálicos na face?'),
-            _pairLine('Resposta', _yesNoValue(answers['placasPinos']), 'Onde?', _value(answers, 'ondePlacasPinos')),
-            _subTitle('Próteses dentárias?'),
-            _pairLine('Resposta', _yesNoValue(answers['protesesDentarias']), '', _value(answers, 'protesesObs')),
-            _subTitle('Faz uso de lentes de contato?'),
-            _pairLine('Resposta', _yesNoValue(answers['lentesContato']), '', _value(answers, 'lentesObs')),
-            _subTitle('Já fez ou faz uso de ácidos na pele?'),
-            _pairLine('Resposta', _yesNoValue(answers['acidosPele']), 'Qual?', _value(answers, 'qualAcido')),
-            _subTitle('Faz uso de cosméticos?'),
-            _pairLine('Resposta', _yesNoValue(answers['cosmeticos']), 'Quais?', _value(answers, 'quaisCosmeticos')),
-            _subTitle('Faz uso de protetor solar?'),
-            _pairLine('Resposta', _yesNoValue(answers['protetorSolar']), 'Qual?', '${_value(answers, 'qualProtetorSolar')} Frequência? ${_value(answers, 'frequenciaProtetorSolar')}'),
-            _subTitle('Costuma tomar sol?'),
-            _pairLine('Resposta', _yesNoValue(answers['tomaSol']), 'Frequência?', _value(answers, 'frequenciaSol')),
-            _subTitle('Fez maquiagem definitiva?'),
-            _pairLine('Resposta', _yesNoValue(answers['maquiagemDefinitiva']), 'Local?', _value(answers, 'localMaquiagemDefinitiva')),
-            _subTitle('Fez aplicação de Metacril ou Toxina Botulínica?'),
-            _pairLine('Resposta', _yesNoValue(answers['toxinaBotulinica']), 'Local?', _value(answers, 'localToxina')),
-            _subTitle('Alergias? (alimentar, cheiro, respiratória, corantes, medicamentos, etc)'),
-            _pairLine('Resposta', _value(answers, 'alergias'), 'Especificar:', _value(answers, 'alergias')),
-            _subTitle('Gestante?'),
-            _pairLine('Resposta', _yesNoValue(answers['gestante']), 'Quantos meses?', _value(answers, 'mesesGestacao')),
-            _subTitle('Filhos?'),
-            _pairLine('Resposta', _yesNoValue(answers['filhos']), 'Quantos?', _value(answers, 'quantidadeFilhos')),
-            _subTitle('Ciclo menstrual regular?'),
-            _pairLine('Resposta', _yesNoValue(answers['cicloRegular']), 'Obs.:', _value(answers, 'obsCiclo')),
-            _subTitle('Já teve herpes?'),
-            _pairLine('Resposta', _yesNoValue(answers['herpes']), 'A quanto tempo?', _value(answers, 'tempoHerpes')),
-            _subTitle('Faz uso de anticoncepcional?'),
-            _pairLine('Resposta', _yesNoValue(answers['anticoncepcional']), 'Qual?', _value(answers, 'qualAnticoncepcional')),
-            _subTitle('Faz uso de hormônio?*'),
-            _pairLine('Resposta', _yesNoValue(answers['hormonio']), 'Qual?', _value(answers, 'qualHormônio')),
-            _subTitle('Autoriza divulgação de foto antes/após tratamento?'),
-            _pairLine('Resposta', _yesNoValue(answers['autorizacaoFoto']), '', _value(answers, 'autorizacaoFotoObs')),
+            ..._historicoRows(answers),
             _line('*Uso de Estrogênio – não pode usar eletrolifting .', _value(answers, 'estrogenioObs')),
           ]),
           pw.NewPage(),
@@ -246,48 +167,6 @@ class AnamnesisPdfService {
   }
 
   pw.Widget _pairLine(String leftLabel, String leftValue, String rightLabel, String rightValue) {
-    if (leftLabel == 'Resposta') {
-      final selection = _toYesNoSelection(leftValue);
-      final inferredSelection = selection ?? (_hasMeaningfulValue(rightValue) ? true : null);
-      final isYes = inferredSelection == true;
-      final isNo = inferredSelection == false;
-      final comment = _hasMeaningfulValue(rightValue) ? rightValue : '';
-
-      return pw.Padding(
-        padding: const pw.EdgeInsets.symmetric(vertical: 2),
-        child: pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Row(
-              children: [
-                pw.Expanded(
-                  child: pw.Text(
-                    'SIM: ${isYes ? 'X' : ''}',
-                    style: const pw.TextStyle(fontSize: 9),
-                  ),
-                ),
-                pw.SizedBox(width: 12),
-                pw.Expanded(
-                  child: pw.Text(
-                    'NÃO: ${isNo ? 'X' : ''}',
-                    style: const pw.TextStyle(fontSize: 9),
-                  ),
-                ),
-              ],
-            ),
-            if (isYes && rightLabel.isNotEmpty)
-              pw.Padding(
-                padding: const pw.EdgeInsets.only(top: 2),
-                child: pw.Text(
-                  '$rightLabel ${comment.isEmpty ? 'NÃO INFORMADO' : comment}',
-                  style: const pw.TextStyle(fontSize: 9),
-                ),
-              ),
-          ],
-        ),
-      );
-    }
-
     return pw.Padding(
       padding: const pw.EdgeInsets.symmetric(vertical: 2),
       child: pw.Row(
@@ -297,6 +176,136 @@ class AnamnesisPdfService {
           pw.Expanded(child: pw.Text('$rightLabel: ${rightValue.isEmpty ? 'NÃO' : rightValue}', style: const pw.TextStyle(fontSize: 9))),
         ],
       ),
+    );
+  }
+
+  List<pw.Widget> _historicoRows(Map<String, dynamic> answers) {
+    final alergiasText = _value(answers, 'alergias');
+
+    final rows = <pw.Widget>[
+      _yesNoRow(
+        _yesNoQuestion('Já fez algum tratamento estético ou dermatológico?', answers['tratamentoEstetico'], 'Qual?', _value(answers, 'qualTratamentoEstetico')),
+        _yesNoQuestion('Problema de cicatrização ou Quelóide?', answers['cicatrizacaoQuelóide'], 'Comente:', _value(answers, 'cicatrizacaoComentario')),
+      ),
+      _yesNoRow(
+        _yesNoQuestion('Faz uso de algum medicamento?', answers['usaMedicamento'], 'Qual?', _value(answers, 'qualMedicamento')),
+        _yesNoQuestion('Usou Isotretinoína (Roacutan) nos últimos 6 meses?', answers['isotretinoina6m'], '', _value(answers, 'isotretinoina6mObs')),
+      ),
+      _yesNoRow(
+        _yesNoQuestion('Tratamento médico ou problema de saúde?', answers['tratamentoMedico'], 'Qual?', _value(answers, 'qualProblemaSaude')),
+        _yesNoQuestion('Apresenta trombose ou tromboflebite?', answers['trombose'], 'Local?', _value(answers, 'localTrombose')),
+      ),
+      _yesNoRow(
+        _yesNoQuestion('Já fez alguma cirurgia?', answers['cirurgia'], 'Qual?', _value(answers, 'qualCirurgia')),
+        _yesNoQuestion('Antecedentes oncológicos?', answers['oncologico'], '', _value(answers, 'oncologicoObs')),
+      ),
+      _yesNoRow(
+        _yesNoQuestion('Doença infectocontagiosa?', answers['infectocontagiosa'], 'Qual?', _value(answers, 'qualInfectocontagiosa')),
+        _yesNoQuestion('Pratica algum esporte?', answers['esporte'], '', _value(answers, 'esporteObs')),
+      ),
+      _yesNoRow(
+        _yesNoQuestion('Alimentação balanceada?', answers['alimentacaoBalanceada'], '', _value(answers, 'alimentacaoObs')),
+        _yesNoQuestion('Ingere no mínimo 2 litros de água por dia?', answers['agua2l'], 'Quantos litros?', _value(answers, 'quantosLitrosAgua')),
+      ),
+      _yesNoRow(
+        _yesNoQuestion('Faz uso de bebida alcoólica?', answers['alcool'], 'Frequência?', _value(answers, 'frequenciaAlcool')),
+        _yesNoQuestion('Faz uso de substâncias químicas ou entorpecentes?', answers['drogas'], 'Qual?', _value(answers, 'qualSubstancia')),
+      ),
+      _yesNoRow(
+        _yesNoQuestion('Distúrbio hormonal?', answers['disturbioHormonal'], 'Qual?', _value(answers, 'qualDisturbioHormonal')),
+        _yesNoQuestion('Dorme bem?', answers['dormeBem'], 'Horas de sono:', _value(answers, 'horasSono')),
+      ),
+      _yesNoRow(
+        _yesNoQuestion('Funcionamento intestinal regular?', answers['intestinoRegular'], '', _value(answers, 'intestinoObs')),
+        _yesNoQuestion('Diabetes?', answers['diabetes'], 'Compensada/descompensada?', _value(answers, 'diabetesCompensada')),
+      ),
+      _yesNoRow(
+        _yesNoQuestion('Tem problemas cardíacos?', answers['cardiaco'], 'Qual?', _value(answers, 'qualCardiaco')),
+        _yesNoQuestion('Depressão?', answers['depressao'], 'Faz tratamento?', _value(answers, 'tratamentoDepressao')),
+      ),
+      _yesNoRow(
+        _yesNoQuestion('Portador de Epilepsia?', answers['epilepsia'], '', _value(answers, 'epilepsiaObs')),
+        _yesNoQuestion('Possui placas e pinos metálicos na face?', answers['placasPinos'], 'Onde?', _value(answers, 'ondePlacasPinos')),
+      ),
+      _yesNoRow(
+        _yesNoQuestion('Próteses dentárias?', answers['protesesDentarias'], '', _value(answers, 'protesesObs')),
+        _yesNoQuestion('Faz uso de lentes de contato?', answers['lentesContato'], '', _value(answers, 'lentesObs')),
+      ),
+      _yesNoRow(
+        _yesNoQuestion('Já fez ou faz uso de ácidos na pele?', answers['acidosPele'], 'Qual?', _value(answers, 'qualAcido')),
+        _yesNoQuestion('Faz uso de cosméticos?', answers['cosmeticos'], 'Quais?', _value(answers, 'quaisCosmeticos')),
+      ),
+      _yesNoRow(
+        _yesNoQuestion('Faz uso de protetor solar?', answers['protetorSolar'], 'Qual?', '${_value(answers, 'qualProtetorSolar')} Frequência? ${_value(answers, 'frequenciaProtetorSolar')}'),
+        _yesNoQuestion('Costuma tomar sol?', answers['tomaSol'], 'Frequência?', _value(answers, 'frequenciaSol')),
+      ),
+      _yesNoRow(
+        _yesNoQuestion('Fez maquiagem definitiva?', answers['maquiagemDefinitiva'], 'Local?', _value(answers, 'localMaquiagemDefinitiva')),
+        _yesNoQuestion('Fez aplicação de Metacril ou Toxina Botulínica?', answers['toxinaBotulinica'], 'Local?', _value(answers, 'localToxina')),
+      ),
+      _yesNoRow(
+        _yesNoQuestion('Alergias? (alimentar, cheiro, respiratória, corantes, medicamentos, etc)', _hasMeaningfulValue(alergiasText), 'Especificar:', alergiasText),
+        _yesNoQuestion('Gestante?', answers['gestante'], 'Quantos meses?', _value(answers, 'mesesGestacao')),
+      ),
+      _yesNoRow(
+        _yesNoQuestion('Filhos?', answers['filhos'], 'Quantos?', _value(answers, 'quantidadeFilhos')),
+        _yesNoQuestion('Ciclo menstrual regular?', answers['cicloRegular'], 'Obs.:', _value(answers, 'obsCiclo')),
+      ),
+      _yesNoRow(
+        _yesNoQuestion('Já teve herpes?', answers['herpes'], 'A quanto tempo?', _value(answers, 'tempoHerpes')),
+        _yesNoQuestion('Faz uso de anticoncepcional?', answers['anticoncepcional'], 'Qual?', _value(answers, 'qualAnticoncepcional')),
+      ),
+      _yesNoRow(
+        _yesNoQuestion('Faz uso de hormônio?*', answers['hormonio'], 'Qual?', _value(answers, 'qualHormônio')),
+        _yesNoQuestion('Autoriza divulgação de foto antes/após tratamento?', answers['autorizacaoFoto'], '', _value(answers, 'autorizacaoFotoObs')),
+      ),
+      _subTitle('Fuma ou Fumou'),
+      _pairLine('Fuma', _value(answers, 'fumaOuFumou'), 'Quanto tempo?', _value(answers, 'tempoTabagismo')),
+      _subTitle('Hipertensão ou Hipotensão?'),
+      _pairLine('Condição', _value(answers, 'pressao'), 'Compensada/descompensada', _value(answers, 'pressaoCompensada')),
+    ];
+
+    return rows;
+  }
+
+  pw.Widget _yesNoRow(pw.Widget left, pw.Widget right) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.only(bottom: 6),
+      child: pw.Row(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Expanded(child: left),
+          pw.SizedBox(width: 12),
+          pw.Expanded(child: right),
+        ],
+      ),
+    );
+  }
+
+  pw.Widget _yesNoQuestion(String question, dynamic rawAnswer, String commentLabel, String commentValue) {
+    final selection = _toYesNoSelection(rawAnswer);
+    final isYes = selection == true;
+    final text = isYes ? 'SIM' : 'NÃO';
+    final hasComment = _hasMeaningfulValue(commentValue);
+
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text(
+          question,
+          style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
+        ),
+        pw.SizedBox(height: 2),
+        pw.Text(text, style: const pw.TextStyle(fontSize: 9)),
+        if (isYes && commentLabel.isNotEmpty)
+          pw.Padding(
+            padding: const pw.EdgeInsets.only(top: 2),
+            child: pw.Text(
+              '$commentLabel ${hasComment ? commentValue : 'NÃO INFORMADO'}',
+              style: const pw.TextStyle(fontSize: 9),
+            ),
+          ),
+      ],
     );
   }
 
@@ -350,16 +359,6 @@ class AnamnesisPdfService {
     final value = answers[key];
     if (value == null) return 'NÃO';
     if (value is String && value.trim().isEmpty) return 'NÃO';
-    return value.toString();
-  }
-
-  String _yesNoValue(dynamic value) {
-    if (value == null) return 'NÃO';
-    if (value is bool) return value ? 'SIM' : 'NÃO';
-    final text = value.toString().trim().toLowerCase();
-    if (text.isEmpty) return 'NÃO';
-    if (text == 'true' || text == 'sim' || text == 'yes') return 'SIM';
-    if (text == 'false' || text == 'nao' || text == 'não' || text == 'no') return 'NÃO';
     return value.toString();
   }
 
