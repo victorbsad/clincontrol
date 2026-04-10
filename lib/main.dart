@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'core/theme/app_theme.dart';
+import 'data/database/database_config.dart';
 import 'features/dashboard/screens/dashboard.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  sqfliteFfiInit();
-  databaseFactory = databaseFactoryFfi;
+  configureDatabaseFactory();
   runApp(const MeuApp());
 }
 
