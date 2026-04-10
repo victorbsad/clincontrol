@@ -1,5 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:printing/printing.dart';
+import '../../../data/repositories/client_repository.dart';
+import '../../../data/repositories/anamnesis_repository.dart';
 import '../../../data/repositories/service_repository.dart';
+import '../../../data/services/anamnesis_pdf_service.dart';
 import '../../clients/screens/client_list.dart';
 import '../../services/screens/new_service.dart';
 
@@ -13,6 +18,9 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   final ServiceRepository _repository = ServiceRepository();
+  final ClientRepository _clientRepository = ClientRepository();
+  final AnamnesisRepository _anamnesisRepository = AnamnesisRepository();
+  final AnamnesisPdfService _pdfService = const AnamnesisPdfService();
   double _total = 0;
   int _count = 0;
   bool _isLoading = true;
@@ -37,6 +45,39 @@ class _DashboardState extends State<Dashboard> {
     });
   }
 
+  Future<void> _openSeedPdf() async {
+    try {
+      final clients = await _clientRepository.findAll();
+      final matchingClients = clients.where((item) => item.id == 1).toList();
+      final client = matchingClients.isNotEmpty ? matchingClients.first : null;
+      final anamneses = await _anamnesisRepository.findByClientId(1);
+      final anamnesis = anamneses.isNotEmpty ? anamneses.first : null;
+
+      if (client == null || anamnesis == null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Seed de anamnese não encontrado.')),
+        );
+        return;
+      }
+
+      final bytes = await _pdfService.generate(
+        client: client,
+        anamnesis: anamnesis,
+      );
+
+      await Printing.layoutPdf(
+        onLayout: (format) async => bytes,
+        name: 'anamnese-cliente-1.pdf',
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao gerar PDF: $error')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,6 +85,14 @@ class _DashboardState extends State<Dashboard> {
         title: const Text('Meu Estúdio'),
         backgroundColor: Colors.purple,
         foregroundColor: Colors.white,
+        actions: [
+          if (kDebugMode)
+            IconButton(
+              tooltip: 'Gerar PDF de teste',
+              icon: const Icon(Icons.picture_as_pdf_outlined),
+              onPressed: _openSeedPdf,
+            ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -111,7 +160,7 @@ class _DashboardState extends State<Dashboard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${_count} atendimentos',
+                            '$_count atendimentos',
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -160,7 +209,7 @@ class _DashboardState extends State<Dashboard> {
                   width: double.infinity,
                   child: OutlinedButton.icon(
                     onPressed: () async {
-                      Navigator.push(
+                        await Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const ClientList()),
                       );
