@@ -1,5 +1,6 @@
 import 'package:pdf/widgets.dart' as pw;
 
+import '../../../core/constants/anamnesis_enums.dart';
 import '../../../core/constants/anamnesis_keys.dart';
 import 'anamnesis_pdf_styles.dart';
 
@@ -284,8 +285,7 @@ class AnamnesisPdfHistorySection {
           _value(answers, AnamnesisKeys.photoAuthorizationComment),
         ),
       ),
-      _yesNoRow(_smokingQuestion(answers),
-       _pressureQuestion(answers)),
+      _yesNoRow(_smokingQuestion(answers), _pressureQuestion(answers)),
     ];
   }
 
@@ -334,13 +334,6 @@ class AnamnesisPdfHistorySection {
     );
   }
 
-  static pw.Widget _subTitle(String title) {
-    return pw.Padding(
-      padding: const pw.EdgeInsets.only(top: 4, bottom: 2),
-      child: pw.Text(_pdfSafe(title), style: AnamnesisPdfStyles.bold),
-    );
-  }
-
   static pw.Widget _stackedQuestion(
     String label,
     String value,
@@ -383,11 +376,19 @@ class AnamnesisPdfHistorySection {
   }
 
   static pw.Widget _pressureQuestion(Map<String, dynamic> answers) {
+    final hypertensionCanonical = _rawStringValue(
+      answers,
+      AnamnesisKeys.hypertensionStatus,
+    );
+    final hypotensionCanonical = _rawStringValue(
+      answers,
+      AnamnesisKeys.hypotensionStatus,
+    );
     final hypertension = _value(answers, AnamnesisKeys.hypertensionStatus);
     final hypotension = _value(answers, AnamnesisKeys.hypotensionStatus);
     final hasPressure =
-        (hypertension.isNotEmpty && hypertension != 'NÃO') ||
-        (hypotension.isNotEmpty && hypotension != 'NÃO');
+        (hypertensionCanonical != null && hypertensionCanonical != 'nao') ||
+        (hypotensionCanonical != null && hypotensionCanonical != 'nao');
 
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -414,7 +415,9 @@ class AnamnesisPdfHistorySection {
     final value = answers[key];
     if (value == null) return 'NÃO';
     if (value is String && value.trim().isEmpty) return 'NÃO';
-    return value.toString();
+
+    final raw = value.toString();
+    return AnamnesisEnumHumanizer.humanize(key, raw);
   }
 
   static String _frequencyValue(
@@ -422,11 +425,21 @@ class AnamnesisPdfHistorySection {
     String frequencyKey,
     String otherKey,
   ) {
-    final value = _value(answers, frequencyKey);
-    if (value == 'outro') {
+    final rawValue = _rawStringValue(answers, frequencyKey);
+    if (rawValue == null) return 'NÃO';
+
+    if (rawValue == AnamnesisFrequency.other.canonical) {
       return _value(answers, otherKey);
     }
-    return value;
+    return AnamnesisEnumHumanizer.humanize(frequencyKey, rawValue);
+  }
+
+  static String? _rawStringValue(Map<String, dynamic> answers, String key) {
+    final value = answers[key];
+    if (value == null) return null;
+    final raw = value.toString().trim();
+    if (raw.isEmpty) return null;
+    return raw;
   }
 
   static bool? _toYesNoSelection(dynamic value) {

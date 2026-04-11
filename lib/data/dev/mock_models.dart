@@ -1,6 +1,7 @@
 import '../models/anamnesis.dart';
 import '../models/client.dart';
 import '../models/service.dart';
+import '../../core/constants/anamnesis_enums.dart';
 import '../../core/constants/anamnesis_keys.dart';
 import '../../core/utils/app_date_formatter.dart';
 
@@ -43,10 +44,7 @@ class DevMockModels {
     );
   }
 
-  static Anamnesis buildAnamnesis({
-    required int clientId,
-    DateTime? now,
-  }) {
+  static Anamnesis buildAnamnesis({required int clientId, DateTime? now}) {
     final createdAt = now ?? DateTime.now();
     return Anamnesis(
       clientId: clientId,
@@ -58,10 +56,13 @@ class DevMockModels {
 
   static Map<String, dynamic> sampleAnswers() {
     return {
-      AnamnesisKeys.visitReasonOption: 'outro',
-      AnamnesisKeys.visitReasonOther: 'Validacao de fluxo em desenvolvimento para anamnese facial completa.',
+      AnamnesisKeys.visitReasonOption:
+          AnamnesisVisitReasonOption.other.canonical,
+      AnamnesisKeys.visitReasonOther:
+          'Validacao de fluxo em desenvolvimento para anamnese facial completa.',
       AnamnesisKeys.hadAestheticTreatment: true,
-      AnamnesisKeys.aestheticTreatmentType: 'Limpeza de pele, peeling e drenagem linfatica',
+      AnamnesisKeys.aestheticTreatmentType:
+          'Limpeza de pele, peeling e drenagem linfatica',
       AnamnesisKeys.keloidScarring: true,
       AnamnesisKeys.scarringComment: 'Cicatriz elevada em ombro esquerdo',
       AnamnesisKeys.usesMedication: true,
@@ -69,40 +70,47 @@ class DevMockModels {
       AnamnesisKeys.isotretinoin6Months: true,
       AnamnesisKeys.isotretinoin6MonthsComment: 'Uso previo ha 4 meses',
       AnamnesisKeys.hadMedicalTreatment: true,
-      AnamnesisKeys.healthProblemType: 'Acompanhamento dermatologico e endocrinologico',
+      AnamnesisKeys.healthProblemType:
+          'Acompanhamento dermatologico e endocrinologico',
       AnamnesisKeys.thrombosis: true,
       AnamnesisKeys.thrombosisLocation: 'Membro inferior direito',
       AnamnesisKeys.hadSurgery: true,
       AnamnesisKeys.surgeryType: 'Apendicectomia e rinoplastia',
       AnamnesisKeys.hasOncologicalHistory: true,
-      AnamnesisKeys.oncologicalComment: 'Historico familiar positivo para cancer de mama',
+      AnamnesisKeys.oncologicalComment:
+          'Historico familiar positivo para cancer de mama',
       AnamnesisKeys.infectiousDiseaseHistory: true,
       AnamnesisKeys.infectiousDiseaseType: 'Herpes labial pregresso',
       AnamnesisKeys.exercisesRegularly: true,
       AnamnesisKeys.exerciseType: 'Musculacao 4x por semana',
       AnamnesisKeys.balancedDiet: true,
-      AnamnesisKeys.dietComment: 'Dieta com orientacao nutricional e boa adesao',
+      AnamnesisKeys.dietComment:
+          'Dieta com orientacao nutricional e boa adesao',
       AnamnesisKeys.drinks2LitersWater: true,
       AnamnesisKeys.waterIntakeAmount: 2.5,
       AnamnesisKeys.consumesAlcohol: true,
-      AnamnesisKeys.alcoholFrequency: 'semanal',
-      AnamnesisKeys.alcoholFrequencyOther: '1 a 2 vezes por semana em eventos sociais',
+      AnamnesisKeys.alcoholFrequency: AnamnesisFrequency.weekly.canonical,
+      AnamnesisKeys.alcoholFrequencyOther:
+          '1 a 2 vezes por semana em eventos sociais',
       AnamnesisKeys.usesDrugs: true,
       AnamnesisKeys.drugType: 'Nao faz uso de drogas ilicitas',
       AnamnesisKeys.hormoneImbalance: true,
-      AnamnesisKeys.hormoneImbalanceType: 'Sindrome dos ovarios policisticos em acompanhamento',
-      AnamnesisKeys.smokingStatus: 'ex_fumante',
+      AnamnesisKeys.hormoneImbalanceType:
+          'Sindrome dos ovarios policisticos em acompanhamento',
+      AnamnesisKeys.smokingStatus: AnamnesisSmokingStatus.exSmoker.canonical,
       AnamnesisKeys.smokingDuration: '8 anos',
       AnamnesisKeys.sleepsWell: true,
       AnamnesisKeys.sleepHours: 7.5,
       AnamnesisKeys.regularBowelMovements: true,
       AnamnesisKeys.bowelComment: 'Evacuacao diaria sem intercorrencias',
-      AnamnesisKeys.hypertensionStatus: 'nao',
-      AnamnesisKeys.hypotensionStatus: 'compensada',
+      AnamnesisKeys.hypertensionStatus: AnamnesisPressureStatus.no.canonical,
+      AnamnesisKeys.hypotensionStatus:
+          AnamnesisPressureStatus.compensated.canonical,
       AnamnesisKeys.hasDiabetes: true,
       AnamnesisKeys.diabetesControlled: 'Compensada',
       AnamnesisKeys.hasCardiacCondition: true,
-      AnamnesisKeys.cardiacConditionType: 'Prolapso de valva mitral sem repercussao funcional',
+      AnamnesisKeys.cardiacConditionType:
+          'Prolapso de valva mitral sem repercussao funcional',
       AnamnesisKeys.hasDepression: true,
       AnamnesisKeys.depressionTreatment: 'Psicoterapia regular',
       AnamnesisKeys.hasEpilepsy: true,
@@ -116,20 +124,23 @@ class DevMockModels {
       AnamnesisKeys.usesAcids: true,
       AnamnesisKeys.acidType: 'Acido glicolico e retinoico',
       AnamnesisKeys.usesCosmeticProducts: true,
-      AnamnesisKeys.cosmeticProductTypes: 'Hidratante, serum de vitamina C e vitamina A',
+      AnamnesisKeys.cosmeticProductTypes:
+          'Hidratante, serum de vitamina C e vitamina A',
       AnamnesisKeys.usesSunscreen: true,
       AnamnesisKeys.sunscreenType: 'FPS 50 com cor',
-      AnamnesisKeys.sunscreenFrequency: 'diario',
+      AnamnesisKeys.sunscreenFrequency: AnamnesisFrequency.daily.canonical,
       AnamnesisKeys.sunscreenFrequencyOther: 'Reaplica a cada 3 horas',
       AnamnesisKeys.exposedToSun: true,
-      AnamnesisKeys.sunExposureFrequency: 'semanal',
-      AnamnesisKeys.sunExposureFrequencyOther: 'Exposicao moderada em caminhada ao ar livre',
+      AnamnesisKeys.sunExposureFrequency: AnamnesisFrequency.weekly.canonical,
+      AnamnesisKeys.sunExposureFrequencyOther:
+          'Exposicao moderada em caminhada ao ar livre',
       AnamnesisKeys.hasPermanentMakeup: true,
       AnamnesisKeys.permanentMakeupLocation: 'Sobrancelhas e labios',
       AnamnesisKeys.usedBotulinum: true,
       AnamnesisKeys.botulinumLocation: 'Testa e glabela',
       AnamnesisKeys.hasAllergies: true,
-      AnamnesisKeys.allergiesDetails: 'Alergia respiratoria a poeira e sensibilidade a alguns cosmeticos',
+      AnamnesisKeys.allergiesDetails:
+          'Alergia respiratoria a poeira e sensibilidade a alguns cosmeticos',
       AnamnesisKeys.isPregnant: true,
       AnamnesisKeys.pregnancyMonths: 3,
       AnamnesisKeys.hasChildren: true,
@@ -143,8 +154,10 @@ class DevMockModels {
       AnamnesisKeys.takesHormones: true,
       AnamnesisKeys.hormoneType: 'Estrogenio e progesterona',
       AnamnesisKeys.authorizedForPhotos: true,
-      AnamnesisKeys.photoAuthorizationComment: 'Autorizo uso para prontuario e divulgacao anonima',
-      AnamnesisKeys.estrogenComment: 'Uso de estrogênio com acompanhamento ginecologico',
+      AnamnesisKeys.photoAuthorizationComment:
+          'Autorizo uso para prontuario e divulgacao anonima',
+      AnamnesisKeys.estrogenComment:
+          'Uso de estrogênio com acompanhamento ginecologico',
       AnamnesisKeys.oilySkinSensitive: true,
       AnamnesisKeys.oilySkinResistant: true,
       AnamnesisKeys.oilySkinPigmented: true,
@@ -185,11 +198,13 @@ class DevMockModels {
       AnamnesisKeys.hasFreckles: true,
       AnamnesisKeys.hasOrbicularHyperpigmentation: true,
       AnamnesisKeys.hasHypochromia: true,
-      AnamnesisKeys.chromaticAbnormalityJustification: 'Escurecimento periorbital e exposicao solar pregressa',
-      AnamnesisKeys.skinPhototype: 'III',
+      AnamnesisKeys.chromaticAbnormalityJustification:
+          'Escurecimento periorbital e exposicao solar pregressa',
+      AnamnesisKeys.skinPhototype: AnamnesisSkinPhototype.iii.canonical,
       AnamnesisKeys.hasDermatitis: true,
       AnamnesisKeys.hasPsoriasis: true,
-      AnamnesisKeys.treatmentIndicated: 'Tratamento combinado com limpeza de pele, peeling e home care',
+      AnamnesisKeys.treatmentIndicated:
+          'Tratamento combinado com limpeza de pele, peeling e home care',
       AnamnesisKeys.numberOfSessions: 8,
       AnamnesisKeys.session1Date: '15/04/2026',
       AnamnesisKeys.session1: 'Limpeza de pele profunda',
@@ -211,7 +226,8 @@ class DevMockModels {
       AnamnesisKeys.session9: 'Sessao complementar',
       AnamnesisKeys.session10Date: '17/06/2026',
       AnamnesisKeys.session10: 'Finalizacao e alta programada',
-      AnamnesisKeys.cosmeticPrescription: 'Limpeza suave, hidratante reparador, FPS 50 e antioxidante diurno.',
+      AnamnesisKeys.cosmeticPrescription:
+          'Limpeza suave, hidratante reparador, FPS 50 e antioxidante diurno.',
     };
   }
 

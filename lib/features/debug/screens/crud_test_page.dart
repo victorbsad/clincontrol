@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/config/app_environment.dart';
+import '../../../core/constants/anamnesis_enums.dart';
 import '../../../core/constants/anamnesis_keys.dart';
 import '../../../data/models/anamnesis.dart';
 import '../../../data/models/client.dart';
@@ -238,10 +239,10 @@ class _CrudTestPageState extends State<CrudTestPage> {
       createdAt: first.createdAt,
       answers: {
         ...first.answers,
-        AnamnesisKeys.visitReasonOption: 'outro',
         AnamnesisKeys.visitReasonOther: 'Motivo atualizado no CRUD Lab',
       },
     );
+    updated.visitReasonOption = AnamnesisVisitReasonOption.other;
 
     final rows = await _anamnesisRepository.update(updated);
     return 'Linhas afetadas: $rows | Anamnese id=${first.id}';
@@ -338,7 +339,9 @@ class _CrudTestPageState extends State<CrudTestPage> {
         body: const Center(
           child: Padding(
             padding: EdgeInsets.all(24),
-            child: Text('Laboratorio disponivel apenas em ambiente de desenvolvimento.'),
+            child: Text(
+              'Laboratorio disponivel apenas em ambiente de desenvolvimento.',
+            ),
           ),
         ),
       );

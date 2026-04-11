@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../../core/constants/anamnesis_enums.dart';
 import '../../core/constants/anamnesis_keys.dart';
 import '../models/anamnesis.dart';
 import '../models/client.dart';
@@ -136,11 +137,16 @@ class AnamnesisPdfService {
   }
 
   String _motivoVisitaLine(Map<String, dynamic> answers) {
-    final option = _value(answers, AnamnesisKeys.visitReasonOption);
-    if (option == 'outro') {
+    final raw =
+        answers[AnamnesisKeys.visitReasonOption]?.toString().trim() ?? '';
+    if (raw == AnamnesisVisitReasonOption.other.canonical) {
       return _value(answers, AnamnesisKeys.visitReasonOther);
     }
-    return option;
+    if (raw.isEmpty) return 'NÃO';
+    return AnamnesisEnumHumanizer.humanize(
+      AnamnesisKeys.visitReasonOption,
+      raw,
+    );
   }
 
   String _clientValue(String value) {
@@ -266,5 +272,4 @@ class AnamnesisPdfService {
     final year = date.year.toString();
     return '$day/$month/$year';
   }
-
 }

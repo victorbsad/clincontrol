@@ -247,9 +247,14 @@ extension DbHelperAnamnesisOperations on DbHelper {
           );
         }
         if (value is Map) {
-          return StoredAnamnesisAnswer(type: 'json', jsonValue: jsonEncode(value));
+          return StoredAnamnesisAnswer(
+            type: 'json',
+            jsonValue: jsonEncode(value),
+          );
         }
-        throw StateError('Invalid json value for ${fieldDefinition.key}: $value');
+        throw StateError(
+          'Invalid json value for ${fieldDefinition.key}: $value',
+        );
       case 'text':
       default:
         return StoredAnamnesisAnswer(type: 'text', textValue: value.toString());
@@ -272,7 +277,10 @@ extension DbHelperAnamnesisOperations on DbHelper {
     if (normalized == 'true' || normalized == 'sim' || normalized == 'yes') {
       return true;
     }
-    if (normalized == 'false' || normalized == 'nao' || normalized == 'não' || normalized == 'no') {
+    if (normalized == 'false' ||
+        normalized == 'nao' ||
+        normalized == 'não' ||
+        normalized == 'no') {
       return false;
     }
     return null;
@@ -318,13 +326,7 @@ extension DbHelperAnamnesisOperations on DbHelper {
   String? _coerceEnum(dynamic value, List<String> allowedValues) {
     final raw = value.toString().trim();
     if (raw.isEmpty) return null;
-
-    for (final allowed in allowedValues) {
-      if (allowed.toLowerCase() == raw.toLowerCase()) {
-        return allowed;
-      }
-    }
-    return null;
+    return allowedValues.contains(raw) ? raw : null;
   }
 }
 
