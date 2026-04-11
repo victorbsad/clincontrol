@@ -31,6 +31,8 @@ class _CrudTestPageState extends State<CrudTestPage> {
   }
 
   void _addLog(String text) {
+    if (!mounted) return;
+
     final now = DateTime.now();
     final stamp =
         '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
@@ -66,8 +68,10 @@ class _CrudTestPageState extends State<CrudTestPage> {
 
     try {
       final result = await action();
+      if (!mounted) return;
       _addLog('Sucesso em $methodName\n$result');
     } catch (e) {
+      if (!mounted) return;
       _addLog('Erro em $methodName\n$e');
     } finally {
       if (mounted) {

@@ -10,7 +10,12 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   configureDatabaseFactory();
   if (kDebugMode) {
-    await DbHelper().seedDevelopmentData();
+    try {
+      await DbHelper().seedDevelopmentData();
+    } catch (e, stackTrace) {
+      debugPrint('Seed de desenvolvimento falhou: $e');
+      debugPrint('$stackTrace');
+    }
   }
   runApp(const MyApp());
 }

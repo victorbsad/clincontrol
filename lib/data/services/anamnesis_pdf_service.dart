@@ -64,36 +64,63 @@ class AnamnesisPdfService {
               _buildSubSection('Pele Oleosa (Lipídica)', [
                 _pairLine(
                   'Sensível',
-                  _checkboxSymbolForKey(answers, AnamnesisKeys.oilySkinSensitive),
+                  _checkboxSymbolForKey(
+                    answers,
+                    AnamnesisKeys.oilySkinSensitive,
+                  ),
                   'Resistente',
-                  _checkboxSymbolForKey(answers, AnamnesisKeys.oilySkinResistant),
+                  _checkboxSymbolForKey(
+                    answers,
+                    AnamnesisKeys.oilySkinResistant,
+                  ),
                 ),
                 _pairLine(
                   'Pigmentada',
-                  _checkboxSymbolForKey(answers, AnamnesisKeys.oilySkinPigmented),
+                  _checkboxSymbolForKey(
+                    answers,
+                    AnamnesisKeys.oilySkinPigmented,
+                  ),
                   'Não pigmentada',
-                  _checkboxSymbolForKey(answers, AnamnesisKeys.oilySkinNonPigmented),
+                  _checkboxSymbolForKey(
+                    answers,
+                    AnamnesisKeys.oilySkinNonPigmented,
+                  ),
                 ),
                 _pairLine(
                   'Firme',
                   _checkboxSymbolForKey(answers, AnamnesisKeys.oilySkinFirm),
                   'Propensa à rugas',
-                  _checkboxSymbolForKey(answers, AnamnesisKeys.oilySkinWrinkled),
+                  _checkboxSymbolForKey(
+                    answers,
+                    AnamnesisKeys.oilySkinWrinkled,
+                  ),
                 ),
               ]),
               pw.SizedBox(height: 8),
               _buildSubSection('Pele Seca (Alípica)', [
                 _pairLine(
                   'Sensível',
-                  _checkboxSymbolForKey(answers, AnamnesisKeys.drySkinSensitive),
+                  _checkboxSymbolForKey(
+                    answers,
+                    AnamnesisKeys.drySkinSensitive,
+                  ),
                   'Resistente',
-                  _checkboxSymbolForKey(answers, AnamnesisKeys.drySkinResistant),
+                  _checkboxSymbolForKey(
+                    answers,
+                    AnamnesisKeys.drySkinResistant,
+                  ),
                 ),
                 _pairLine(
                   'Pigmentada',
-                  _checkboxSymbolForKey(answers, AnamnesisKeys.drySkinPigmented),
+                  _checkboxSymbolForKey(
+                    answers,
+                    AnamnesisKeys.drySkinPigmented,
+                  ),
                   'Não pigmentada',
-                  _checkboxSymbolForKey(answers, AnamnesisKeys.drySkinNonPigmented),
+                  _checkboxSymbolForKey(
+                    answers,
+                    AnamnesisKeys.drySkinNonPigmented,
+                  ),
                 ),
                 _pairLine(
                   'Firme',
@@ -106,21 +133,39 @@ class AnamnesisPdfService {
               _buildSubSection('Pele Mista', [
                 _pairLine(
                   'Sensível',
-                  _checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinSensitive),
+                  _checkboxSymbolForKey(
+                    answers,
+                    AnamnesisKeys.combinationSkinSensitive,
+                  ),
                   'Resistente',
-                  _checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinResistant),
+                  _checkboxSymbolForKey(
+                    answers,
+                    AnamnesisKeys.combinationSkinResistant,
+                  ),
                 ),
                 _pairLine(
                   'Pigmentada',
-                  _checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinPigmented),
+                  _checkboxSymbolForKey(
+                    answers,
+                    AnamnesisKeys.combinationSkinPigmented,
+                  ),
                   'Não pigmentada',
-                  _checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinNonPigmented),
+                  _checkboxSymbolForKey(
+                    answers,
+                    AnamnesisKeys.combinationSkinNonPigmented,
+                  ),
                 ),
                 _pairLine(
                   'Firme',
-                  _checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinFirm),
+                  _checkboxSymbolForKey(
+                    answers,
+                    AnamnesisKeys.combinationSkinFirm,
+                  ),
                   'Propensa à rugas',
-                  _checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinWrinkled),
+                  _checkboxSymbolForKey(
+                    answers,
+                    AnamnesisKeys.combinationSkinWrinkled,
+                  ),
                 ),
               ]),
             ]),
@@ -148,11 +193,20 @@ class AnamnesisPdfService {
                           _getAnswer(answers, AnamnesisKeys.hasPustule),
                           _getAnswer(answers, AnamnesisKeys.hasPapule),
                           _getAnswer(answers, AnamnesisKeys.hasNodule),
-                          _getAnswer(answers, AnamnesisKeys.hasHyperkeratinization),
+                          _getAnswer(
+                            answers,
+                            AnamnesisKeys.hasHyperkeratinization,
+                          ),
                           _getAnswer(answers, AnamnesisKeys.hasMilium),
                           _getAnswer(answers, AnamnesisKeys.hasMicrocyst),
-                          _getAnswer(answers, AnamnesisKeys.hasInflammatoryAcne),
-                          _getAnswer(answers, AnamnesisKeys.hasNonInflammatoryAcne),
+                          _getAnswer(
+                            answers,
+                            AnamnesisKeys.hasInflammatoryAcne,
+                          ),
+                          _getAnswer(
+                            answers,
+                            AnamnesisKeys.hasNonInflammatoryAcne,
+                          ),
                         ],
                       ),
                     ]),
@@ -170,15 +224,30 @@ class AnamnesisPdfService {
                           'Acrocórdon',
                         ],
                         [
-                          _getAnswer(answers, AnamnesisKeys.hasTelangiectasiaNevus),
-                          _getAnswer(answers, AnamnesisKeys.hasActinicKeratosis),
-                          _getAnswer(answers, AnamnesisKeys.hasMelanocyticNevus),
-                          _getAnswer(answers, AnamnesisKeys.hasDermatosisPapulosa),
+                          _getAnswer(
+                            answers,
+                            AnamnesisKeys.hasTelangiectasiaNevus,
+                          ),
+                          _getAnswer(
+                            answers,
+                            AnamnesisKeys.hasActinicKeratosis,
+                          ),
+                          _getAnswer(
+                            answers,
+                            AnamnesisKeys.hasMelanocyticNevus,
+                          ),
+                          _getAnswer(
+                            answers,
+                            AnamnesisKeys.hasDermatosisPapulosa,
+                          ),
                           _getAnswer(answers, AnamnesisKeys.hasPapilloma),
                           _getAnswer(answers, AnamnesisKeys.hasAcrochordion),
                         ],
                       ),
-                      _line('Outras', _value(answers, AnamnesisKeys.hasOtherLesions)),
+                      _line(
+                        'Outras',
+                        _value(answers, AnamnesisKeys.hasOtherLesions),
+                      ),
                     ]),
                   ),
                   pw.SizedBox(width: 8),
@@ -194,17 +263,26 @@ class AnamnesisPdfService {
                           'Hipocromia',
                         ],
                         [
-                          _getAnswer(answers, AnamnesisKeys.hasInflammatoryHyperpigmentation),
+                          _getAnswer(
+                            answers,
+                            AnamnesisKeys.hasInflammatoryHyperpigmentation,
+                          ),
                           _getAnswer(answers, AnamnesisKeys.hasPhotoaging),
                           _getAnswer(answers, AnamnesisKeys.hasMelasma),
                           _getAnswer(answers, AnamnesisKeys.hasFreckles),
-                          _getAnswer(answers, AnamnesisKeys.hasOrbicularHyperpigmentation),
+                          _getAnswer(
+                            answers,
+                            AnamnesisKeys.hasOrbicularHyperpigmentation,
+                          ),
                           _getAnswer(answers, AnamnesisKeys.hasHypochromia),
                         ],
                       ),
                       _line(
                         'Por quê? Quanto tempo?',
-                        _value(answers, AnamnesisKeys.chromaticAbnormalityJustification),
+                        _value(
+                          answers,
+                          AnamnesisKeys.chromaticAbnormalityJustification,
+                        ),
                       ),
                     ]),
                   ),
@@ -232,7 +310,10 @@ class AnamnesisPdfService {
                 _value(answers, AnamnesisKeys.treatmentIndicated),
               ),
               pw.SizedBox(height: 6),
-              _line('NUMERO DE SESSOES', _value(answers, AnamnesisKeys.numberOfSessions)),
+              _line(
+                'NUMERO DE SESSOES',
+                _value(answers, AnamnesisKeys.numberOfSessions),
+              ),
               pw.SizedBox(height: 6),
               _subTitle('CONTROLE PROCEDIMENTOS'),
               _tableHeader(['Sessão', 'Data', 'Tratamento']),
@@ -379,12 +460,15 @@ class AnamnesisPdfService {
   }
 
   pw.Widget _line(String label, String value) {
+    final displayValue = value.isEmpty ? 'NÃO' : value;
+    final normalizedLabel = label.trim();
+    final text = normalizedLabel.isEmpty
+        ? displayValue
+        : '$normalizedLabel: $displayValue';
+
     return pw.Padding(
       padding: const pw.EdgeInsets.symmetric(vertical: 2),
-      child: pw.Text(
-        _pdfSafe('$label: ${value.isEmpty ? 'NÃO' : value}'),
-        style: const pw.TextStyle(fontSize: 9),
-      ),
+      child: pw.Text(_pdfSafe(text), style: const pw.TextStyle(fontSize: 9)),
     );
   }
 
@@ -926,7 +1010,9 @@ class AnamnesisPdfService {
     final trimmed = value.trim();
     if (trimmed.isEmpty || trimmed == 'NÃO') return value;
 
-    final dateOnlyMatch = RegExp(r'^(\d{4})-(\d{2})-(\d{2})$').firstMatch(trimmed);
+    final dateOnlyMatch = RegExp(
+      r'^(\d{4})-(\d{2})-(\d{2})$',
+    ).firstMatch(trimmed);
     if (dateOnlyMatch != null) {
       return '${dateOnlyMatch.group(3)}/${dateOnlyMatch.group(2)}/${dateOnlyMatch.group(1)}';
     }
@@ -1008,7 +1094,10 @@ class AnamnesisPdfService {
 
   pw.Widget _pressureQuestion(Map<String, dynamic> answers) {
     final pressureValue = _value(answers, AnamnesisKeys.bloodPressure);
-    final pressureStatus = _value(answers, AnamnesisKeys.bloodPressureControlled);
+    final pressureStatus = _value(
+      answers,
+      AnamnesisKeys.bloodPressureControlled,
+    );
     final hasPressure = pressureValue.isNotEmpty && pressureValue != 'NÃO';
 
     return pw.Column(
