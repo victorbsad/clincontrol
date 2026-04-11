@@ -10,6 +10,15 @@ import '../models/client.dart';
 class AnamnesisPdfService {
   const AnamnesisPdfService();
 
+  static final titleFont = pw.Font.helveticaBold();
+  static final regularFont = pw.Font.helvetica();
+
+  //Style constants
+  static final titleStyle = pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, font: titleFont);
+  static final subTitleStyle = pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold, font: titleFont);
+  static final textStyle = pw.TextStyle(fontSize: 9, font: regularFont);
+  static final boldStyle = pw.TextStyle (fontSize: 10, fontWeight: pw.FontWeight.bold, font: regularFont);
+
   Future<Uint8List> generate({
     required Client client,
     required Anamnesis anamnesis,
@@ -477,7 +486,7 @@ class AnamnesisPdfService {
       padding: const pw.EdgeInsets.only(top: 4, bottom: 2),
       child: pw.Text(
         _pdfSafe(title),
-        style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+        style: subTitleStyle,
       ),
     );
   }
@@ -848,10 +857,10 @@ class AnamnesisPdfService {
       children: [
         pw.Text(
           question,
-          style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
+          style: boldStyle,
         ),
         pw.SizedBox(height: 2),
-        pw.Text(text, style: const pw.TextStyle(fontSize: 9)),
+        pw.Text(text, style: textStyle),
         if (isYes && commentLabel.isNotEmpty)
           pw.Padding(
             padding: const pw.EdgeInsets.only(top: 2),
@@ -1119,7 +1128,7 @@ class AnamnesisPdfService {
             style: const pw.TextStyle(fontSize: 9),
           ),
         ] else
-          pw.Text('NÃO', style: const pw.TextStyle(fontSize: 9)),
+          pw.Text('NÃO', style: textStyle),
       ],
     );
   }
