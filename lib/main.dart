@@ -1,12 +1,17 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/theme/app_theme.dart';
+import 'data/database/db_helper.dart';
 import 'data/database/database_config.dart';
 import 'features/dashboard/screens/dashboard.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   configureDatabaseFactory();
+  if (kDebugMode) {
+    await DbHelper().seedDevelopmentData();
+  }
   runApp(const MeuApp());
 }
 
