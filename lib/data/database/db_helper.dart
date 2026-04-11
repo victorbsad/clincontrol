@@ -33,9 +33,6 @@ class DbHelper {
         if (oldVersion < 2) {
           await _createAnamnesisSchema(db);
         }
-        if (oldVersion < 3) {
-          await _migrateAnamnesisKeysToEnglish(db);
-        }
       },
     );
   }
@@ -140,11 +137,7 @@ class DbHelper {
       );
 
       answersByAnamnesisId.putIfAbsent(anamnesisId, () => {});
-      _storeAnswerWithCompatibility(
-        answersByAnamnesisId[anamnesisId]!,
-        rawKey,
-        decodedValue,
-      );
+      answersByAnamnesisId[anamnesisId]![rawKey] = decodedValue;
     }
 
     return anamnesisRows.map((row) {
@@ -178,10 +171,9 @@ class DbHelper {
 
     final map = <String, dynamic>{};
     for (final row in answers) {
-      _storeAnswerWithCompatibility(
-        map,
-        row['field_key'] as String,
-        _decodeStoredValue(row['value'] as String, row['value_type'] as String),
+      map[row['field_key'] as String] = _decodeStoredValue(
+        row['value'] as String,
+        row['value_type'] as String,
       );
     }
 
@@ -459,7 +451,6 @@ class DbHelper {
   ) sync* {
     for (final entry in answers.entries) {
       final value = entry.value;
-      final canonicalKey = AnamnesisKeys.toCanonical(entry.key);
 
       if (value == null) continue;
       if (value is String && value.trim().isEmpty) continue;
@@ -467,40 +458,19 @@ class DbHelper {
       if (value is Map && value.isEmpty) continue;
 
       if (value is bool) {
-        yield MapEntry(
-          canonicalKey,
-          StoredAnamnesisAnswer(value.toString(), 'bool'),
-        );
+        yield MapEntry(entry.key, StoredAnamnesisAnswer(value.toString(), 'bool'));
       } else if (value is int) {
-        yield MapEntry(
-          canonicalKey,
-          StoredAnamnesisAnswer(value.toString(), 'int'),
-        );
+        yield MapEntry(entry.key, StoredAnamnesisAnswer(value.toString(), 'int'));
       } else if (value is double) {
-        yield MapEntry(
-          canonicalKey,
-          StoredAnamnesisAnswer(value.toString(), 'double'),
-        );
+        yield MapEntry(entry.key, StoredAnamnesisAnswer(value.toString(), 'double'));
       } else if (value is DateTime) {
-        yield MapEntry(
-          canonicalKey,
-          StoredAnamnesisAnswer(value.toIso8601String(), 'datetime'),
-        );
+        yield MapEntry(entry.key, StoredAnamnesisAnswer(value.toIso8601String(), 'datetime'));
       } else if (value is Iterable) {
-        yield MapEntry(
-          canonicalKey,
-          StoredAnamnesisAnswer(jsonEncode(value.toList()), 'json'),
-        );
+        yield MapEntry(entry.key, StoredAnamnesisAnswer(jsonEncode(value.toList()), 'json'));
       } else if (value is Map) {
-        yield MapEntry(
-          canonicalKey,
-          StoredAnamnesisAnswer(jsonEncode(value), 'json'),
-        );
+        yield MapEntry(entry.key, StoredAnamnesisAnswer(jsonEncode(value), 'json'));
       } else {
-        yield MapEntry(
-          canonicalKey,
-          StoredAnamnesisAnswer(value.toString(), 'text'),
-        );
+        yield MapEntry(entry.key, StoredAnamnesisAnswer(value.toString(), 'text'));
       }
     }
   }
@@ -520,34 +490,6 @@ class DbHelper {
       default:
         return value;
     }
-  }
-
-  void _storeAnswerWithCompatibility(
-    Map<String, dynamic> target,
-    String rawKey,
-    dynamic value,
-  ) {
-    final canonicalKey = AnamnesisKeys.toCanonical(rawKey);
-    target[canonicalKey] = value;
-
-    // Keep legacy aliases during transition to avoid breaking readers still
-    // using PT-BR key names (for example PDF templates).
-    final legacyKey = AnamnesisKeys.toLegacy(canonicalKey);
-    target[legacyKey] = value;
-  }
-
-  Future<void> _migrateAnamnesisKeysToEnglish(Database db) async {
-    await db.transaction((txn) async {
-      for (final entry in AnamnesisKeys.legacyToCanonical.entries) {
-        await txn.update(
-          'anamnesis_answers',
-          {'field_key': entry.value},
-          where: 'field_key = ?',
-          whereArgs: [entry.key],
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-      }
-    });
   }
 
   // ----------CLIENTS--------------------------------------------------
