@@ -2,6 +2,7 @@ import '../models/anamnesis.dart';
 import '../models/client.dart';
 import '../models/service.dart';
 import '../../core/constants/anamnesis_keys.dart';
+import '../../core/utils/app_date_formatter.dart';
 
 class DevMockModels {
   const DevMockModels._();
@@ -24,9 +25,7 @@ class DevMockModels {
     String procedure = 'Procedimento Teste',
   }) {
     final targetDate = date ?? DateTime.now();
-    final dbDate = '${targetDate.year}-'
-        '${targetDate.month.toString().padLeft(2, '0')}-'
-        '${targetDate.day.toString().padLeft(2, '0')}';
+    final dbDate = AppDateFormatter.toDatabaseIsoDate(targetDate);
 
     return Service(
       clientId: clientId,
