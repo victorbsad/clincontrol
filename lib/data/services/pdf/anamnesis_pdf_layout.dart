@@ -29,7 +29,7 @@ class AnamnesisPdfLayout {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Text('Ficha de Avaliacao Facial', style: AnamnesisPdfStyles.title),
+                pw.Text('Ficha de Avaliação Facial', style: AnamnesisPdfStyles.title),
                 pw.SizedBox(height: 8),
                 pw.Text(pdfSafe('Cliente: ${client.name}')),
                 pw.Text(pdfSafe('Gerado em: ${anamnesis.createdAt.toLocal()}')),
@@ -87,7 +87,7 @@ class AnamnesisPdfLayout {
     required String value,
     required PdfSafeText pdfSafe,
   }) {
-    final displayValue = value.isEmpty ? 'NAO' : value;
+    final displayValue = value.isEmpty ? 'NÃO' : value;
     final normalizedLabel = label.trim();
     final text = normalizedLabel.isEmpty
         ? displayValue
@@ -118,14 +118,14 @@ class AnamnesisPdfLayout {
         children: [
           pw.Expanded(
             child: pw.Text(
-              '$leftLabel: ${leftValue.isEmpty ? 'NAO' : leftValue}',
+              '$leftLabel: ${leftValue.isEmpty ? 'NÃO' : leftValue}',
               style: AnamnesisPdfStyles.text,
             ),
           ),
           pw.SizedBox(width: 12),
           pw.Expanded(
             child: pw.Text(
-              '$rightLabel: ${rightValue.isEmpty ? 'NAO' : rightValue}',
+              '$rightLabel: ${rightValue.isEmpty ? 'NÃO' : rightValue}',
               style: AnamnesisPdfStyles.text,
             ),
           ),
@@ -194,13 +194,13 @@ class AnamnesisPdfLayout {
         pw.Expanded(child: pw.Text(pdfSafe(session), style: AnamnesisPdfStyles.text)),
         pw.Expanded(
           child: pw.Text(
-            pdfSafe(date.isEmpty ? 'NAO' : date),
+            pdfSafe(date.isEmpty ? 'NÃO' : date),
             style: AnamnesisPdfStyles.text,
           ),
         ),
         pw.Expanded(
           child: pw.Text(
-            pdfSafe(treatment.isEmpty ? 'NAO' : treatment),
+            pdfSafe(treatment.isEmpty ? 'NÃO' : treatment),
             style: AnamnesisPdfStyles.text,
           ),
         ),

@@ -28,10 +28,10 @@ class AnamnesisPdfSkinSection {
         checkboxSymbolForKey,
   }) {
     return [
-      buildSubSection('BIOTIPO CUTANEO', [
-        buildSubSection('Pele Oleosa (Lipidica)', [
+      buildSubSection('BIOTIPO CUTÂNEO', [
+        buildSubSection('Pele Oleosa (Lipídica)', [
           pairLine(
-            'Sensivel',
+            'Sensível',
             checkboxSymbolForKey(answers, AnamnesisKeys.oilySkinSensitive),
             'Resistente',
             checkboxSymbolForKey(answers, AnamnesisKeys.oilySkinResistant),
@@ -39,20 +39,20 @@ class AnamnesisPdfSkinSection {
           pairLine(
             'Pigmentada',
             checkboxSymbolForKey(answers, AnamnesisKeys.oilySkinPigmented),
-            'Nao pigmentada',
+            'Não pigmentada',
             checkboxSymbolForKey(answers, AnamnesisKeys.oilySkinNonPigmented),
           ),
           pairLine(
             'Firme',
             checkboxSymbolForKey(answers, AnamnesisKeys.oilySkinFirm),
-            'Propensa a rugas',
+            'Propensa à rugas',
             checkboxSymbolForKey(answers, AnamnesisKeys.oilySkinWrinkled),
           ),
         ]),
         pw.SizedBox(height: 8),
-        buildSubSection('Pele Seca (Alipica)', [
+        buildSubSection('Pele Seca (Alípica)', [
           pairLine(
-            'Sensivel',
+            'Sensível',
             checkboxSymbolForKey(answers, AnamnesisKeys.drySkinSensitive),
             'Resistente',
             checkboxSymbolForKey(answers, AnamnesisKeys.drySkinResistant),
@@ -60,20 +60,20 @@ class AnamnesisPdfSkinSection {
           pairLine(
             'Pigmentada',
             checkboxSymbolForKey(answers, AnamnesisKeys.drySkinPigmented),
-            'Nao pigmentada',
+            'Não pigmentada',
             checkboxSymbolForKey(answers, AnamnesisKeys.drySkinNonPigmented),
           ),
           pairLine(
             'Firme',
             checkboxSymbolForKey(answers, AnamnesisKeys.drySkinFirm),
-            'Propensa a rugas',
+            'Propensa à rugas',
             checkboxSymbolForKey(answers, AnamnesisKeys.drySkinWrinkled),
           ),
         ]),
         pw.SizedBox(height: 8),
         buildSubSection('Pele Mista', [
           pairLine(
-            'Sensivel',
+            'Sensível',
             checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinSensitive),
             'Resistente',
             checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinResistant),
@@ -81,19 +81,19 @@ class AnamnesisPdfSkinSection {
           pairLine(
             'Pigmentada',
             checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinPigmented),
-            'Nao pigmentada',
+            'Não pigmentada',
             checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinNonPigmented),
           ),
           pairLine(
             'Firme',
             checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinFirm),
-            'Propensa a rugas',
+            'Propensa à rugas',
             checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinWrinkled),
           ),
         ]),
       ]),
       pw.SizedBox(height: 12),
-      buildSubSection('ANALISE DETALHADA DA PELE', [
+      buildSubSection('ANÁLISE DETALHADA DA PELE', [
         pw.Row(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
@@ -101,15 +101,15 @@ class AnamnesisPdfSkinSection {
               child: buildSubSection('Pele com acne', [
                 wrapBullets(
                   [
-                    'Comedao',
-                    'Pustula',
-                    'Papula',
-                    'Nodulo',
-                    'Hiperqueratinizacao',
-                    'Milium',
+                    'Comedão',
+                    'Pústula',
+                    'Pápula',
+                    'Nódulo',
+                    'Hiperqueratinização',
+                    'Mílium',
                     'Microcisto',
-                    'Acne Inflamatoria',
-                    'Acne Nao Inflamatoria',
+                    'Acne Inflamatória',
+                    'Acne Não Inflamatória',
                   ],
                   [
                     getAnswer(answers, AnamnesisKeys.hasComedo),
@@ -127,15 +127,15 @@ class AnamnesisPdfSkinSection {
             ),
             pw.SizedBox(width: 8),
             pw.Expanded(
-              child: buildSubSection('Lesoes dermatologicas', [
+              child: buildSubSection('Lesoes dermatológicas', [
                 wrapBullets(
                   [
                     'Telangiectasia/ Nevo',
-                    'Queratose Actinica',
-                    'Nevo Melanocitico',
+                    'Queratose Actínica',
+                    'Nevo Melanocítico',
                     'Dermatose Papulosa Nigra',
                     'Papiloma',
-                    'Acrocordon',
+                    'Acrocórdon',
                   ],
                   [
                     getAnswer(answers, AnamnesisKeys.hasTelangiectasiaNevus),
@@ -154,11 +154,11 @@ class AnamnesisPdfSkinSection {
               child: buildSubSection('Dicromias', [
                 wrapBullets(
                   [
-                    'Hiperpigmentacao inflamatoria',
+                    'Hiperpigmentação inflamatória',
                     'Fotoenvelhecimento',
                     'Melasma',
                     'Efelides',
-                    'Hiperpigmentacao orbicular',
+                    'Hiperpigmentação orbicular',
                     'Hipocromia',
                   ],
                   [
@@ -177,7 +177,7 @@ class AnamnesisPdfSkinSection {
                   ],
                 ),
                 line(
-                  'Por que? Quanto tempo?',
+                  'Por quê? Quanto tempo?',
                   value(answers, AnamnesisKeys.chromaticAbnormalityJustification),
                 ),
               ]),
@@ -209,54 +209,54 @@ class AnamnesisPdfSkinSection {
         line('NUMERO DE SESSOES', value(answers, AnamnesisKeys.numberOfSessions)),
         pw.SizedBox(height: 6),
         subTitle('CONTROLE PROCEDIMENTOS'),
-        tableHeader(['Sessao', 'Data', 'Tratamento']),
+        tableHeader(['Sessão', 'Data', 'Tratamento']),
         tableRow(
-          '1a',
+          '1ª',
           value(answers, AnamnesisKeys.session1Date),
           value(answers, AnamnesisKeys.session1),
         ),
         tableRow(
-          '2a',
+          '2ª',
           value(answers, AnamnesisKeys.session2Date),
           value(answers, AnamnesisKeys.session2),
         ),
         tableRow(
-          '3a',
+          '3ª',
           value(answers, AnamnesisKeys.session3Date),
           value(answers, AnamnesisKeys.session3),
         ),
         tableRow(
-          '4a',
+          '4ª',
           value(answers, AnamnesisKeys.session4Date),
           value(answers, AnamnesisKeys.session4),
         ),
         tableRow(
-          '5a',
+          '5ª',
           value(answers, AnamnesisKeys.session5Date),
           value(answers, AnamnesisKeys.session5),
         ),
         tableRow(
-          '6a',
+          '6ª',
           value(answers, AnamnesisKeys.session6Date),
           value(answers, AnamnesisKeys.session6),
         ),
         tableRow(
-          '7a',
+          '7ª',
           value(answers, AnamnesisKeys.session7Date),
           value(answers, AnamnesisKeys.session7),
         ),
         tableRow(
-          '8a',
+          '8ª',
           value(answers, AnamnesisKeys.session8Date),
           value(answers, AnamnesisKeys.session8),
         ),
         tableRow(
-          '9a',
+          '9ª',
           value(answers, AnamnesisKeys.session9Date),
           value(answers, AnamnesisKeys.session9),
         ),
         tableRow(
-          '10a',
+          '10ª',
           value(answers, AnamnesisKeys.session10Date),
           value(answers, AnamnesisKeys.session10),
         ),

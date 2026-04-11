@@ -12,13 +12,13 @@ class AnamnesisPdfHistorySection {
     return [
       _yesNoRow(
         _yesNoQuestion(
-          'Ja fez algum tratamento estetico ou dermatologico?',
+          'Já fez algum tratamento estético ou dermatológico?',
           answers[AnamnesisKeys.hadAestheticTreatment],
           'Qual?',
           _value(answers, AnamnesisKeys.aestheticTreatmentType),
         ),
         _yesNoQuestion(
-          'Problema de cicatrizacao ou Queloide?',
+          'Problema de cicatrização ou Quelóide?',
           answers[AnamnesisKeys.keloidScarring],
           'Comente:',
           _value(answers, AnamnesisKeys.scarringComment),
@@ -32,7 +32,7 @@ class AnamnesisPdfHistorySection {
           _value(answers, AnamnesisKeys.medicationType),
         ),
         _yesNoQuestion(
-          'Usou Isotretinoina (Roacutan) nos ultimos 6 meses?',
+          'Usou Isotretinoína (Roacutan) nos últimos 6 meses?',
           answers[AnamnesisKeys.isotretinoin6Months],
           '',
           _value(answers, AnamnesisKeys.isotretinoin6MonthsComment),
@@ -40,7 +40,7 @@ class AnamnesisPdfHistorySection {
       ),
       _yesNoRow(
         _yesNoQuestion(
-          'Tratamento medico ou problema de saude?',
+          'Tratamento médico ou problema de saúde?',
           answers[AnamnesisKeys.hadMedicalTreatment],
           'Qual?',
           _value(answers, AnamnesisKeys.healthProblemType),
@@ -54,13 +54,13 @@ class AnamnesisPdfHistorySection {
       ),
       _yesNoRow(
         _yesNoQuestion(
-          'Ja fez alguma cirurgia?',
+          'Já fez alguma cirurgia?',
           answers[AnamnesisKeys.hadSurgery],
           'Qual?',
           _value(answers, AnamnesisKeys.surgeryType),
         ),
         _yesNoQuestion(
-          'Antecedentes oncologicos?',
+          'Antecedentes oncológicos?',
           answers[AnamnesisKeys.hasOncologicalHistory],
           '',
           _value(answers, AnamnesisKeys.oncologicalComment),
@@ -68,7 +68,7 @@ class AnamnesisPdfHistorySection {
       ),
       _yesNoRow(
         _yesNoQuestion(
-          'Doenca infectocontagiosa?',
+          'Doença infectocontagiosa?',
           answers[AnamnesisKeys.infectiousDiseaseHistory],
           'Qual?',
           _value(answers, AnamnesisKeys.infectiousDiseaseType),
@@ -82,13 +82,13 @@ class AnamnesisPdfHistorySection {
       ),
       _yesNoRow(
         _yesNoQuestion(
-          'Alimentacao balanceada?',
+          'Alimentação balanceada?',
           answers[AnamnesisKeys.balancedDiet],
           '',
           _value(answers, AnamnesisKeys.dietComment),
         ),
         _yesNoQuestion(
-          'Ingere no minimo 2 litros de agua por dia?',
+          'Ingere no mínimo 2 litros de água por dia?',
           answers[AnamnesisKeys.drinks2LitersWater],
           'Quantos litros?',
           _value(answers, AnamnesisKeys.waterIntakeAmount),
@@ -96,13 +96,13 @@ class AnamnesisPdfHistorySection {
       ),
       _yesNoRow(
         _yesNoQuestion(
-          'Faz uso de bebida alcoolica?',
+          'Faz uso de bebida alcoólica?',
           answers[AnamnesisKeys.consumesAlcohol],
-          'Frequencia?',
+          'Frequência?',
           _value(answers, AnamnesisKeys.alcoholFrequency),
         ),
         _yesNoQuestion(
-          'Faz uso de substancias quimicas ou entorpecentes?',
+          'Faz uso de substâncias químicas ou entorpecentes?',
           answers[AnamnesisKeys.usesDrugs],
           'Qual?',
           _value(answers, AnamnesisKeys.drugType),
@@ -110,7 +110,7 @@ class AnamnesisPdfHistorySection {
       ),
       _yesNoRow(
         _yesNoQuestion(
-          'Disturbio hormonal?',
+          'Distúrbio hormonal?',
           answers[AnamnesisKeys.hormoneImbalance],
           'Qual?',
           _value(answers, AnamnesisKeys.hormoneImbalanceType),
@@ -138,13 +138,13 @@ class AnamnesisPdfHistorySection {
       ),
       _yesNoRow(
         _yesNoQuestion(
-          'Tem problemas cardiacos?',
+          'Tem problemas cardíacos?',
           answers[AnamnesisKeys.hasCardiacCondition],
           'Qual?',
           _value(answers, AnamnesisKeys.cardiacConditionType),
         ),
         _yesNoQuestion(
-          'Depressao?',
+          'Depressão?',
           answers[AnamnesisKeys.hasDepression],
           'Faz tratamento?',
           _value(answers, AnamnesisKeys.depressionTreatment),
@@ -158,7 +158,7 @@ class AnamnesisPdfHistorySection {
           _value(answers, AnamnesisKeys.epilepsyComment),
         ),
         _yesNoQuestion(
-          'Possui placas e pinos metalicos na face?',
+          'Possui placas e pinos metálicos na face?',
           answers[AnamnesisKeys.hasDentalImplants],
           'Onde?',
           _value(answers, AnamnesisKeys.dentalImplantLocation),
@@ -166,7 +166,7 @@ class AnamnesisPdfHistorySection {
       ),
       _yesNoRow(
         _yesNoQuestion(
-          'Proteses dentarias?',
+          'Próteses dentárias?',
           answers[AnamnesisKeys.hasDentures],
           '',
           _value(answers, AnamnesisKeys.denturesComment),
@@ -180,13 +180,13 @@ class AnamnesisPdfHistorySection {
       ),
       _yesNoRow(
         _yesNoQuestion(
-          'Ja fez ou faz uso de acidos na pele?',
+          'Já fez ou faz uso de ácidos na pele?',
           answers[AnamnesisKeys.usesAcids],
           'Qual?',
           _value(answers, AnamnesisKeys.acidType),
         ),
         _yesNoQuestion(
-          'Faz uso de cosmeticos?',
+          'Faz uso de cosméticos?',
           answers[AnamnesisKeys.usesCosmeticProducts],
           'Quais?',
           _value(answers, AnamnesisKeys.cosmeticProductTypes),
@@ -197,12 +197,12 @@ class AnamnesisPdfHistorySection {
           'Faz uso de protetor solar?',
           answers[AnamnesisKeys.usesSunscreen],
           'Qual?',
-          '${_value(answers, AnamnesisKeys.sunscreenType)} Frequencia? ${_value(answers, AnamnesisKeys.sunscreenFrequency)}',
+          '${_value(answers, AnamnesisKeys.sunscreenType)} Frequência? ${_value(answers, AnamnesisKeys.sunscreenFrequency)}',
         ),
         _yesNoQuestion(
           'Costuma tomar sol?',
           answers[AnamnesisKeys.exposedToSun],
-          'Frequencia?',
+          'Frequência?',
           _value(answers, AnamnesisKeys.sunExposureFrequency),
         ),
       ),
@@ -214,7 +214,7 @@ class AnamnesisPdfHistorySection {
           _value(answers, AnamnesisKeys.permanentMakeupLocation),
         ),
         _yesNoQuestion(
-          'Fez aplicacao de Metacril ou Toxina Botulinica?',
+          'Fez aplicação de Metacril ou Toxina Botulínica?',
           answers[AnamnesisKeys.usedBotulinum],
           'Local?',
           _value(answers, AnamnesisKeys.botulinumLocation),
@@ -222,7 +222,7 @@ class AnamnesisPdfHistorySection {
       ),
       _yesNoRow(
         _yesNoQuestion(
-          'Alergias? (alimentar, cheiro, respiratoria, corantes, medicamentos, etc)',
+          'Alergias? (alimentar, cheiro, respiratória, corantes, medicamentos, etc)',
           _hasMeaningfulValue(alergiasText),
           'Especificar:',
           alergiasText,
@@ -250,7 +250,7 @@ class AnamnesisPdfHistorySection {
       ),
       _yesNoRow(
         _yesNoQuestion(
-          'Ja teve herpes?',
+          'Já teve herpes?',
           answers[AnamnesisKeys.hasHerpesHistory],
           'A quanto tempo?',
           _value(answers, AnamnesisKeys.herpesDuration),
@@ -264,13 +264,13 @@ class AnamnesisPdfHistorySection {
       ),
       _yesNoRow(
         _yesNoQuestion(
-          'Faz uso de hormonio?*',
+          'Faz uso de hormônio?*',
           answers[AnamnesisKeys.takesHormones],
           'Qual?',
           _value(answers, AnamnesisKeys.hormoneType),
         ),
         _yesNoQuestion(
-          'Autoriza divulgacao de foto antes/apos tratamento?',
+          'Autoriza divulgação de foto antes/após tratamento?',
           answers[AnamnesisKeys.authorizedForPhotos],
           '',
           _value(answers, AnamnesisKeys.photoAuthorizationComment),
@@ -309,7 +309,7 @@ class AnamnesisPdfHistorySection {
   ) {
     final selection = _toYesNoSelection(rawAnswer);
     final isYes = selection == true;
-    final text = isYes ? 'SIM' : 'NAO';
+    final text = isYes ? 'SIM' : 'NÃO';
     final hasComment = _hasMeaningfulValue(commentValue);
 
     return pw.Column(
@@ -323,7 +323,7 @@ class AnamnesisPdfHistorySection {
             padding: const pw.EdgeInsets.only(top: 2),
             child: pw.Text(
               _pdfSafe(
-                '$commentLabel ${hasComment ? commentValue : 'NAO INFORMADO'}',
+                '$commentLabel ${hasComment ? commentValue : 'NÃO INFORMADO'}',
               ),
               style: AnamnesisPdfStyles.text,
             ),
@@ -351,12 +351,12 @@ class AnamnesisPdfHistorySection {
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
           pw.Text(
-            '$label: ${value.isEmpty ? 'NAO' : value}',
+            '$label: ${value.isEmpty ? 'NÃO' : value}',
             style: AnamnesisPdfStyles.text,
           ),
           pw.SizedBox(height: 2),
           pw.Text(
-            '$subLabel: ${subValue.isEmpty ? 'NAO' : subValue}',
+            '$subLabel: ${subValue.isEmpty ? 'NÃO' : subValue}',
             style: AnamnesisPdfStyles.text,
           ),
         ],
@@ -370,13 +370,13 @@ class AnamnesisPdfHistorySection {
       answers,
       AnamnesisKeys.bloodPressureControlled,
     );
-    final hasPressure = pressureValue.isNotEmpty && pressureValue != 'NAO';
+    final hasPressure = pressureValue.isNotEmpty && pressureValue != 'NÃO';
 
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         pw.Text(
-          'Hipertensao ou Hipotensao?',
+          'Hipertensão ou Hipotensão?',
           style: AnamnesisPdfStyles.bold,
         ),
         pw.SizedBox(height: 2),
@@ -388,15 +388,15 @@ class AnamnesisPdfHistorySection {
             style: AnamnesisPdfStyles.text,
           ),
         ] else
-          pw.Text('NAO', style: AnamnesisPdfStyles.text),
+          pw.Text('NÃO', style: AnamnesisPdfStyles.text),
       ],
     );
   }
 
   static String _value(Map<String, dynamic> answers, String key) {
     final value = answers[key];
-    if (value == null) return 'NAO';
-    if (value is String && value.trim().isEmpty) return 'NAO';
+    if (value == null) return 'NÃO';
+    if (value is String && value.trim().isEmpty) return 'NÃO';
     return value.toString();
   }
 
