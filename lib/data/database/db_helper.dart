@@ -24,7 +24,7 @@ class DbHelper {
 
     return await openDatabase(
       path,
-      version: 3,
+      version: 2,
       onCreate: (db, version) async {
         await _createBaseSchema(db);
         await _createAnamnesisSchema(db);
