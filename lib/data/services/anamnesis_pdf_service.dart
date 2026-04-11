@@ -60,7 +60,7 @@ class AnamnesisPdfService {
           pw.NewPage(),
           pw.SizedBox(height: 12),
           _buildSection('Avaliação da Pele', [
-            _buildSubSection('BIOTIPO CUTANEO', [
+            _buildSubSection('BIOTIPO CUTÂNEO', [
               _buildSubSection('Pele Oleosa (Lipídica)', [
                 _pairLine(
                   'Sensível',
@@ -125,7 +125,7 @@ class AnamnesisPdfService {
               ]),
             ]),
             pw.SizedBox(height: 12),
-            _buildSubSection('ANALISE DETALHADA DA PELE', [
+            _buildSubSection('ANÁLISE DETALHADA DA PELE', [
               pw.Row(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
@@ -923,8 +923,23 @@ class AnamnesisPdfService {
   }
 
   String _formatDate(String value) {
-    if (value == 'NÃO') return value;
-    return value;
+    final trimmed = value.trim();
+    if (trimmed.isEmpty || trimmed == 'NÃO') return value;
+
+    final dateOnlyMatch = RegExp(r'^(\d{4})-(\d{2})-(\d{2})$').firstMatch(trimmed);
+    if (dateOnlyMatch != null) {
+      return '${dateOnlyMatch.group(3)}/${dateOnlyMatch.group(2)}/${dateOnlyMatch.group(1)}';
+    }
+
+    try {
+      final parsed = DateTime.parse(trimmed);
+      final day = parsed.day.toString().padLeft(2, '0');
+      final month = parsed.month.toString().padLeft(2, '0');
+      final year = parsed.year.toString().padLeft(4, '0');
+      return '$day/$month/$year';
+    } catch (_) {
+      return value;
+    }
   }
 
   String _pdfSafe(String value) {

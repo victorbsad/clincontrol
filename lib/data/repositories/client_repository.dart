@@ -5,7 +5,9 @@ class ClientRepository {
   final DbHelper _db = DbHelper();
 
   Future<int> save(Client client) => _db.insertClient(client);
-  Future<List<Client>> findAll() => _db.fetchClients();
+  Future<List<Client>> findAll({bool includeDeleted = false}) =>
+      _db.fetchClients(includeDeleted: includeDeleted);
   Future<int> update(Client client) => _db.updateClient(client);
   Future<int> delete(int id) => _db.deleteClient(id);
+  Future<int> purge(int id) => _db.purgeClient(id);
 }

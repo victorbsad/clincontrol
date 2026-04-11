@@ -24,7 +24,10 @@ class DbHelper {
 
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
+      onConfigure: (db) async {
+        await db.execute('PRAGMA foreign_keys = ON');
+      },
       onCreate: (db, version) async {
         await _createBaseSchema(db);
         await _createAnamnesisSchema(db);
@@ -32,6 +35,9 @@ class DbHelper {
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
           await _createAnamnesisSchema(db);
+        }
+        if (oldVersion < 3) {
+          await _migrateToV3(db);
         }
       },
     );
@@ -43,7 +49,8 @@ class DbHelper {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         phone TEXT,
-        notes TEXT
+        notes TEXT,
+        deleted_at TEXT
       )
     ''');
 
@@ -54,7 +61,7 @@ class DbHelper {
         procedure TEXT NOT NULL,
         amount REAL NOT NULL,
         date TEXT NOT NULL,
-        FOREIGN KEY (client_id) REFERENCES clients(id)
+        FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
       )
     ''');
   }
@@ -66,7 +73,7 @@ class DbHelper {
         client_id INTEGER NOT NULL,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL,
-        FOREIGN KEY (client_id) REFERENCES clients(id)
+        FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
       )
     ''');
 
@@ -83,18 +90,80 @@ class DbHelper {
     ''');
   }
 
+  Future<void> _migrateToV3(Database db) async {
+    await db.execute('PRAGMA foreign_keys = OFF');
+
+    try {
+      final clientColumns = await db.rawQuery("PRAGMA table_info(clients)");
+      final hasDeletedAt = clientColumns.any((column) => column['name'] == 'deleted_at');
+
+      if (!hasDeletedAt) {
+        await db.execute('ALTER TABLE clients ADD COLUMN deleted_at TEXT');
+      }
+
+      await db.execute('''
+        CREATE TABLE services_new (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          client_id INTEGER NOT NULL,
+          procedure TEXT NOT NULL,
+          amount REAL NOT NULL,
+          date TEXT NOT NULL,
+          FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
+        )
+      ''');
+
+      await db.execute('''
+        INSERT INTO services_new (id, client_id, procedure, amount, date)
+        SELECT id, client_id, procedure, amount, date
+        FROM services
+      ''');
+
+      await db.execute('DROP TABLE services');
+      await db.execute('ALTER TABLE services_new RENAME TO services');
+
+      final anamnesesTable = await db.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'anamneses'",
+      );
+
+      if (anamnesesTable.isNotEmpty) {
+        await db.execute('''
+          CREATE TABLE anamneses_new (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            client_id INTEGER NOT NULL,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL,
+            FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
+          )
+        ''');
+
+        await db.execute('''
+          INSERT INTO anamneses_new (id, client_id, created_at, updated_at)
+          SELECT id, client_id, created_at, updated_at
+          FROM anamneses
+        ''');
+
+        await db.execute('DROP TABLE anamneses');
+        await db.execute('ALTER TABLE anamneses_new RENAME TO anamneses');
+      }
+    } finally {
+      await db.execute('PRAGMA foreign_keys = ON');
+    }
+  }
+
   // ----------ANAMNESIS----------------------------------------------
 
   Future<int> insertAnamnesis(Anamnesis anamnesis) async {
     final db = await database;
-    final createdAt = anamnesis.createdAt.toIso8601String();
-    final updatedAt = anamnesis.updatedAt.toIso8601String();
+    final createdAt = anamnesis.createdAt;
+    final normalizedUpdatedAt = anamnesis.updatedAt.isBefore(createdAt)
+        ? createdAt
+        : anamnesis.updatedAt;
 
     return await db.transaction((txn) async {
       final anamnesisId = await txn.insert('anamneses', {
         'client_id': anamnesis.clientId,
-        'created_at': createdAt,
-        'updated_at': updatedAt,
+        'created_at': createdAt.toIso8601String(),
+        'updated_at': normalizedUpdatedAt.toIso8601String(),
       });
 
       for (final entry in _normalizeAnswers(anamnesis.answers)) {
@@ -501,38 +570,60 @@ class DbHelper {
       'name': client.name,
       'phone': client.phone,
       'notes': client.notes,
+      'deleted_at': client.deletedAt?.toIso8601String(),
     });
   }
 
-  Future<List<Client>> fetchClients() async {
-    final db = await database;
-    final List<Map<String, dynamic>> rows = await db.query('clients');
 
-    return rows
-        .map(
-          (map) => Client(
-            id: map['id'],
-            name: map['name'],
-            phone: map['phone'],
-            notes: map['notes'],
-          ),
-        )
-        .toList();
+  Future<List<Client>> fetchClients({bool includeDeleted = false}) async {
+    final db = await database;
+    final List<Map<String, dynamic>> rows = await db.query(
+      'clients',
+      where: includeDeleted ? null : 'deleted_at IS NULL',
+    );
+
+    return rows.map((map) => Client(
+      id: map['id'],
+      name: map['name'],
+      phone: map['phone'],
+      notes: map['notes'],
+      deletedAt: map['deleted_at'] != null
+          ? DateTime.tryParse(map['deleted_at'] as String)
+          : null,
+    )).toList();
   }
 
   Future<int> updateClient(Client client) async {
     final db = await database;
     return await db.update(
       'clients',
-      {'name': client.name, 'phone': client.phone, 'notes': client.notes},
-      where: 'id = ?',
+      {
+        'name': client.name,
+        'phone': client.phone,
+        'notes': client.notes,
+      },
+      where: 'id = ? AND deleted_at IS NULL',
       whereArgs: [client.id],
     );
   }
 
   Future<int> deleteClient(int id) async {
     final db = await database;
-    return await db.delete('clients', where: 'id = ?', whereArgs: [id]);
+    return await db.update(
+      'clients',
+      {'deleted_at': DateTime.now().toIso8601String()},
+      where: 'id = ? AND deleted_at IS NULL',
+      whereArgs: [id],
+    );
+  }
+
+  Future<int> purgeClient(int id) async {
+    final db = await database;
+    return await db.delete(
+      'clients',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 
   // ─── SERVICES ─────────────────────────────────────
