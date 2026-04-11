@@ -63,7 +63,7 @@ class AnamnesisPdfService {
               ]),
             ]),
             pw.SizedBox(height: 12),
-            _buildSubSection('ANALISE DETALHADA DA PELE', [
+            _buildSubSection('ANÁLISE DETALHADA DA PELE', [
               pw.Row(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
