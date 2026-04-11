@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../../core/constants/anamnesis_keys.dart';
 import '../models/anamnesis.dart';
 import '../models/client.dart';
 
@@ -27,25 +28,25 @@ class AnamnesisPdfService {
             _line('Nome', client.name),
             _pairLine(
               'Estado civil',
-              _value(answers, 'maritalStatus'),
+              _value(answers, AnamnesisKeys.maritalStatus),
               'Nacionalidade',
-              _value(answers, 'nationality'),
+              _value(answers, AnamnesisKeys.nationality),
             ),
-            _line('Endereço completo', _value(answers, 'address')),
+            _line('Endereço completo', _value(answers, AnamnesisKeys.address)),
             _pairLine(
               'Telefone',
-              _value(answers, 'phone'),
+              _value(answers, AnamnesisKeys.phone),
               'WhatsApp',
-              _value(answers, 'whatsapp'),
+              _value(answers, AnamnesisKeys.whatsapp),
             ),
-            _line('Email', _value(answers, 'email')),
+            _line('Email', _value(answers, AnamnesisKeys.email)),
             _pairLine(
               'Data de nascimento',
-              _formatDate(_value(answers, 'dateOfBirth')),
+              _formatDate(_value(answers, AnamnesisKeys.dateOfBirth)),
               'Idade',
-              _value(answers, 'age'),
+              _value(answers, AnamnesisKeys.age),
             ),
-            _line('Profissão', _value(answers, 'profession')),
+            _line('Profissão', _value(answers, AnamnesisKeys.profession)),
             _line('Motivo da visita', _motivoVisitaLine(answers)),
           ]),
           pw.SizedBox(height: 12),
@@ -63,63 +64,63 @@ class AnamnesisPdfService {
               _buildSubSection('Pele Oleosa (Lipídica)', [
                 _pairLine(
                   'Sensível',
-                  _checkboxSymbolForKey(answers, 'oilySkinSensitive'),
+                  _checkboxSymbolForKey(answers, AnamnesisKeys.oilySkinSensitive),
                   'Resistente',
-                  _checkboxSymbolForKey(answers, 'oilySkinResistant'),
+                  _checkboxSymbolForKey(answers, AnamnesisKeys.oilySkinResistant),
                 ),
                 _pairLine(
                   'Pigmentada',
-                  _checkboxSymbolForKey(answers, 'oilySkinPigmented'),
+                  _checkboxSymbolForKey(answers, AnamnesisKeys.oilySkinPigmented),
                   'Não pigmentada',
-                  _checkboxSymbolForKey(answers, 'oilySkinNonPigmented'),
+                  _checkboxSymbolForKey(answers, AnamnesisKeys.oilySkinNonPigmented),
                 ),
                 _pairLine(
                   'Firme',
-                  _checkboxSymbolForKey(answers, 'oilySkinFirm'),
+                  _checkboxSymbolForKey(answers, AnamnesisKeys.oilySkinFirm),
                   'Propensa à rugas',
-                  _checkboxSymbolForKey(answers, 'oilySkinWrinkled'),
+                  _checkboxSymbolForKey(answers, AnamnesisKeys.oilySkinWrinkled),
                 ),
               ]),
               pw.SizedBox(height: 8),
               _buildSubSection('Pele Seca (Alípica)', [
                 _pairLine(
                   'Sensível',
-                  _checkboxSymbolForKey(answers, 'drySkinSensitive'),
+                  _checkboxSymbolForKey(answers, AnamnesisKeys.drySkinSensitive),
                   'Resistente',
-                  _checkboxSymbolForKey(answers, 'drySkinResistant'),
+                  _checkboxSymbolForKey(answers, AnamnesisKeys.drySkinResistant),
                 ),
                 _pairLine(
                   'Pigmentada',
-                  _checkboxSymbolForKey(answers, 'drySkinPigmented'),
+                  _checkboxSymbolForKey(answers, AnamnesisKeys.drySkinPigmented),
                   'Não pigmentada',
-                  _checkboxSymbolForKey(answers, 'drySkinNonPigmented'),
+                  _checkboxSymbolForKey(answers, AnamnesisKeys.drySkinNonPigmented),
                 ),
                 _pairLine(
                   'Firme',
-                  _checkboxSymbolForKey(answers, 'drySkinFirm'),
+                  _checkboxSymbolForKey(answers, AnamnesisKeys.drySkinFirm),
                   'Propensa à rugas',
-                  _checkboxSymbolForKey(answers, 'drySkinWrinkled'),
+                  _checkboxSymbolForKey(answers, AnamnesisKeys.drySkinWrinkled),
                 ),
               ]),
               pw.SizedBox(height: 8),
               _buildSubSection('Pele Mista', [
                 _pairLine(
                   'Sensível',
-                  _checkboxSymbolForKey(answers, 'combinationSkinSensitive'),
+                  _checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinSensitive),
                   'Resistente',
-                  _checkboxSymbolForKey(answers, 'combinationSkinResistant'),
+                  _checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinResistant),
                 ),
                 _pairLine(
                   'Pigmentada',
-                  _checkboxSymbolForKey(answers, 'combinationSkinPigmented'),
+                  _checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinPigmented),
                   'Não pigmentada',
-                  _checkboxSymbolForKey(answers, 'combinationSkinNonPigmented'),
+                  _checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinNonPigmented),
                 ),
                 _pairLine(
                   'Firme',
-                  _checkboxSymbolForKey(answers, 'combinationSkinFirm'),
+                  _checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinFirm),
                   'Propensa à rugas',
-                  _checkboxSymbolForKey(answers, 'combinationSkinWrinkled'),
+                  _checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinWrinkled),
                 ),
               ]),
             ]),
@@ -143,15 +144,15 @@ class AnamnesisPdfService {
                           'Acne Não Inflamatória',
                         ],
                         [
-                          _getAnswer(answers, 'hasComedo'),
-                          _getAnswer(answers, 'hasPustule'),
-                          _getAnswer(answers, 'hasPapule'),
-                          _getAnswer(answers, 'hasNodule'),
-                          _getAnswer(answers, 'hasHyperkeratinization'),
-                          _getAnswer(answers, 'hasMilium'),
-                          _getAnswer(answers, 'hasMicrocyst'),
-                          _getAnswer(answers, 'hasInflammatoryAcne'),
-                          _getAnswer(answers, 'hasNonInflammatoryAcne'),
+                          _getAnswer(answers, AnamnesisKeys.hasComedo),
+                          _getAnswer(answers, AnamnesisKeys.hasPustule),
+                          _getAnswer(answers, AnamnesisKeys.hasPapule),
+                          _getAnswer(answers, AnamnesisKeys.hasNodule),
+                          _getAnswer(answers, AnamnesisKeys.hasHyperkeratinization),
+                          _getAnswer(answers, AnamnesisKeys.hasMilium),
+                          _getAnswer(answers, AnamnesisKeys.hasMicrocyst),
+                          _getAnswer(answers, AnamnesisKeys.hasInflammatoryAcne),
+                          _getAnswer(answers, AnamnesisKeys.hasNonInflammatoryAcne),
                         ],
                       ),
                     ]),
@@ -169,15 +170,15 @@ class AnamnesisPdfService {
                           'Acrocórdon',
                         ],
                         [
-                          _getAnswer(answers, 'hasTelangiecatsiaNevus'),
-                          _getAnswer(answers, 'hasActinicKeratosis'),
-                          _getAnswer(answers, 'hasMelanocyticNevus'),
-                          _getAnswer(answers, 'hasDermatosisPapulosa'),
-                          _getAnswer(answers, 'hasPapilloma'),
-                          _getAnswer(answers, 'hasAcrochordion'),
+                          _getAnswer(answers, AnamnesisKeys.hasTelangiecatsiaNevus),
+                          _getAnswer(answers, AnamnesisKeys.hasActinicKeratosis),
+                          _getAnswer(answers, AnamnesisKeys.hasMelanocyticNevus),
+                          _getAnswer(answers, AnamnesisKeys.hasDermatosisPapulosa),
+                          _getAnswer(answers, AnamnesisKeys.hasPapilloma),
+                          _getAnswer(answers, AnamnesisKeys.hasAcrochordion),
                         ],
                       ),
-                      _line('Outras', _value(answers, 'hasOtherLesions')),
+                      _line('Outras', _value(answers, AnamnesisKeys.hasOtherLesions)),
                     ]),
                   ),
                   pw.SizedBox(width: 8),
@@ -193,17 +194,17 @@ class AnamnesisPdfService {
                           'Hipocromia',
                         ],
                         [
-                          _getAnswer(answers, 'hasInflammatoryHyperpigmentation'),
-                          _getAnswer(answers, 'hasPhotoaging'),
-                          _getAnswer(answers, 'hasMelasma'),
-                          _getAnswer(answers, 'hasFreckles'),
-                          _getAnswer(answers, 'hasOrbicularHyperpigmentation'),
-                          _getAnswer(answers, 'hasHypochromia'),
+                          _getAnswer(answers, AnamnesisKeys.hasInflammatoryHyperpigmentation),
+                          _getAnswer(answers, AnamnesisKeys.hasPhotoaging),
+                          _getAnswer(answers, AnamnesisKeys.hasMelasma),
+                          _getAnswer(answers, AnamnesisKeys.hasFreckles),
+                          _getAnswer(answers, AnamnesisKeys.hasOrbicularHyperpigmentation),
+                          _getAnswer(answers, AnamnesisKeys.hasHypochromia),
                         ],
                       ),
                       _line(
                         'Por quê? Quanto tempo?',
-                        _value(answers, 'chromaticAbnormalityJustification'),
+                        _value(answers, AnamnesisKeys.chromaticAbnormalityJustification),
                       ),
                     ]),
                   ),
@@ -214,81 +215,81 @@ class AnamnesisPdfService {
             _buildSubSection('FOTOTIPO', [
               _line(
                 'FOTOTIPO - REATIVIDADE A LUZ ULTRAVIOLETA (Escala Fitzpatrick)',
-                _value(answers, 'skinPhototype'),
+                _value(answers, AnamnesisKeys.skinPhototype),
               ),
             ]),
             pw.SizedBox(height: 12),
             _buildSubSection('OUTROS', [
               _pairLine(
                 'DERMATITE',
-                _checkboxSymbolForKey(answers, 'hasDermatitis'),
+                _checkboxSymbolForKey(answers, AnamnesisKeys.hasDermatitis),
                 'PSORIASE',
-                _checkboxSymbolForKey(answers, 'hasPsoriasis'),
+                _checkboxSymbolForKey(answers, AnamnesisKeys.hasPsoriasis),
               ),
               pw.SizedBox(height: 6),
               _line(
                 'TRATAMENTO INDICADO',
-                _value(answers, 'treatmentIndicated'),
+                _value(answers, AnamnesisKeys.treatmentIndicated),
               ),
               pw.SizedBox(height: 6),
-              _line('NUMERO DE SESSOES', _value(answers, 'numberOfSessions')),
+              _line('NUMERO DE SESSOES', _value(answers, AnamnesisKeys.numberOfSessions)),
               pw.SizedBox(height: 6),
               _subTitle('CONTROLE PROCEDIMENTOS'),
               _tableHeader(['Sessão', 'Data', 'Tratamento']),
               _tableRow(
                 '1ª',
-                _value(answers, 'session1Date'),
-                _value(answers, 'session1'),
+                _value(answers, AnamnesisKeys.session1Date),
+                _value(answers, AnamnesisKeys.session1),
               ),
               _tableRow(
                 '2ª',
-                _value(answers, 'session2Date'),
-                _value(answers, 'session2'),
+                _value(answers, AnamnesisKeys.session2Date),
+                _value(answers, AnamnesisKeys.session2),
               ),
               _tableRow(
                 '3ª',
-                _value(answers, 'session3Date'),
-                _value(answers, 'session3'),
+                _value(answers, AnamnesisKeys.session3Date),
+                _value(answers, AnamnesisKeys.session3),
               ),
               _tableRow(
                 '4ª',
-                _value(answers, 'session4Date'),
-                _value(answers, 'session4'),
+                _value(answers, AnamnesisKeys.session4Date),
+                _value(answers, AnamnesisKeys.session4),
               ),
               _tableRow(
                 '5ª',
-                _value(answers, 'session5Date'),
-                _value(answers, 'session5'),
+                _value(answers, AnamnesisKeys.session5Date),
+                _value(answers, AnamnesisKeys.session5),
               ),
               _tableRow(
                 '6ª',
-                _value(answers, 'session6Date'),
-                _value(answers, 'session6'),
+                _value(answers, AnamnesisKeys.session6Date),
+                _value(answers, AnamnesisKeys.session6),
               ),
               _tableRow(
                 '7ª',
-                _value(answers, 'session7Date'),
-                _value(answers, 'session7'),
+                _value(answers, AnamnesisKeys.session7Date),
+                _value(answers, AnamnesisKeys.session7),
               ),
               _tableRow(
                 '8ª',
-                _value(answers, 'session8Date'),
-                _value(answers, 'session8'),
+                _value(answers, AnamnesisKeys.session8Date),
+                _value(answers, AnamnesisKeys.session8),
               ),
               _tableRow(
                 '9ª',
-                _value(answers, 'session9Date'),
-                _value(answers, 'session9'),
+                _value(answers, AnamnesisKeys.session9Date),
+                _value(answers, AnamnesisKeys.session9),
               ),
               _tableRow(
                 '10ª',
-                _value(answers, 'session10Date'),
-                _value(answers, 'session10'),
+                _value(answers, AnamnesisKeys.session10Date),
+                _value(answers, AnamnesisKeys.session10),
               ),
             ]),
             pw.SizedBox(height: 14),
             _buildSubSection('PRESCRICAO COSMETICA (home care)', [
-              _line('', _value(answers, 'cosmeticPrescription')),
+              _line('', _value(answers, AnamnesisKeys.cosmeticPrescription)),
             ]),
           ]),
           pw.SizedBox(height: 20),
@@ -451,217 +452,217 @@ class AnamnesisPdfService {
   }
 
   List<pw.Widget> _historicoRows(Map<String, dynamic> answers) {
-    final alergiasText = _value(answers, 'hasAllergies');
+    final alergiasText = _value(answers, AnamnesisKeys.hasAllergies);
 
     final rows = <pw.Widget>[
       _yesNoRow(
         _yesNoQuestion(
           'Já fez algum tratamento estético ou dermatológico?',
-          answers['hadAestheticTreatment'],
+          answers[AnamnesisKeys.hadAestheticTreatment],
           'Qual?',
-          _value(answers, 'aestheticTreatmentType'),
+          _value(answers, AnamnesisKeys.aestheticTreatmentType),
         ),
         _yesNoQuestion(
           'Problema de cicatrização ou Quelóide?',
-          answers['keloidScarring'],
+          answers[AnamnesisKeys.keloidScarring],
           'Comente:',
-          _value(answers, 'scarringComment'),
+          _value(answers, AnamnesisKeys.scarringComment),
         ),
       ),
       _yesNoRow(
         _yesNoQuestion(
           'Faz uso de algum medicamento?',
-          answers['usesMedication'],
+          answers[AnamnesisKeys.usesMedication],
           'Qual?',
-          _value(answers, 'medicationType'),
+          _value(answers, AnamnesisKeys.medicationType),
         ),
         _yesNoQuestion(
           'Usou Isotretinoína (Roacutan) nos últimos 6 meses?',
-          answers['isotretinoin6Months'],
+          answers[AnamnesisKeys.isotretinoin6Months],
           '',
-          _value(answers, 'isotretinoin6MonthsComment'),
+          _value(answers, AnamnesisKeys.isotretinoin6MonthsComment),
         ),
       ),
       _yesNoRow(
         _yesNoQuestion(
           'Tratamento médico ou problema de saúde?',
-          answers['hadMedicalTreatment'],
+          answers[AnamnesisKeys.hadMedicalTreatment],
           'Qual?',
-          _value(answers, 'healthProblemType'),
+          _value(answers, AnamnesisKeys.healthProblemType),
         ),
         _yesNoQuestion(
           'Apresenta trombose ou tromboflebite?',
-          answers['thrombosis'],
+          answers[AnamnesisKeys.thrombosis],
           'Local?',
-          _value(answers, 'thrombosisLocation'),
+          _value(answers, AnamnesisKeys.thrombosisLocation),
         ),
       ),
       _yesNoRow(
         _yesNoQuestion(
           'Já fez alguma cirurgia?',
-          answers['hadSurgery'],
+          answers[AnamnesisKeys.hadSurgery],
           'Qual?',
-          _value(answers, 'surgeryType'),
+          _value(answers, AnamnesisKeys.surgeryType),
         ),
         _yesNoQuestion(
           'Antecedentes oncológicos?',
-          answers['hasOncologicalHistory'],
+          answers[AnamnesisKeys.hasOncologicalHistory],
           '',
-          _value(answers, 'oncologicalComment'),
+          _value(answers, AnamnesisKeys.oncologicalComment),
         ),
       ),
       _yesNoRow(
         _yesNoQuestion(
           'Doença infectocontagiosa?',
-          answers['infectiousDiseaseHistory'],
+          answers[AnamnesisKeys.infectiousDiseaseHistory],
           'Qual?',
-          _value(answers, 'infectiousDiseaseType'),
+          _value(answers, AnamnesisKeys.infectiousDiseaseType),
         ),
         _yesNoQuestion(
           'Pratica algum esporte?',
-          answers['exercisesRegularly'],
+          answers[AnamnesisKeys.exercisesRegularly],
           '',
-          _value(answers, 'exerciseType'),
+          _value(answers, AnamnesisKeys.exerciseType),
         ),
       ),
       _yesNoRow(
         _yesNoQuestion(
           'Alimentação balanceada?',
-          answers['balancedDiet'],
+          answers[AnamnesisKeys.balancedDiet],
           '',
-          _value(answers, 'dietComment'),
+          _value(answers, AnamnesisKeys.dietComment),
         ),
         _yesNoQuestion(
           'Ingere no mínimo 2 litros de água por dia?',
-          answers['drinks2LitersWater'],
+          answers[AnamnesisKeys.drinks2LitersWater],
           'Quantos litros?',
-          _value(answers, 'waterIntakeAmount'),
+          _value(answers, AnamnesisKeys.waterIntakeAmount),
         ),
       ),
       _yesNoRow(
         _yesNoQuestion(
           'Faz uso de bebida alcoólica?',
-          answers['consumesAlcohol'],
+          answers[AnamnesisKeys.consumesAlcohol],
           'Frequência?',
-          _value(answers, 'alcoholFrequency'),
+          _value(answers, AnamnesisKeys.alcoholFrequency),
         ),
         _yesNoQuestion(
           'Faz uso de substâncias químicas ou entorpecentes?',
-          answers['usesDrugs'],
+          answers[AnamnesisKeys.usesDrugs],
           'Qual?',
-          _value(answers, 'drugType'),
+          _value(answers, AnamnesisKeys.drugType),
         ),
       ),
       _yesNoRow(
         _yesNoQuestion(
           'Distúrbio hormonal?',
-          answers['hormoneImbalance'],
+          answers[AnamnesisKeys.hormoneImbalance],
           'Qual?',
-          _value(answers, 'hormoneImbalanceType'),
+          _value(answers, AnamnesisKeys.hormoneImbalanceType),
         ),
         _yesNoQuestion(
           'Dorme bem?',
-          answers['sleepsWell'],
+          answers[AnamnesisKeys.sleepsWell],
           'Horas de sono:',
-          _value(answers, 'sleepHours'),
+          _value(answers, AnamnesisKeys.sleepHours),
         ),
       ),
       _yesNoRow(
         _yesNoQuestion(
           'Funcionamento intestinal regular?',
-          answers['regularBowelMovements'],
+          answers[AnamnesisKeys.regularBowelMovements],
           '',
-          _value(answers, 'bowelComment'),
+          _value(answers, AnamnesisKeys.bowelComment),
         ),
         _yesNoQuestion(
           'Diabetes?',
-          answers['hasDiabetes'],
+          answers[AnamnesisKeys.hasDiabetes],
           'Compensada/descompensada?',
-          _value(answers, 'diabetesControlled'),
+          _value(answers, AnamnesisKeys.diabetesControlled),
         ),
       ),
       _yesNoRow(
         _yesNoQuestion(
           'Tem problemas cardíacos?',
-          answers['hasCardiacCondition'],
+          answers[AnamnesisKeys.hasCardiacCondition],
           'Qual?',
-          _value(answers, 'cardiacConditionType'),
+          _value(answers, AnamnesisKeys.cardiacConditionType),
         ),
         _yesNoQuestion(
           'Depressão?',
-          answers['hasDepression'],
+          answers[AnamnesisKeys.hasDepression],
           'Faz tratamento?',
-          _value(answers, 'depressionTreatment'),
+          _value(answers, AnamnesisKeys.depressionTreatment),
         ),
       ),
       _yesNoRow(
         _yesNoQuestion(
           'Portador de Epilepsia?',
-          answers['hasEpilepsy'],
+          answers[AnamnesisKeys.hasEpilepsy],
           '',
-          _value(answers, 'epilepsyComment'),
+          _value(answers, AnamnesisKeys.epilepsyComment),
         ),
         _yesNoQuestion(
           'Possui placas e pinos metálicos na face?',
-          answers['hasDentalImplants'],
+          answers[AnamnesisKeys.hasDentalImplants],
           'Onde?',
-          _value(answers, 'dentalImplantLocation'),
+          _value(answers, AnamnesisKeys.dentalImplantLocation),
         ),
       ),
       _yesNoRow(
         _yesNoQuestion(
           'Próteses dentárias?',
-          answers['hasDentures'],
+          answers[AnamnesisKeys.hasDentures],
           '',
-          _value(answers, 'denturesComment'),
+          _value(answers, AnamnesisKeys.denturesComment),
         ),
         _yesNoQuestion(
           'Faz uso de lentes de contato?',
-          answers['wearsContactLenses'],
+          answers[AnamnesisKeys.wearsContactLenses],
           '',
-          _value(answers, 'contactLensesComment'),
+          _value(answers, AnamnesisKeys.contactLensesComment),
         ),
       ),
       _yesNoRow(
         _yesNoQuestion(
           'Já fez ou faz uso de ácidos na pele?',
-          answers['usesAcids'],
+          answers[AnamnesisKeys.usesAcids],
           'Qual?',
-          _value(answers, 'acidType'),
+          _value(answers, AnamnesisKeys.acidType),
         ),
         _yesNoQuestion(
           'Faz uso de cosméticos?',
-          answers['usesCosmeticProducts'],
+          answers[AnamnesisKeys.usesCosmeticProducts],
           'Quais?',
-          _value(answers, 'cosmeticProductTypes'),
+          _value(answers, AnamnesisKeys.cosmeticProductTypes),
         ),
       ),
       _yesNoRow(
         _yesNoQuestion(
           'Faz uso de protetor solar?',
-          answers['usesSunscreen'],
+          answers[AnamnesisKeys.usesSunscreen],
           'Qual?',
-          '${_value(answers, 'sunscreenType')} Frequência? ${_value(answers, 'sunscreenFrequency')}',
+          '${_value(answers, AnamnesisKeys.sunscreenType)} Frequência? ${_value(answers, AnamnesisKeys.sunscreenFrequency)}',
         ),
         _yesNoQuestion(
           'Costuma tomar sol?',
-          answers['exposedToSun'],
+          answers[AnamnesisKeys.exposedToSun],
           'Frequência?',
-          _value(answers, 'sunExposureFrequency'),
+          _value(answers, AnamnesisKeys.sunExposureFrequency),
         ),
       ),
       _yesNoRow(
         _yesNoQuestion(
           'Fez maquiagem definitiva?',
-          answers['hasPermanentMakeup'],
+          answers[AnamnesisKeys.hasPermanentMakeup],
           'Local?',
-          _value(answers, 'permanentMakeupLocation'),
+          _value(answers, AnamnesisKeys.permanentMakeupLocation),
         ),
         _yesNoQuestion(
           'Fez aplicação de Metacril ou Toxina Botulínica?',
-          answers['usedBotulinum'],
+          answers[AnamnesisKeys.usedBotulinum],
           'Local?',
-          _value(answers, 'botulinumLocation'),
+          _value(answers, AnamnesisKeys.botulinumLocation),
         ),
       ),
       _yesNoRow(
@@ -673,59 +674,59 @@ class AnamnesisPdfService {
         ),
         _yesNoQuestion(
           'Gestante?',
-          answers['isPregnant'],
+          answers[AnamnesisKeys.isPregnant],
           'Quantos meses?',
-          _value(answers, 'pregnancyMonths'),
+          _value(answers, AnamnesisKeys.pregnancyMonths),
         ),
       ),
       _yesNoRow(
         _yesNoQuestion(
           'Filhos?',
-          answers['hasChildren'],
+          answers[AnamnesisKeys.hasChildren],
           'Quantos?',
-          _value(answers, 'numberOfChildren'),
+          _value(answers, AnamnesisKeys.numberOfChildren),
         ),
         _yesNoQuestion(
           'Ciclo menstrual regular?',
-          answers['regularMenstrualCycle'],
+          answers[AnamnesisKeys.regularMenstrualCycle],
           'Obs.:',
-          _value(answers, 'menstrualCycleComment'),
+          _value(answers, AnamnesisKeys.menstrualCycleComment),
         ),
       ),
       _yesNoRow(
         _yesNoQuestion(
           'Já teve herpes?',
-          answers['hasHerpesHistory'],
+          answers[AnamnesisKeys.hasHerpesHistory],
           'A quanto tempo?',
-          _value(answers, 'herpesDuration'),
+          _value(answers, AnamnesisKeys.herpesDuration),
         ),
         _yesNoQuestion(
           'Faz uso de anticoncepcional?',
-          answers['usesContraceptive'],
+          answers[AnamnesisKeys.usesContraceptive],
           'Qual?',
-          _value(answers, 'contraceptiveType'),
+          _value(answers, AnamnesisKeys.contraceptiveType),
         ),
       ),
       _yesNoRow(
         _yesNoQuestion(
           'Faz uso de hormônio?*',
-          answers['takesHormones'],
+          answers[AnamnesisKeys.takesHormones],
           'Qual?',
-          _value(answers, 'hormoneType'),
+          _value(answers, AnamnesisKeys.hormoneType),
         ),
         _yesNoQuestion(
           'Autoriza divulgação de foto antes/após tratamento?',
-          answers['authorizedForPhotos'],
+          answers[AnamnesisKeys.authorizedForPhotos],
           '',
-          _value(answers, 'photoAuthorizationComment'),
+          _value(answers, AnamnesisKeys.photoAuthorizationComment),
         ),
       ),
       _subTitle('Fuma ou Fumou'),
       _stackedQuestion(
         'Fuma',
-        _value(answers, 'smokeOrSmoked'),
+        _value(answers, AnamnesisKeys.smokeOrSmoked),
         'Quanto tempo?',
-        _value(answers, 'smokingDuration'),
+        _value(answers, AnamnesisKeys.smokingDuration),
       ),
       _pressureQuestion(answers),
     ];
@@ -782,7 +783,7 @@ class AnamnesisPdfService {
   }
 
   String _motivoVisitaLine(Map<String, dynamic> answers) {
-    return _value(answers, 'visitReason');
+    return _value(answers, AnamnesisKeys.visitReason);
   }
 
   pw.Widget _wrapBullets(List<String> labels, List<dynamic> values) {
@@ -991,8 +992,8 @@ class AnamnesisPdfService {
   }
 
   pw.Widget _pressureQuestion(Map<String, dynamic> answers) {
-    final pressureValue = _value(answers, 'bloodPressure');
-    final pressureStatus = _value(answers, 'bloodPressureControlled');
+    final pressureValue = _value(answers, AnamnesisKeys.bloodPressure);
+    final pressureStatus = _value(answers, AnamnesisKeys.bloodPressureControlled);
     final hasPressure = pressureValue.isNotEmpty && pressureValue != 'NÃO';
 
     return pw.Column(
