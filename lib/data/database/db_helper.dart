@@ -28,7 +28,7 @@ class DbHelper {
 
     return await openDatabase(
       path,
-      version: 3,
+      version: 4,
       onConfigure: (db) async {
         await db.execute('PRAGMA foreign_keys = ON');
       },
@@ -49,6 +49,14 @@ class DbHelper {
         name TEXT NOT NULL,
         phone TEXT,
         notes TEXT,
+        maritalStatus TEXT,
+        nationality TEXT,
+        address TEXT,
+        whatsapp TEXT,
+        email TEXT,
+        dateOfBirth TEXT,
+        age TEXT,
+        profession TEXT,
         deleted_at TEXT
       )
     ''');
@@ -88,5 +96,4 @@ class DbHelper {
       )
     ''');
   }
-
 }
