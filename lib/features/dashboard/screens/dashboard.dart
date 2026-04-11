@@ -1,6 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
+import '../../../core/config/app_environment.dart';
+import '../../../data/dev/mock_models.dart';
+import '../../../data/models/client.dart';
 import '../../../data/repositories/anamnesis_repository.dart';
 import '../../../data/repositories/client_repository.dart';
 import '../../../data/repositories/service_repository.dart';
@@ -47,8 +49,17 @@ class _DashboardState extends State<Dashboard> {
 
   Future<void> _openSeedPdf() async {
     try {
-      final client = await _clientRepository.findById(1);
-      final anamneses = await _anamnesisRepository.findByClientId(1);
+      final clients = await _clientRepository.findAll();
+      Client? client;
+      for (final item in clients) {
+        if (DevMockModels.isDevMockClient(item)) {
+          client = item;
+          break;
+        }
+      }
+      final anamneses = client == null
+          ? const []
+          : await _anamnesisRepository.findByClientId(client.id!);
       final anamnesis = anamneses.isNotEmpty ? anamneses.first : null;
 
       if (client == null || anamnesis == null) {
@@ -66,7 +77,7 @@ class _DashboardState extends State<Dashboard> {
 
       await Printing.layoutPdf(
         onLayout: (format) async => bytes,
-        name: 'anamnese-cliente-1.pdf',
+        name: 'anamnese-cliente-dev.pdf',
       );
     } catch (error) {
       if (!mounted) return;
@@ -84,7 +95,7 @@ class _DashboardState extends State<Dashboard> {
         backgroundColor: Colors.purple,
         foregroundColor: Colors.white,
         actions: [
-          if (kDebugMode)
+          if (AppEnvironment.devToolsEnabled)
             IconButton(
               tooltip: 'Gerar PDF de teste',
               icon: const Icon(Icons.picture_as_pdf_outlined),
@@ -228,29 +239,30 @@ class _DashboardState extends State<Dashboard> {
                   const SizedBox(height: 12),
 
                   // Botão Lab CRUD
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const CrudTestPage(),
+                  if (AppEnvironment.devToolsEnabled)
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const CrudTestPage(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.science_outlined),
+                        label: const Text('Lab CRUD (teste)'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.purple,
+                          side: const BorderSide(color: Colors.purple),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                        );
-                      },
-                      icon: const Icon(Icons.science_outlined),
-                      label: const Text('Lab CRUD (teste)'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.purple,
-                        side: const BorderSide(color: Colors.purple),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
