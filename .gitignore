@@ -75,3 +75,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 >>>>>>> 5018d0c (first commit)
+.vscode/c_cpp_properties.json
+.vscode/launch.json
+.vscode/settings.json
