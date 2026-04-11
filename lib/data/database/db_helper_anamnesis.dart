@@ -224,7 +224,7 @@ extension DbHelperAnamnesisOperations on DbHelper {
         }
         return StoredAnamnesisAnswer(type: 'decimal', realValue: decimalValue);
       case 'date':
-        final dateValue = _coerceIsoDate(value);
+        final dateValue = _coerceBrazilianDate(value);
         if (dateValue == null) {
           throw StateError(
             'Invalid date value for ${fieldDefinition.key}: $value',
@@ -289,24 +289,30 @@ extension DbHelperAnamnesisOperations on DbHelper {
     return double.tryParse(value.toString().trim().replaceAll(',', '.'));
   }
 
-  String? _coerceIsoDate(dynamic value) {
+  String? _coerceBrazilianDate(dynamic value) {
     if (value is DateTime) {
       final day = value.day.toString().padLeft(2, '0');
       final month = value.month.toString().padLeft(2, '0');
-      return '${value.year.toString().padLeft(4, '0')}-$month-$day';
+      return '$day/$month/${value.year.toString().padLeft(4, '0')}';
     }
 
     final raw = value.toString().trim();
+    final brazilianDate = RegExp(r'^\d{2}/\d{2}/\d{4}$');
+    if (brazilianDate.hasMatch(raw)) {
+      return raw;
+    }
+
     final alreadyIso = RegExp(r'^\d{4}-\d{2}-\d{2}$');
     if (alreadyIso.hasMatch(raw)) {
-      return raw;
+      final parts = raw.split('-');
+      return '${parts[2]}/${parts[1]}/${parts[0]}';
     }
 
     final parsed = DateTime.tryParse(raw);
     if (parsed == null) return null;
     final day = parsed.day.toString().padLeft(2, '0');
     final month = parsed.month.toString().padLeft(2, '0');
-    return '${parsed.year.toString().padLeft(4, '0')}-$month-$day';
+    return '$day/$month/${parsed.year.toString().padLeft(4, '0')}';
   }
 
   String? _coerceEnum(dynamic value, List<String> allowedValues) {

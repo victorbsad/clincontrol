@@ -215,6 +215,11 @@ class AnamnesisPdfService {
     final trimmed = value.trim();
     if (trimmed.isEmpty || trimmed == 'NÃO') return value;
 
+    final brazilianDateMatch = RegExp(r'^\d{2}/\d{2}/\d{4}$');
+    if (brazilianDateMatch.hasMatch(trimmed)) {
+      return trimmed;
+    }
+
     final dateOnlyMatch = RegExp(
       r'^(\d{4})-(\d{2})-(\d{2})$',
     ).firstMatch(trimmed);
