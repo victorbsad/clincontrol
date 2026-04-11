@@ -76,7 +76,7 @@ class AnamnesisPdfHistorySection {
         _yesNoQuestion(
           'Pratica algum esporte?',
           answers[AnamnesisKeys.exercisesRegularly],
-          '',
+          'Qual?',
           _value(answers, AnamnesisKeys.exerciseType),
         ),
       ),
@@ -343,7 +343,7 @@ class AnamnesisPdfHistorySection {
   static pw.Widget _subTitle(String title) {
     return pw.Padding(
       padding: const pw.EdgeInsets.only(top: 4, bottom: 2),
-      child: pw.Text(_pdfSafe(title), style: AnamnesisPdfStyles.subTitle),
+      child: pw.Text(_pdfSafe(title), style: AnamnesisPdfStyles.bold),
     );
   }
 
@@ -382,10 +382,7 @@ class AnamnesisPdfHistorySection {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Text(
-          'Hipertensão ou Hipotensão?',
-          style: AnamnesisPdfStyles.bold,
-        ),
+        pw.Text('Hipertensão ou Hipotensão?', style: AnamnesisPdfStyles.bold),
         pw.SizedBox(height: 2),
         if (hasPressure) ...[
           pw.Text(
@@ -431,7 +428,10 @@ class AnamnesisPdfHistorySection {
     if (normalized == 'sim' || normalized == 'true' || normalized == 'yes') {
       return true;
     }
-    if (normalized == 'nao' || normalized == 'não' || normalized == 'false' || normalized == 'no') {
+    if (normalized == 'nao' ||
+        normalized == 'não' ||
+        normalized == 'false' ||
+        normalized == 'no') {
       return false;
     }
     return null;

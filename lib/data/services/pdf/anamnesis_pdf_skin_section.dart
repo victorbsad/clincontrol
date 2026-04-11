@@ -127,7 +127,7 @@ class AnamnesisPdfSkinSection {
             ),
             pw.SizedBox(width: 8),
             pw.Expanded(
-              child: buildSubSection('Lesoes dermatológicas', [
+              child: buildSubSection('Lesões dermatológicas', [
                 wrapBullets(
                   [
                     'Telangiectasia/ Nevo',
@@ -188,7 +188,7 @@ class AnamnesisPdfSkinSection {
       pw.SizedBox(height: 12),
       buildSubSection('FOTOTIPO', [
         line(
-          'FOTOTIPO - REATIVIDADE A LUZ ULTRAVIOLETA (Escala Fitzpatrick)',
+          'FOTOTIPO - REATIVIDADE À LUZ ULTRAVIOLETA (Escala Fitzpatrick)',
           value(answers, AnamnesisKeys.skinPhototype),
         ),
       ]),

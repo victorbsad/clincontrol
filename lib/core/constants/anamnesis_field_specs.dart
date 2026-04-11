@@ -34,7 +34,7 @@ class AnamnesisFieldSpecs {
   static const List<String> smokingStatusEnumValues = [
     'nunca',
     'ex_fumante',
-    'atual',
+    'sim',
   ];
 
   static const List<String> frequencyEnumValues = [
