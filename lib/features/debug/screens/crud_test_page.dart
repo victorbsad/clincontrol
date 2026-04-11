@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/config/app_environment.dart';
 import '../../../core/constants/anamnesis_keys.dart';
 import '../../../data/models/anamnesis.dart';
 import '../../../data/models/client.dart';
-import '../../../data/models/service.dart';
+import '../../../data/dev/mock_models.dart';
 import '../../../data/repositories/anamnesis_repository.dart';
 import '../../../data/repositories/client_repository.dart';
 import '../../../data/repositories/service_repository.dart';
@@ -81,14 +82,7 @@ class _CrudTestPageState extends State<CrudTestPage> {
   }
 
   Future<String> _saveClient() async {
-    final now = DateTime.now().millisecondsSinceEpoch;
-    final id = await _clientRepository.save(
-      Client(
-        name: 'Cliente Teste $now',
-        phone: '(11) 99999-0000',
-        notes: 'Criado pela tela de teste',
-      ),
-    );
+    final id = await _clientRepository.save(DevMockModels.buildClient());
 
     return 'ID criado: $id';
   }
@@ -116,12 +110,9 @@ class _CrudTestPageState extends State<CrudTestPage> {
   }
 
   Future<String> _updateFirstClient() async {
-    final clients = await _clientRepository.findAll();
-    if (clients.isEmpty) {
-      return 'Não há clientes para atualizar';
-    }
+    final first = await _findMockClient();
+    if (first == null) return 'Nao ha clientes DEV para atualizar';
 
-    final first = clients.first;
     final updated = Client(
       id: first.id,
       name: '${first.name} (editado)',
@@ -135,42 +126,19 @@ class _CrudTestPageState extends State<CrudTestPage> {
 
   Future<String> _deleteLastClient() async {
     final clients = await _clientRepository.findAll();
-    if (clients.isEmpty) {
-      return 'Não há clientes para remover';
-    }
+    final mockClients = clients.where(DevMockModels.isDevMockClient).toList();
+    if (mockClients.isEmpty) return 'Nao ha clientes DEV para remover';
 
-    final last = clients.last;
+    final last = mockClients.last;
     final rows = await _clientRepository.delete(last.id!);
 
     return 'Linhas afetadas: $rows | Cliente removido id=${last.id}';
   }
 
   Future<String> _saveService() async {
-    var clients = await _clientRepository.findAll();
-    if (clients.isEmpty) {
-      final id = await _clientRepository.save(
-        Client(
-          name: 'Cliente Base Serviço',
-          phone: '(11) 90000-0000',
-          notes: 'Criado automaticamente para teste de serviço',
-        ),
-      );
-      _addLog('Cliente base criado automaticamente: id=$id');
-      clients = await _clientRepository.findAll();
-    }
-
-    final client = clients.first;
-    final now = DateTime.now();
-    final date =
-        '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
-
+    final client = await _ensureMockClient();
     final id = await _serviceRepository.save(
-      Service(
-        clientId: client.id!,
-        procedure: 'Procedimento Teste',
-        amount: 100.0,
-        date: date,
-      ),
+      DevMockModels.buildService(clientId: client.id!),
     );
 
     return 'Atendimento criado: id=$id para client_id=${client.id}';
@@ -191,29 +159,8 @@ class _CrudTestPageState extends State<CrudTestPage> {
   }
 
   Future<String> _saveAnamnesis() async {
-    var clients = await _clientRepository.findAll();
-    if (clients.isEmpty) {
-      final id = await _clientRepository.save(
-        Client(
-          name: 'Cliente Base Anamnese',
-          phone: '(11) 98888-0000',
-          notes: 'Criado automaticamente para teste de anamnese',
-        ),
-      );
-      _addLog('Cliente base criado automaticamente: id=$id');
-      clients = await _clientRepository.findAll();
-    }
-
-    final client = clients.first;
-    final anamnesis = Anamnesis(
-      clientId: client.id!,
-      answers: {
-        AnamnesisKeys.maritalStatus: 'Single',
-        AnamnesisKeys.nationality: 'Brazilian',
-        AnamnesisKeys.profession: 'Test Profession',
-        AnamnesisKeys.age: 30,
-      },
-    );
+    final client = await _ensureMockClient();
+    final anamnesis = DevMockModels.buildAnamnesis(clientId: client.id!);
 
     final id = await _anamnesisRepository.save(anamnesis);
     return 'Anamnese criada: id=$id para client_id=${client.id}';
@@ -249,7 +196,10 @@ class _CrudTestPageState extends State<CrudTestPage> {
   }
 
   Future<String> _findAnamnesisById() async {
-    final anamneses = await _anamnesisRepository.findByClientId(1);
+    final client = await _findMockClient();
+    if (client == null) return 'Nenhum cliente DEV encontrado';
+
+    final anamneses = await _anamnesisRepository.findByClientId(client.id!);
     if (anamneses.isEmpty) {
       return 'Nenhuma anamnese encontrada';
     }
@@ -273,7 +223,10 @@ class _CrudTestPageState extends State<CrudTestPage> {
   }
 
   Future<String> _updateAnamnesis() async {
-    final anamneses = await _anamnesisRepository.findByClientId(1);
+    final client = await _findMockClient();
+    if (client == null) return 'Nenhum cliente DEV encontrado';
+
+    final anamneses = await _anamnesisRepository.findByClientId(client.id!);
     if (anamneses.isEmpty) {
       return 'Não há anamneses para atualizar';
     }
@@ -295,7 +248,10 @@ class _CrudTestPageState extends State<CrudTestPage> {
   }
 
   Future<String> _deleteAnamnesis() async {
-    final anamnesisList = await _anamnesisRepository.findByClientId(1);
+    final client = await _findMockClient();
+    if (client == null) return 'Nenhum cliente DEV encontrado';
+
+    final anamnesisList = await _anamnesisRepository.findByClientId(client.id!);
     if (anamnesisList.isEmpty) {
       return 'Não há anamneses para remover';
     }
@@ -304,6 +260,31 @@ class _CrudTestPageState extends State<CrudTestPage> {
     final rows = await _anamnesisRepository.delete(last.id!);
 
     return 'Linhas afetadas: $rows | Anamnese removida id=${last.id}';
+  }
+
+  Future<Client> _ensureMockClient() async {
+    final existing = await _findMockClient();
+    if (existing != null) return existing;
+
+    final id = await _clientRepository.save(DevMockModels.buildClient());
+    _addLog('Cliente DEV criado automaticamente: id=$id');
+
+    return Client(
+      id: id,
+      name: 'Cliente Dev $id',
+      phone: '(11) 99999-0000',
+      notes: '${DevMockModels.notesMarker} Gerado para laboratorio de CRUD.',
+    );
+  }
+
+  Future<Client?> _findMockClient() async {
+    final clients = await _clientRepository.findAll();
+    for (final client in clients) {
+      if (DevMockModels.isDevMockClient(client)) {
+        return client;
+      }
+    }
+    return null;
   }
 
   Widget _methodCard({
@@ -347,6 +328,22 @@ class _CrudTestPageState extends State<CrudTestPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!AppEnvironment.devToolsEnabled) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Lab de CRUD'),
+          backgroundColor: Colors.purple,
+          foregroundColor: Colors.white,
+        ),
+        body: const Center(
+          child: Padding(
+            padding: EdgeInsets.all(24),
+            child: Text('Laboratorio disponivel apenas em ambiente de desenvolvimento.'),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lab de CRUD'),
