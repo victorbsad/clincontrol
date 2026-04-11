@@ -231,7 +231,7 @@ class AnamnesisPdfHistorySection {
       _yesNoRow(
         _yesNoQuestion(
           'Alergias? (alimentar, cheiro, respiratória, corantes, medicamentos, etc)',
-          _hasMeaningfulValue(alergiasText),
+          answers[AnamnesisKeys.hasAllergies],
           'Especificar:',
           alergiasText,
         ),
@@ -284,14 +284,8 @@ class AnamnesisPdfHistorySection {
           _value(answers, AnamnesisKeys.photoAuthorizationComment),
         ),
       ),
-      _subTitle('Fuma ou Fumou'),
-      _stackedQuestion(
-        'Fuma',
-        _value(answers, AnamnesisKeys.smokingStatus),
-        'Quanto tempo?',
-        _value(answers, AnamnesisKeys.smokingDuration),
-      ),
-      _pressureQuestion(answers),
+      _yesNoRow(_smokingQuestion(answers),
+       _pressureQuestion(answers)),
     ];
   }
 
@@ -369,6 +363,22 @@ class AnamnesisPdfHistorySection {
           ),
         ],
       ),
+    );
+  }
+
+  static pw.Widget _smokingQuestion(Map<String, dynamic> answers) {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text('Fuma ou Fumou', style: AnamnesisPdfStyles.bold),
+        pw.SizedBox(height: 2),
+        _stackedQuestion(
+          'Fuma',
+          _value(answers, AnamnesisKeys.smokingStatus),
+          'Quanto tempo?',
+          _value(answers, AnamnesisKeys.smokingDuration),
+        ),
+      ],
     );
   }
 

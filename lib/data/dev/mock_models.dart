@@ -91,7 +91,7 @@ class DevMockModels {
       AnamnesisKeys.drugType: 'Nao faz uso de drogas ilicitas',
       AnamnesisKeys.hormoneImbalance: true,
       AnamnesisKeys.hormoneImbalanceType: 'Sindrome dos ovarios policisticos em acompanhamento',
-      AnamnesisKeys.smokingStatus: 'sim',
+      AnamnesisKeys.smokingStatus: 'ex_fumante',
       AnamnesisKeys.smokingDuration: '8 anos',
       AnamnesisKeys.sleepsWell: true,
       AnamnesisKeys.sleepHours: 7.5,
