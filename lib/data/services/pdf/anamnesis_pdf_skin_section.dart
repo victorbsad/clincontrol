@@ -1,6 +1,7 @@
 import 'package:pdf/widgets.dart' as pw;
 
 import '../../../core/constants/anamnesis_keys.dart';
+import 'anamnesis_pdf_styles.dart';
 
 class AnamnesisPdfSkinSection {
   const AnamnesisPdfSkinSection._();
@@ -8,24 +9,26 @@ class AnamnesisPdfSkinSection {
   static List<pw.Widget> build({
     required Map<String, dynamic> answers,
     required pw.Widget Function(String title, List<pw.Widget> lines)
-        buildSubSection,
+    buildSubSection,
     required pw.Widget Function(
       String leftLabel,
       String leftValue,
       String rightLabel,
       String rightValue,
-    ) pairLine,
+    )
+    pairLine,
     required pw.Widget Function(String label, String value) line,
     required pw.Widget Function(String title) subTitle,
     required pw.Widget Function(List<String> labels, List<dynamic> values)
-        wrapBullets,
+    wrapBullets,
     required pw.Widget Function(List<String> columns) tableHeader,
     required pw.Widget Function(String session, String date, String treatment)
-        tableRow,
+    tableRow,
     required String Function(Map<String, dynamic> answers, String key) value,
-    required dynamic Function(Map<String, dynamic> answers, String key) getAnswer,
+    required dynamic Function(Map<String, dynamic> answers, String key)
+    getAnswer,
     required String Function(Map<String, dynamic> answers, String key)
-        checkboxSymbolForKey,
+    checkboxSymbolForKey,
   }) {
     return [
       buildSubSection('BIOTIPO CUTÂNEO', [
@@ -74,21 +77,36 @@ class AnamnesisPdfSkinSection {
         buildSubSection('Pele Mista', [
           pairLine(
             'Sensível',
-            checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinSensitive),
+            checkboxSymbolForKey(
+              answers,
+              AnamnesisKeys.combinationSkinSensitive,
+            ),
             'Resistente',
-            checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinResistant),
+            checkboxSymbolForKey(
+              answers,
+              AnamnesisKeys.combinationSkinResistant,
+            ),
           ),
           pairLine(
             'Pigmentada',
-            checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinPigmented),
+            checkboxSymbolForKey(
+              answers,
+              AnamnesisKeys.combinationSkinPigmented,
+            ),
             'Não pigmentada',
-            checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinNonPigmented),
+            checkboxSymbolForKey(
+              answers,
+              AnamnesisKeys.combinationSkinNonPigmented,
+            ),
           ),
           pairLine(
             'Firme',
             checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinFirm),
             'Propensa à rugas',
-            checkboxSymbolForKey(answers, AnamnesisKeys.combinationSkinWrinkled),
+            checkboxSymbolForKey(
+              answers,
+              AnamnesisKeys.combinationSkinWrinkled,
+            ),
           ),
         ]),
       ]),
@@ -127,7 +145,7 @@ class AnamnesisPdfSkinSection {
             ),
             pw.SizedBox(width: 8),
             pw.Expanded(
-              child: buildSubSection('Lesoes dermatológicas', [
+              child: buildSubSection('Lesões dermatológicas', [
                 wrapBullets(
                   [
                     'Telangiectasia/ Nevo',
@@ -178,7 +196,10 @@ class AnamnesisPdfSkinSection {
                 ),
                 line(
                   'Por quê? Quanto tempo?',
-                  value(answers, AnamnesisKeys.chromaticAbnormalityJustification),
+                  value(
+                    answers,
+                    AnamnesisKeys.chromaticAbnormalityJustification,
+                  ),
                 ),
               ]),
             ),
@@ -186,12 +207,10 @@ class AnamnesisPdfSkinSection {
         ),
       ]),
       pw.SizedBox(height: 12),
-      buildSubSection('FOTOTIPO', [
-        line(
-          'FOTOTIPO - REATIVIDADE A LUZ ULTRAVIOLETA (Escala Fitzpatrick)',
-          value(answers, AnamnesisKeys.skinPhototype),
-        ),
-      ]),
+      buildSubSection(
+        'FOTOTIPO – REATIVIDADE À LUZ ULTRAVIOLETA (Escala Fitzpatrick)',
+        [_phototypeBlock(value(answers, AnamnesisKeys.skinPhototype))],
+      ),
       pw.SizedBox(height: 12),
       buildSubSection('OUTROS', [
         pairLine(
@@ -206,7 +225,10 @@ class AnamnesisPdfSkinSection {
           value(answers, AnamnesisKeys.treatmentIndicated),
         ),
         pw.SizedBox(height: 6),
-        line('NUMERO DE SESSOES', value(answers, AnamnesisKeys.numberOfSessions)),
+        line(
+          'NUMERO DE SESSOES',
+          value(answers, AnamnesisKeys.numberOfSessions),
+        ),
         pw.SizedBox(height: 6),
         subTitle('CONTROLE PROCEDIMENTOS'),
         tableHeader(['Sessão', 'Data', 'Tratamento']),
@@ -266,5 +288,54 @@ class AnamnesisPdfSkinSection {
         line('', value(answers, AnamnesisKeys.cosmeticPrescription)),
       ]),
     ];
+  }
+
+  static pw.Widget _phototypeBlock(String selectedValue) {
+    final normalized = selectedValue.trim().toUpperCase();
+
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.SizedBox(height: 4),
+        _phototypeOption('I', 'Branco / Loiro', 'nunca bronzeia', normalized),
+        _phototypeOption('II', 'Branco', 'dificilmente bronzeia', normalized),
+        _phototypeOption(
+          'III',
+          'Moreno Claro',
+          'bronzeia moderadamente',
+          normalized,
+        ),
+        _phototypeOption(
+          'IV',
+          'Moreno Moderado',
+          'sempre bronzeia',
+          normalized,
+        ),
+        _phototypeOption(
+          'V',
+          'Moreno Escuro',
+          'bronzeia intensamente',
+          normalized,
+        ),
+        _phototypeOption('VI', 'Negro', 'não se queima', normalized),
+      ],
+    );
+  }
+
+  static pw.Widget _phototypeOption(
+    String code,
+    String skinTone,
+    String description,
+    String selectedValue,
+  ) {
+    final isSelected = selectedValue == code;
+
+    return pw.Padding(
+      padding: const pw.EdgeInsets.only(bottom: 2),
+      child: pw.Text(
+        '${isSelected ? '[x]' : '[ ]'} $code – $skinTone – $description',
+        style: AnamnesisPdfStyles.text,
+      ),
+    );
   }
 }

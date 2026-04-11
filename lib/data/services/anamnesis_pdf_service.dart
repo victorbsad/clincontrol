@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../../core/constants/anamnesis_enums.dart';
 import '../../core/constants/anamnesis_keys.dart';
 import '../models/anamnesis.dart';
 import '../models/client.dart';
@@ -136,7 +137,16 @@ class AnamnesisPdfService {
   }
 
   String _motivoVisitaLine(Map<String, dynamic> answers) {
-    return _value(answers, AnamnesisKeys.visitReason);
+    final raw =
+        answers[AnamnesisKeys.visitReasonOption]?.toString().trim() ?? '';
+    if (raw == AnamnesisVisitReasonOption.other.canonical) {
+      return _value(answers, AnamnesisKeys.visitReasonOther);
+    }
+    if (raw.isEmpty) return 'NÃO';
+    return AnamnesisEnumHumanizer.humanize(
+      AnamnesisKeys.visitReasonOption,
+      raw,
+    );
   }
 
   String _clientValue(String value) {
@@ -211,6 +221,11 @@ class AnamnesisPdfService {
     final trimmed = value.trim();
     if (trimmed.isEmpty || trimmed == 'NÃO') return value;
 
+    final brazilianDateMatch = RegExp(r'^\d{2}/\d{2}/\d{4}$');
+    if (brazilianDateMatch.hasMatch(trimmed)) {
+      return trimmed;
+    }
+
     final dateOnlyMatch = RegExp(
       r'^(\d{4})-(\d{2})-(\d{2})$',
     ).firstMatch(trimmed);
@@ -257,5 +272,4 @@ class AnamnesisPdfService {
     final year = date.year.toString();
     return '$day/$month/$year';
   }
-
 }
