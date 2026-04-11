@@ -7,6 +7,7 @@ import '../../core/constants/anamnesis_keys.dart';
 import '../models/anamnesis.dart';
 import '../models/client.dart';
 import 'pdf/anamnesis_pdf_history_section.dart';
+import 'pdf/anamnesis_pdf_layout.dart';
 import 'pdf/anamnesis_pdf_styles.dart';
 import 'pdf/pdf_theme_provider.dart';
 
@@ -386,103 +387,31 @@ class AnamnesisPdfService {
   }
 
   pw.Widget _buildHeader(Client client, Anamnesis anamnesis) {
-    return pw.Container(
-      padding: const pw.EdgeInsets.all(12),
-      decoration: pw.BoxDecoration(
-        border: pw.Border.all(color: PdfColors.grey700),
-        borderRadius: pw.BorderRadius.circular(6),
-      ),
-      child: pw.Row(
-        children: [
-          pw.Expanded(
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Text(
-                  'Ficha de Avaliação Facial',
-                  style: pw.TextStyle(
-                    fontSize: 18,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
-                pw.SizedBox(height: 8),
-                pw.Text(_pdfSafe('Cliente: ${client.name}')),
-                pw.Text(
-                  _pdfSafe('Gerado em: ${anamnesis.createdAt.toLocal()}'),
-                ),
-              ],
-            ),
-          ),
-          pw.SizedBox(width: 20),
-          _buildLogoPlaceholder(),
-        ],
-      ),
+    return AnamnesisPdfLayout.buildHeader(
+      client: client,
+      anamnesis: anamnesis,
+      pdfSafe: _pdfSafe,
     );
   }
 
   pw.Widget _buildSection(String title, List<pw.Widget> lines) {
-    return pw.Container(
-      padding: const pw.EdgeInsets.all(10),
-      decoration: pw.BoxDecoration(
-        border: pw.Border.all(color: PdfColors.grey400),
-        borderRadius: pw.BorderRadius.circular(6),
-      ),
-      child: pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Text(
-            title,
-            style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
-          ),
-          pw.SizedBox(height: 8),
-          ...lines,
-        ],
-      ),
-    );
+    return AnamnesisPdfLayout.buildSection(title, lines);
   }
 
   pw.Widget _buildSubSection(String title, List<pw.Widget> lines) {
-    return pw.Container(
-      padding: const pw.EdgeInsets.all(8),
-      decoration: pw.BoxDecoration(
-        border: pw.Border.all(color: PdfColors.grey600, width: 0.5),
-        borderRadius: pw.BorderRadius.circular(4),
-      ),
-      child: pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Text(
-            title,
-            style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold),
-          ),
-          pw.SizedBox(height: 6),
-          ...lines,
-        ],
-      ),
-    );
+    return AnamnesisPdfLayout.buildSubSection(title, lines);
   }
 
   pw.Widget _line(String label, String value) {
-    final displayValue = value.isEmpty ? 'NÃO' : value;
-    final normalizedLabel = label.trim();
-    final text = normalizedLabel.isEmpty
-        ? displayValue
-        : '$normalizedLabel: $displayValue';
-
-    return pw.Padding(
-      padding: const pw.EdgeInsets.symmetric(vertical: 2),
-      child: pw.Text(_pdfSafe(text), style: const pw.TextStyle(fontSize: 9)),
+    return AnamnesisPdfLayout.line(
+      label: label,
+      value: value,
+      pdfSafe: _pdfSafe,
     );
   }
 
   pw.Widget _subTitle(String title) {
-    return pw.Padding(
-      padding: const pw.EdgeInsets.only(top: 4, bottom: 2),
-      child: pw.Text(
-        _pdfSafe(title),
-        style: AnamnesisPdfStyles.subTitle,
-      ),
-    );
+    return AnamnesisPdfLayout.subTitle(title, _pdfSafe);
   }
 
   pw.Widget _pairLine(
@@ -491,50 +420,11 @@ class AnamnesisPdfService {
     String rightLabel,
     String rightValue,
   ) {
-    return pw.Padding(
-      padding: const pw.EdgeInsets.symmetric(vertical: 2),
-      child: pw.Row(
-        children: [
-          pw.Expanded(
-            child: pw.Text(
-              '$leftLabel: ${leftValue.isEmpty ? 'NÃO' : leftValue}',
-              style: const pw.TextStyle(fontSize: 9),
-            ),
-          ),
-          pw.SizedBox(width: 12),
-          pw.Expanded(
-            child: pw.Text(
-              '$rightLabel: ${rightValue.isEmpty ? 'NÃO' : rightValue}',
-              style: const pw.TextStyle(fontSize: 9),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  pw.Widget _stackedQuestion(
-    String label,
-    String value,
-    String subLabel,
-    String subValue,
-  ) {
-    return pw.Padding(
-      padding: const pw.EdgeInsets.symmetric(vertical: 2),
-      child: pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Text(
-            '$label: ${value.isEmpty ? 'NÃO' : value}',
-            style: const pw.TextStyle(fontSize: 9),
-          ),
-          pw.SizedBox(height: 2),
-          pw.Text(
-            '$subLabel: ${subValue.isEmpty ? 'NÃO' : subValue}',
-            style: const pw.TextStyle(fontSize: 9),
-          ),
-        ],
-      ),
+    return AnamnesisPdfLayout.pairLine(
+      leftLabel: leftLabel,
+      leftValue: leftValue,
+      rightLabel: rightLabel,
+      rightValue: rightValue,
     );
   }
 
@@ -547,72 +437,23 @@ class AnamnesisPdfService {
   }
 
   pw.Widget _wrapBullets(List<String> labels, List<dynamic> values) {
-    return pw.Padding(
-      padding: const pw.EdgeInsets.symmetric(vertical: 2),
-      child: pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: List.generate(labels.length, (index) {
-          final value = _checkboxSymbol(values[index]);
-          return pw.Padding(
-            padding: const pw.EdgeInsets.only(bottom: 2),
-            child: pw.Text(
-              '${labels[index]}: $value',
-              style: const pw.TextStyle(fontSize: 9),
-            ),
-          );
-        }),
-      ),
+    return AnamnesisPdfLayout.wrapBullets(
+      labels: labels,
+      values: values,
+      checkboxSymbol: _checkboxSymbol,
     );
   }
 
   pw.Widget _tableHeader(List<String> columns) {
-    return pw.Row(
-      children: columns
-          .map(
-            (column) => pw.Expanded(
-              child: pw.Container(
-                padding: const pw.EdgeInsets.symmetric(vertical: 4),
-                decoration: const pw.BoxDecoration(
-                  border: pw.Border(
-                    bottom: pw.BorderSide(width: 0.5, color: PdfColors.grey600),
-                  ),
-                ),
-                child: pw.Text(
-                  column,
-                  style: pw.TextStyle(
-                    fontSize: 9,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          )
-          .toList(),
-    );
+    return AnamnesisPdfLayout.tableHeader(columns);
   }
 
   pw.Widget _tableRow(String session, String date, String treatment) {
-    return pw.Row(
-      children: [
-        pw.Expanded(
-          child: pw.Text(
-            _pdfSafe(session),
-            style: const pw.TextStyle(fontSize: 9),
-          ),
-        ),
-        pw.Expanded(
-          child: pw.Text(
-            _pdfSafe(date.isEmpty ? 'NÃO' : date),
-            style: const pw.TextStyle(fontSize: 9),
-          ),
-        ),
-        pw.Expanded(
-          child: pw.Text(
-            _pdfSafe(treatment.isEmpty ? 'NÃO' : treatment),
-            style: const pw.TextStyle(fontSize: 9),
-          ),
-        ),
-      ],
+    return AnamnesisPdfLayout.tableRow(
+      session: session,
+      date: date,
+      treatment: treatment,
+      pdfSafe: _pdfSafe,
     );
   }
 
@@ -693,46 +534,11 @@ class AnamnesisPdfService {
         .replaceAll('✓', 'v');
   }
 
-  pw.Widget _buildLogoPlaceholder() {
-    return pw.Container(
-      width: 80,
-      height: 80,
-      decoration: pw.BoxDecoration(
-        border: pw.Border.all(color: PdfColors.grey400, width: 1),
-        borderRadius: pw.BorderRadius.circular(4),
-      ),
-      child: pw.Center(
-        child: pw.Text(
-          '[Logo]',
-          style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600),
-        ),
-      ),
-    );
-  }
-
   pw.Widget _buildSignatureSection(Client client) {
-    final currentDate = _formatBrazilianDate(DateTime.now());
-
-    return pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        pw.Text(
-          'Assinatura da Paciente:',
-          style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
-        ),
-        pw.SizedBox(height: 60),
-        pw.Container(width: double.infinity, height: 1, color: PdfColors.black),
-        pw.SizedBox(height: 6),
-        pw.Text(
-          _pdfSafe('Nome: ${client.name}'),
-          style: const pw.TextStyle(fontSize: 9),
-        ),
-        pw.SizedBox(height: 2),
-        pw.Text(
-          _pdfSafe('Data: $currentDate'),
-          style: const pw.TextStyle(fontSize: 9),
-        ),
-      ],
+    return AnamnesisPdfLayout.buildSignatureSection(
+      client: client,
+      formatDate: _formatBrazilianDate,
+      pdfSafe: _pdfSafe,
     );
   }
 
