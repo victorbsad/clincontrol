@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/anamnesis_keys.dart';
 import '../../../data/models/anamnesis.dart';
 import '../../../data/models/client.dart';
 import '../../../data/models/service.dart';
@@ -203,10 +204,10 @@ class _CrudTestPageState extends State<CrudTestPage> {
     final anamnesis = Anamnesis(
       clientId: client.id!,
       answers: {
-        'estadoCivil': 'Solteira',
-        'nacionalidade': 'Brasileira',
-        'profissao': 'Teste Profissão',
-        'idade': 30,
+        AnamnesisKeys.maritalStatus: 'Single',
+        AnamnesisKeys.nationality: 'Brazilian',
+        AnamnesisKeys.profession: 'Test Profession',
+        AnamnesisKeys.age: 30,
       },
     );
 
@@ -280,8 +281,8 @@ class _CrudTestPageState extends State<CrudTestPage> {
       createdAt: first.createdAt,
       answers: {
         ...first.answers,
-        'profissao': 'Profissão Atualizada',
-        'atualizadoEm': 'Lab Teste',
+        AnamnesisKeys.profession: 'Updated Profession',
+        'updatedBy': 'CRUD Lab',
       },
     );
 
@@ -290,12 +291,12 @@ class _CrudTestPageState extends State<CrudTestPage> {
   }
 
   Future<String> _deleteAnamnesis() async {
-    final anamnese = await _anamnesisRepository.findByClientId(1);
-    if (anamnese.isEmpty) {
+    final anamnesisList = await _anamnesisRepository.findByClientId(1);
+    if (anamnesisList.isEmpty) {
       return 'Não há anamneses para remover';
     }
 
-    final last = anamnese.last;
+    final last = anamnesisList.last;
     final rows = await _anamnesisRepository.delete(last.id!);
 
     return 'Linhas afetadas: $rows | Anamnese removida id=${last.id}';
