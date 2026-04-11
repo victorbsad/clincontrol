@@ -53,7 +53,7 @@ class AnamnesisPdfService {
           _buildSection('HISTÓRICO', [..._historicoRows(answers)]),
           pw.SizedBox(height: 20),
           pw.Text(
-            '*Uso de Estrogenio - nao pode usar eletrolifting .',
+            '*Uso de estrogênio - não pode usar eletrolifting.',
             style: pw.TextStyle(fontSize: 9, fontStyle: pw.FontStyle.italic),
           ),
           pw.SizedBox(height: 20),
