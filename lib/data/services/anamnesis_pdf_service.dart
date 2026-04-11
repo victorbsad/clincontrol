@@ -9,6 +9,15 @@ import '../models/client.dart';
 class AnamnesisPdfService {
   const AnamnesisPdfService();
 
+  static final titleFont = pw.Font.helveticaBold();
+  static final regularFont = pw.Font.helvetica();
+
+  //Style constants
+  static final titleStyle = pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, font: titleFont);
+  static final subTitleStyle = pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold, font: titleFont);
+  static final textStyle = pw.TextStyle(fontSize: 9, font: regularFont);
+  static final boldStyle = pw.TextStyle (fontSize: 10, fontWeight: pw.FontWeight.bold, font: regularFont);
+
   Future<Uint8List> generate({
     required Client client,
     required Anamnesis anamnesis,
@@ -38,7 +47,7 @@ class AnamnesisPdfService {
             ..._historicoRows(answers),
           ]),
           pw.SizedBox(height: 20),
-          pw.Text('*Uso de Estrogênio - não pode usar eletrolifting.', style: pw.TextStyle(fontSize: 9, fontStyle: pw.FontStyle.italic)),
+          pw.Text('*Uso de Estrogênio - não pode usar eletrolifting.', style: pw.TextStyle(fontSize: 9, fontStyle: pw.FontStyle.italic, font: regularFont)),
           pw.SizedBox(height: 20),
           pw.NewPage(),
           pw.SizedBox(height: 12),
@@ -165,7 +174,7 @@ class AnamnesisPdfService {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Text('Ficha de Avaliação Facial', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
+                pw.Text('Ficha de Avaliação Facial', style: titleStyle),
                 pw.SizedBox(height: 8),
                 pw.Text(_pdfSafe('Cliente: ${client.name}')),
                 pw.Text(_pdfSafe('Gerado em: ${anamnesis.createdAt.toLocal()}')),
@@ -189,7 +198,7 @@ class AnamnesisPdfService {
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          pw.Text(title, style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
+          pw.Text(title, style: subTitleStyle),
           pw.SizedBox(height: 8),
           ...lines,
         ],
@@ -207,7 +216,7 @@ class AnamnesisPdfService {
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          pw.Text(title, style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold)),
+          pw.Text(title, style: boldStyle),
           pw.SizedBox(height: 6),
           ...lines,
         ],
@@ -218,7 +227,7 @@ class AnamnesisPdfService {
   pw.Widget _line(String label, String value) {
     return pw.Padding(
       padding: const pw.EdgeInsets.symmetric(vertical: 2),
-      child: pw.Text(_pdfSafe('$label: ${value.isEmpty ? 'NÃO' : value}'), style: const pw.TextStyle(fontSize: 9)),
+      child: pw.Text(_pdfSafe('$label: ${value.isEmpty ? 'NÃO' : value}'), style: textStyle),
     );
   }
 
@@ -227,7 +236,7 @@ class AnamnesisPdfService {
       padding: const pw.EdgeInsets.only(top: 4, bottom: 2),
       child: pw.Text(
         _pdfSafe(title),
-        style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+        style: subTitleStyle,
       ),
     );
   }
@@ -237,9 +246,9 @@ class AnamnesisPdfService {
       padding: const pw.EdgeInsets.symmetric(vertical: 2),
       child: pw.Row(
         children: [
-          pw.Expanded(child: pw.Text('$leftLabel: ${leftValue.isEmpty ? 'NÃO' : leftValue}', style: const pw.TextStyle(fontSize: 9))),
+          pw.Expanded(child: pw.Text('$leftLabel: ${leftValue.isEmpty ? 'NÃO' : leftValue}', style: textStyle)),
           pw.SizedBox(width: 12),
-          pw.Expanded(child: pw.Text('$rightLabel: ${rightValue.isEmpty ? 'NÃO' : rightValue}', style: const pw.TextStyle(fontSize: 9))),
+          pw.Expanded(child: pw.Text('$rightLabel: ${rightValue.isEmpty ? 'NÃO' : rightValue}', style: textStyle)),
         ],
       ),
     );
@@ -251,9 +260,9 @@ class AnamnesisPdfService {
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          pw.Text('$label: ${value.isEmpty ? 'NÃO' : value}', style: const pw.TextStyle(fontSize: 9)),
+          pw.Text('$label: ${value.isEmpty ? 'NÃO' : value}', style: textStyle),
           pw.SizedBox(height: 2),
-          pw.Text('$subLabel: ${subValue.isEmpty ? 'NÃO' : subValue}', style: const pw.TextStyle(fontSize: 9)),
+          pw.Text('$subLabel: ${subValue.isEmpty ? 'NÃO' : subValue}', style: textStyle),
         ],
       ),
     );
@@ -372,10 +381,10 @@ class AnamnesisPdfService {
       children: [
         pw.Text(
           question,
-          style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
+          style: boldStyle,
         ),
         pw.SizedBox(height: 2),
-        pw.Text(text, style: const pw.TextStyle(fontSize: 9)),
+        pw.Text(text, style: textStyle),
         if (isYes && commentLabel.isNotEmpty)
           pw.Padding(
             padding: const pw.EdgeInsets.only(top: 2),
@@ -401,7 +410,7 @@ class AnamnesisPdfService {
           final value = _checkboxSymbol(values[index]);
           return pw.Padding(
             padding: const pw.EdgeInsets.only(bottom: 2),
-            child: pw.Text('${labels[index]}: $value', style: const pw.TextStyle(fontSize: 9)),
+            child: pw.Text('${labels[index]}: $value', style: textStyle),
           );
         }),
       ),
@@ -418,7 +427,7 @@ class AnamnesisPdfService {
                 decoration: const pw.BoxDecoration(
                   border: pw.Border(bottom: pw.BorderSide(width: 0.5, color: PdfColors.grey600)),
                 ),
-                child: pw.Text(column, style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold)),
+                child: pw.Text(column, style: boldStyle),
               ),
             ),
           )
@@ -429,9 +438,9 @@ class AnamnesisPdfService {
   pw.Widget _tableRow(String session, String date, String treatment) {
     return pw.Row(
       children: [
-        pw.Expanded(child: pw.Text(_pdfSafe(session), style: const pw.TextStyle(fontSize: 9))),
-        pw.Expanded(child: pw.Text(_pdfSafe(date.isEmpty ? 'NÃO' : date), style: const pw.TextStyle(fontSize: 9))),
-        pw.Expanded(child: pw.Text(_pdfSafe(treatment.isEmpty ? 'NÃO' : treatment), style: const pw.TextStyle(fontSize: 9))),
+        pw.Expanded(child: pw.Text(_pdfSafe(session), style: textStyle)),
+        pw.Expanded(child: pw.Text(_pdfSafe(date.isEmpty ? 'NÃO' : date), style: textStyle)),
+        pw.Expanded(child: pw.Text(_pdfSafe(treatment.isEmpty ? 'NÃO' : treatment), style: textStyle)),
       ],
     );
   }
@@ -536,14 +545,14 @@ class AnamnesisPdfService {
         pw.Text('Assinatura da Paciente:', style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
         pw.SizedBox(height: 60),
         pw.Container(
-          width: double.infinity,
+          width: 200,
           height: 1,
           color: PdfColors.black,
         ),
         pw.SizedBox(height: 6),
-        pw.Text(_pdfSafe('Nome: ${client.name}'), style: const pw.TextStyle(fontSize: 9)),
+        pw.Text(_pdfSafe('Nome: ${client.name}'), style: textStyle),
         pw.SizedBox(height: 2),
-        pw.Text(_pdfSafe('Data: $currentDate'), style: const pw.TextStyle(fontSize: 9)),
+        pw.Text(_pdfSafe('Data: $currentDate'), style: textStyle),
       ],
     );
   }
@@ -563,14 +572,14 @@ class AnamnesisPdfService {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Text('Hipertensão ou Hipotensão?', style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold)),
+        pw.Text('Hipertensão ou Hipotensão?', style: boldStyle),
         pw.SizedBox(height: 2),
         if (hasPressure) ...[
-          pw.Text(_pdfSafe(pressureValue), style: const pw.TextStyle(fontSize: 9)),
+          pw.Text(_pdfSafe(pressureValue), style: textStyle),
           pw.SizedBox(height: 2),
-          pw.Text(_pdfSafe('Compensada/descompensada: $pressureStatus'), style: const pw.TextStyle(fontSize: 9)),
+          pw.Text(_pdfSafe('Compensada/descompensada: $pressureStatus'), style: textStyle),
         ] else
-          pw.Text('NÃO', style: const pw.TextStyle(fontSize: 9)),
+          pw.Text('NÃO', style: textStyle),
       ],
     );
   }
