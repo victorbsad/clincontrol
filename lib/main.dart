@@ -10,13 +10,18 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   configureDatabaseFactory();
   if (kDebugMode) {
-    await DbHelper().seedDevelopmentData();
+    try {
+      await DbHelper().seedDevelopmentData();
+    } catch (e, stackTrace) {
+      debugPrint('Seed de desenvolvimento falhou: $e');
+      debugPrint('$stackTrace');
+    }
   }
-  runApp(const MeuApp());
+  runApp(const MyApp());
 }
 
-class MeuApp extends StatelessWidget {
-  const MeuApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +34,7 @@ class MeuApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('pt', 'BR'),
-      ],
+      supportedLocales: const [Locale('pt', 'BR')],
       home: const Dashboard(),
     );
   }

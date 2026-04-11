@@ -43,21 +43,21 @@ class _NewServiceState extends State<NewService> {
   }
 
   Future<void> _loadClients() async {
-    final clientes = await _clientRepository.findAll();
-    setState(() => _clients = clientes);
+    final clients = await _clientRepository.findAll();
+    setState(() => _clients = clients);
   }
 
   //Abre o seletor de data
-  Future<void> _selecionarData() async {
-    final data = await showDatePicker(
+  Future<void> _selectDate() async {
+    final selectedDate = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime(2024),
       lastDate: DateTime.now(),
       locale: const Locale('pt', 'BR'),
     );
-    if (data != null) {
-      setState(() => _selectedDate = data);
+    if (selectedDate != null) {
+      setState(() => _selectedDate = selectedDate);
     }
   }
 
@@ -76,9 +76,9 @@ class _NewServiceState extends State<NewService> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedClient == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Selecione um cliente')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Selecione um cliente')));
       return;
     }
 
@@ -93,7 +93,7 @@ class _NewServiceState extends State<NewService> {
 
     await _serviceRepository.save(service);
 
-    if(mounted) Navigator.pop(context);
+    if (mounted) Navigator.pop(context);
   }
 
   @override
@@ -111,9 +111,11 @@ class _NewServiceState extends State<NewService> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               //Campo Cliente
-              const Text('Cliente', style: TextStyle(fontWeight: FontWeight.w600)),
+              const Text(
+                'Cliente',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
               const SizedBox(height: 8),
               Container(
                 width: double.infinity,
@@ -146,7 +148,7 @@ class _NewServiceState extends State<NewService> {
               const Text('Data', style: TextStyle(fontWeight: FontWeight.w600)),
               const SizedBox(height: 8),
               GestureDetector(
-                onTap: _selecionarData,
+                onTap: _selectDate,
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
@@ -156,9 +158,16 @@ class _NewServiceState extends State<NewService> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.calendar_today, color: Colors.purple, size: 20),
+                      const Icon(
+                        Icons.calendar_today,
+                        color: Colors.purple,
+                        size: 20,
+                      ),
                       const SizedBox(width: 12),
-                      Text(_formattedDate, style: const TextStyle(fontSize: 15)),
+                      Text(
+                        _formattedDate,
+                        style: const TextStyle(fontSize: 15),
+                      ),
                     ],
                   ),
                 ),
@@ -167,7 +176,10 @@ class _NewServiceState extends State<NewService> {
               const SizedBox(height: 20),
 
               //Camo Procedimento
-              const Text('Procedimento', style: TextStyle(fontWeight: FontWeight.w600)),
+              const Text(
+                'Procedimento',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
               const SizedBox(height: 8),
               TextFormField(
                 controller: _procedureController,
@@ -188,11 +200,16 @@ class _NewServiceState extends State<NewService> {
               const SizedBox(height: 20),
 
               //Campo Valor
-              const Text('Valor cobrado (R\$)', style: TextStyle(fontWeight: FontWeight.w600)),
+              const Text(
+                'Valor cobrado (R\$)',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
               const SizedBox(height: 8),
               TextFormField(
                 controller: _amountController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'[0-9,.]')),
                 ],
@@ -208,8 +225,8 @@ class _NewServiceState extends State<NewService> {
                   if (value == null || value.trim().isEmpty) {
                     return 'Informe o valor';
                   }
-                  final valor = double.tryParse(value.replaceAll(',', '.'));
-                  if (valor == null || valor <= 0) {
+                  final amount = double.tryParse(value.replaceAll(',', '.'));
+                  if (amount == null || amount <= 0) {
                     return 'Valor inválido';
                   }
                   return null;
@@ -236,7 +253,6 @@ class _NewServiceState extends State<NewService> {
                       : const Text('Salvar', style: TextStyle(fontSize: 16)),
                 ),
               ),
-
             ],
           ),
         ),
