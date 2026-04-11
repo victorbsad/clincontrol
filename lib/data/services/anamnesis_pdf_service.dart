@@ -38,12 +38,12 @@ class AnamnesisPdfService {
             ..._historicoRows(answers),
           ]),
           pw.SizedBox(height: 20),
-          pw.Text('*Uso de Estrogenio - nao pode usar eletrolifting .', style: pw.TextStyle(fontSize: 9, fontStyle: pw.FontStyle.italic)),
+          pw.Text('*Uso de Estrogênio - não pode usar eletrolifting.', style: pw.TextStyle(fontSize: 9, fontStyle: pw.FontStyle.italic)),
           pw.SizedBox(height: 20),
           pw.NewPage(),
           pw.SizedBox(height: 12),
           _buildSection('Avaliação da Pele', [
-            _buildSubSection('BIOTIPO CUTANEO', [
+            _buildSubSection('BIOTIPO CUTÂNEO', [
               _buildSubSection('Pele Oleosa (Lipídica)', [
                 _pairLine('Sensível', _checkboxSymbol(answers['peleOleosaSensivel']), 'Resistente', _checkboxSymbol(answers['peleOleosaResistente'])),
                 _pairLine('Pigmentada', _checkboxSymbol(answers['peleOleosaPigmentada']), 'Não pigmentada', _checkboxSymbol(answers['peleOleosaNaoPigmentada'])),
