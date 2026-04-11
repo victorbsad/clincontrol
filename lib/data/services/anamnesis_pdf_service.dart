@@ -136,7 +136,11 @@ class AnamnesisPdfService {
   }
 
   String _motivoVisitaLine(Map<String, dynamic> answers) {
-    return _value(answers, AnamnesisKeys.visitReason);
+    final option = _value(answers, AnamnesisKeys.visitReasonOption);
+    if (option == 'outro') {
+      return _value(answers, AnamnesisKeys.visitReasonOther);
+    }
+    return option;
   }
 
   String _clientValue(String value) {

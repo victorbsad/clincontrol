@@ -59,7 +59,9 @@ class DevMockModels {
   static Map<String, dynamic> sampleAnswers() {
     return {
       AnamnesisKeys.hasAllergies: false,
-      AnamnesisKeys.visitReason: 'Validacao de fluxo em desenvolvimento',
+      AnamnesisKeys.allergiesDetails: '',
+      AnamnesisKeys.visitReasonOption: 'outro',
+      AnamnesisKeys.visitReasonOther: 'Validacao de fluxo em desenvolvimento',
     };
   }
 

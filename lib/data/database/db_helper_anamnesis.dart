@@ -9,18 +9,18 @@ extension DbHelperAnamnesisOperations on DbHelper {
         : anamnesis.updatedAt;
 
     return await db.transaction((txn) async {
+      final fieldDefs = await _fetchFieldDefinitions(txn);
       final anamnesisId = await txn.insert('anamneses', {
         'client_id': anamnesis.clientId,
         'created_at': createdAt.toIso8601String(),
         'updated_at': normalizedUpdatedAt.toIso8601String(),
       });
 
-      for (final entry in _normalizeAnswers(anamnesis.answers)) {
+      for (final entry in _normalizeAnswers(anamnesis.answers, fieldDefs)) {
         await txn.insert('anamnesis_answers', {
           'anamnesis_id': anamnesisId,
           'field_key': entry.key,
-          'value': entry.value.value,
-          'value_type': entry.value.type,
+          ...entry.value.toDbMap(),
         });
       }
 
@@ -50,10 +50,7 @@ extension DbHelperAnamnesisOperations on DbHelper {
     for (final row in answerRows) {
       final anamnesisId = row['anamnesis_id'] as int;
       final rawKey = row['field_key'] as String;
-      final decodedValue = _decodeStoredValue(
-        row['value'] as String,
-        row['value_type'] as String,
-      );
+      final decodedValue = _decodeStoredValue(row);
 
       answersByAnamnesisId.putIfAbsent(anamnesisId, () => {});
       answersByAnamnesisId[anamnesisId]![rawKey] = decodedValue;
@@ -90,10 +87,7 @@ extension DbHelperAnamnesisOperations on DbHelper {
 
     final map = <String, dynamic>{};
     for (final row in answers) {
-      map[row['field_key'] as String] = _decodeStoredValue(
-        row['value'] as String,
-        row['value_type'] as String,
-      );
+      map[row['field_key'] as String] = _decodeStoredValue(row);
     }
 
     final row = rows.first;
@@ -115,6 +109,7 @@ extension DbHelperAnamnesisOperations on DbHelper {
     final updatedAt = anamnesis.updatedAt.toIso8601String();
 
     return await db.transaction((txn) async {
+      final fieldDefs = await _fetchFieldDefinitions(txn);
       await txn.update(
         'anamneses',
         {'client_id': anamnesis.clientId, 'updated_at': updatedAt},
@@ -128,12 +123,11 @@ extension DbHelperAnamnesisOperations on DbHelper {
         whereArgs: [anamnesis.id],
       );
 
-      for (final entry in _normalizeAnswers(anamnesis.answers)) {
+      for (final entry in _normalizeAnswers(anamnesis.answers, fieldDefs)) {
         await txn.insert('anamnesis_answers', {
           'anamnesis_id': anamnesis.id,
           'field_key': entry.key,
-          'value': entry.value.value,
-          'value_type': entry.value.type,
+          ...entry.value.toDbMap(),
         });
       }
 
@@ -155,8 +149,14 @@ extension DbHelperAnamnesisOperations on DbHelper {
 
   Iterable<MapEntry<String, StoredAnamnesisAnswer>> _normalizeAnswers(
     Map<String, dynamic> answers,
+    Map<String, _AnamnesisFieldDefinition> fieldDefinitions,
   ) sync* {
     for (final entry in answers.entries) {
+      final fieldDefinition = fieldDefinitions[entry.key];
+      if (fieldDefinition == null) {
+        throw StateError('Unknown anamnesis key: ${entry.key}');
+      }
+
       final value = entry.value;
 
       if (value == null) continue;
@@ -164,38 +164,187 @@ extension DbHelperAnamnesisOperations on DbHelper {
       if (value is Iterable && value.isEmpty) continue;
       if (value is Map && value.isEmpty) continue;
 
-      if (value is bool) {
-        yield MapEntry(entry.key, StoredAnamnesisAnswer(value.toString(), 'bool'));
-      } else if (value is int) {
-        yield MapEntry(entry.key, StoredAnamnesisAnswer(value.toString(), 'int'));
-      } else if (value is double) {
-        yield MapEntry(entry.key, StoredAnamnesisAnswer(value.toString(), 'double'));
-      } else if (value is DateTime) {
-        yield MapEntry(entry.key, StoredAnamnesisAnswer(value.toIso8601String(), 'datetime'));
-      } else if (value is Iterable) {
-        yield MapEntry(entry.key, StoredAnamnesisAnswer(jsonEncode(value.toList()), 'json'));
-      } else if (value is Map) {
-        yield MapEntry(entry.key, StoredAnamnesisAnswer(jsonEncode(value), 'json'));
-      } else {
-        yield MapEntry(entry.key, StoredAnamnesisAnswer(value.toString(), 'text'));
-      }
+      yield MapEntry(entry.key, _buildStoredAnswer(fieldDefinition, value));
     }
   }
 
-  dynamic _decodeStoredValue(String value, String type) {
+  dynamic _decodeStoredValue(Map<String, Object?> row) {
+    final type = row['value_type'] as String;
+
     switch (type) {
       case 'bool':
-        return value == 'true';
+        return (row['value_bool'] as int?) == 1;
       case 'int':
-        return int.tryParse(value);
-      case 'double':
-        return double.tryParse(value);
-      case 'datetime':
-        return DateTime.tryParse(value);
+        return row['value_int'] as int?;
+      case 'decimal':
+        return row['value_real'] as double?;
+      case 'date':
+        return row['value_date'] as String?;
+      case 'enum':
+        return row['value_enum'] as String?;
       case 'json':
-        return jsonDecode(value);
+        final raw = row['value_json'] as String?;
+        if (raw == null || raw.isEmpty) return null;
+        return jsonDecode(raw);
       default:
-        return value;
+        return row['value_text'] as String?;
     }
+  }
+
+  StoredAnamnesisAnswer _buildStoredAnswer(
+    _AnamnesisFieldDefinition fieldDefinition,
+    dynamic value,
+  ) {
+    switch (fieldDefinition.valueType) {
+      case 'bool':
+        final boolValue = _coerceBool(value);
+        if (boolValue == null) {
+          throw StateError(
+            'Invalid bool value for ${fieldDefinition.key}: $value',
+          );
+        }
+        return StoredAnamnesisAnswer(
+          type: 'bool',
+          boolValue: boolValue ? 1 : 0,
+        );
+      case 'int':
+        final intValue = _coerceInt(value);
+        if (intValue == null) {
+          throw StateError(
+            'Invalid int value for ${fieldDefinition.key}: $value',
+          );
+        }
+        return StoredAnamnesisAnswer(type: 'int', intValue: intValue);
+      case 'decimal':
+        final decimalValue = _coerceDouble(value);
+        if (decimalValue == null) {
+          throw StateError(
+            'Invalid decimal value for ${fieldDefinition.key}: $value',
+          );
+        }
+        return StoredAnamnesisAnswer(type: 'decimal', realValue: decimalValue);
+      case 'date':
+        final dateValue = _coerceIsoDate(value);
+        if (dateValue == null) {
+          throw StateError(
+            'Invalid date value for ${fieldDefinition.key}: $value',
+          );
+        }
+        return StoredAnamnesisAnswer(type: 'date', dateValue: dateValue);
+      case 'enum':
+        final enumValue = _coerceEnum(value, fieldDefinition.enumValues);
+        if (enumValue == null) {
+          throw StateError(
+            'Invalid enum value for ${fieldDefinition.key}: $value',
+          );
+        }
+        return StoredAnamnesisAnswer(type: 'enum', enumValue: enumValue);
+      case 'json':
+        if (value is Iterable) {
+          return StoredAnamnesisAnswer(
+            type: 'json',
+            jsonValue: jsonEncode(value.toList()),
+          );
+        }
+        if (value is Map) {
+          return StoredAnamnesisAnswer(type: 'json', jsonValue: jsonEncode(value));
+        }
+        throw StateError('Invalid json value for ${fieldDefinition.key}: $value');
+      case 'text':
+      default:
+        return StoredAnamnesisAnswer(type: 'text', textValue: value.toString());
+    }
+  }
+
+  Future<Map<String, _AnamnesisFieldDefinition>> _fetchFieldDefinitions(
+    DatabaseExecutor db,
+  ) async {
+    final rows = await db.query('anamnesis_field_defs');
+    return {
+      for (final row in rows)
+        row['field_key'] as String: _AnamnesisFieldDefinition.fromRow(row),
+    };
+  }
+
+  bool? _coerceBool(dynamic value) {
+    if (value is bool) return value;
+    final normalized = value.toString().trim().toLowerCase();
+    if (normalized == 'true' || normalized == 'sim' || normalized == 'yes') {
+      return true;
+    }
+    if (normalized == 'false' || normalized == 'nao' || normalized == 'não' || normalized == 'no') {
+      return false;
+    }
+    return null;
+  }
+
+  int? _coerceInt(dynamic value) {
+    if (value is int) return value;
+    return int.tryParse(value.toString().trim());
+  }
+
+  double? _coerceDouble(dynamic value) {
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    return double.tryParse(value.toString().trim().replaceAll(',', '.'));
+  }
+
+  String? _coerceIsoDate(dynamic value) {
+    if (value is DateTime) {
+      final day = value.day.toString().padLeft(2, '0');
+      final month = value.month.toString().padLeft(2, '0');
+      return '${value.year.toString().padLeft(4, '0')}-$month-$day';
+    }
+
+    final raw = value.toString().trim();
+    final alreadyIso = RegExp(r'^\d{4}-\d{2}-\d{2}$');
+    if (alreadyIso.hasMatch(raw)) {
+      return raw;
+    }
+
+    final parsed = DateTime.tryParse(raw);
+    if (parsed == null) return null;
+    final day = parsed.day.toString().padLeft(2, '0');
+    final month = parsed.month.toString().padLeft(2, '0');
+    return '${parsed.year.toString().padLeft(4, '0')}-$month-$day';
+  }
+
+  String? _coerceEnum(dynamic value, List<String> allowedValues) {
+    final raw = value.toString().trim();
+    if (raw.isEmpty) return null;
+
+    for (final allowed in allowedValues) {
+      if (allowed.toLowerCase() == raw.toLowerCase()) {
+        return allowed;
+      }
+    }
+    return null;
+  }
+}
+
+class _AnamnesisFieldDefinition {
+  final String key;
+  final String valueType;
+  final List<String> enumValues;
+
+  const _AnamnesisFieldDefinition({
+    required this.key,
+    required this.valueType,
+    required this.enumValues,
+  });
+
+  factory _AnamnesisFieldDefinition.fromRow(Map<String, Object?> row) {
+    final rawEnumValues = row['enum_values_json'] as String?;
+    final enumValues = rawEnumValues == null || rawEnumValues.isEmpty
+        ? <String>[]
+        : (jsonDecode(rawEnumValues) as List<dynamic>)
+              .map((e) => e.toString())
+              .toList();
+
+    return _AnamnesisFieldDefinition(
+      key: row['field_key'] as String,
+      valueType: row['value_type'] as String,
+      enumValues: enumValues,
+    );
   }
 }

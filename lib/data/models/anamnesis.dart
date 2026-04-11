@@ -17,8 +17,36 @@ class Anamnesis {
 }
 
 class StoredAnamnesisAnswer {
-  final String value;
+  final String? textValue;
+  final int? intValue;
+  final double? realValue;
+  final int? boolValue;
+  final String? dateValue;
+  final String? enumValue;
+  final String? jsonValue;
   final String type;
 
-  const StoredAnamnesisAnswer(this.value, this.type);
+  const StoredAnamnesisAnswer({
+    required this.type,
+    this.textValue,
+    this.intValue,
+    this.realValue,
+    this.boolValue,
+    this.dateValue,
+    this.enumValue,
+    this.jsonValue,
+  });
+
+  Map<String, Object?> toDbMap() {
+    return {
+      'value_type': type,
+      'value_text': textValue,
+      'value_int': intValue,
+      'value_real': realValue,
+      'value_bool': boolValue,
+      'value_date': dateValue,
+      'value_enum': enumValue,
+      'value_json': jsonValue,
+    };
+  }
 }

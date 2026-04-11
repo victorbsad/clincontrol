@@ -238,8 +238,8 @@ class _CrudTestPageState extends State<CrudTestPage> {
       createdAt: first.createdAt,
       answers: {
         ...first.answers,
-        AnamnesisKeys.visitReason: 'Motivo atualizado no CRUD Lab',
-        'updatedBy': 'CRUD Lab',
+        AnamnesisKeys.visitReasonOption: 'outro',
+        AnamnesisKeys.visitReasonOther: 'Motivo atualizado no CRUD Lab',
       },
     );
 

@@ -4,6 +4,7 @@ import 'database_migration.dart';
 import 'migration_v2_anamnesis_schema.dart';
 import 'migration_v3_soft_delete_and_fk.dart';
 import 'migration_v5_standardize_client_columns.dart';
+import 'migration_v6_rebuild_anamnesis_schema.dart';
 
 class DatabaseMigrationRunner {
   const DatabaseMigrationRunner._();
@@ -12,6 +13,7 @@ class DatabaseMigrationRunner {
     MigrationV2AnamnesisSchema(),
     MigrationV3SoftDeleteAndFk(),
     MigrationV5StandardizeClientColumns(),
+    MigrationV6RebuildAnamnesisSchema(),
   ];
 
   static Future<void> run(Database db, int oldVersion, int newVersion) async {

@@ -7,7 +7,7 @@ class AnamnesisPdfHistorySection {
   const AnamnesisPdfHistorySection._();
 
   static List<pw.Widget> build(Map<String, dynamic> answers) {
-    final alergiasText = _value(answers, AnamnesisKeys.hasAllergies);
+    final alergiasText = _value(answers, AnamnesisKeys.allergiesDetails);
 
     return [
       _yesNoRow(
@@ -99,7 +99,11 @@ class AnamnesisPdfHistorySection {
           'Faz uso de bebida alcoólica?',
           answers[AnamnesisKeys.consumesAlcohol],
           'Frequência?',
-          _value(answers, AnamnesisKeys.alcoholFrequency),
+          _frequencyValue(
+            answers,
+            AnamnesisKeys.alcoholFrequency,
+            AnamnesisKeys.alcoholFrequencyOther,
+          ),
         ),
         _yesNoQuestion(
           'Faz uso de substâncias químicas ou entorpecentes?',
@@ -197,13 +201,17 @@ class AnamnesisPdfHistorySection {
           'Faz uso de protetor solar?',
           answers[AnamnesisKeys.usesSunscreen],
           'Qual?',
-          '${_value(answers, AnamnesisKeys.sunscreenType)} Frequência? ${_value(answers, AnamnesisKeys.sunscreenFrequency)}',
+          '${_value(answers, AnamnesisKeys.sunscreenType)} Frequência? ${_frequencyValue(answers, AnamnesisKeys.sunscreenFrequency, AnamnesisKeys.sunscreenFrequencyOther)}',
         ),
         _yesNoQuestion(
           'Costuma tomar sol?',
           answers[AnamnesisKeys.exposedToSun],
           'Frequência?',
-          _value(answers, AnamnesisKeys.sunExposureFrequency),
+          _frequencyValue(
+            answers,
+            AnamnesisKeys.sunExposureFrequency,
+            AnamnesisKeys.sunExposureFrequencyOther,
+          ),
         ),
       ),
       _yesNoRow(
@@ -279,7 +287,7 @@ class AnamnesisPdfHistorySection {
       _subTitle('Fuma ou Fumou'),
       _stackedQuestion(
         'Fuma',
-        _value(answers, AnamnesisKeys.smokeOrSmoked),
+        _value(answers, AnamnesisKeys.smokingStatus),
         'Quanto tempo?',
         _value(answers, AnamnesisKeys.smokingDuration),
       ),
@@ -365,12 +373,11 @@ class AnamnesisPdfHistorySection {
   }
 
   static pw.Widget _pressureQuestion(Map<String, dynamic> answers) {
-    final pressureValue = _value(answers, AnamnesisKeys.bloodPressure);
-    final pressureStatus = _value(
-      answers,
-      AnamnesisKeys.bloodPressureControlled,
-    );
-    final hasPressure = pressureValue.isNotEmpty && pressureValue != 'NÃO';
+    final hypertension = _value(answers, AnamnesisKeys.hypertensionStatus);
+    final hypotension = _value(answers, AnamnesisKeys.hypotensionStatus);
+    final hasPressure =
+        (hypertension.isNotEmpty && hypertension != 'NÃO') ||
+        (hypotension.isNotEmpty && hypotension != 'NÃO');
 
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -381,10 +388,13 @@ class AnamnesisPdfHistorySection {
         ),
         pw.SizedBox(height: 2),
         if (hasPressure) ...[
-          pw.Text(_pdfSafe(pressureValue), style: AnamnesisPdfStyles.text),
+          pw.Text(
+            _pdfSafe('Hipertensão: $hypertension'),
+            style: AnamnesisPdfStyles.text,
+          ),
           pw.SizedBox(height: 2),
           pw.Text(
-            _pdfSafe('Compensada/descompensada: $pressureStatus'),
+            _pdfSafe('Hipotensão: $hypotension'),
             style: AnamnesisPdfStyles.text,
           ),
         ] else
@@ -398,6 +408,18 @@ class AnamnesisPdfHistorySection {
     if (value == null) return 'NÃO';
     if (value is String && value.trim().isEmpty) return 'NÃO';
     return value.toString();
+  }
+
+  static String _frequencyValue(
+    Map<String, dynamic> answers,
+    String frequencyKey,
+    String otherKey,
+  ) {
+    final value = _value(answers, frequencyKey);
+    if (value == 'outro') {
+      return _value(answers, otherKey);
+    }
+    return value;
   }
 
   static bool? _toYesNoSelection(dynamic value) {

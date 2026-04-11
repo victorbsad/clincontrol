@@ -15,7 +15,8 @@ void main() {
         AnamnesisKeys.email,
         AnamnesisKeys.age,
         AnamnesisKeys.profession,
-        AnamnesisKeys.visitReason,
+        AnamnesisKeys.visitReasonOption,
+        AnamnesisKeys.visitReasonOther,
       ];
 
       for (final field in requiredFields) {
