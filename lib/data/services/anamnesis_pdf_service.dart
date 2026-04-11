@@ -36,75 +36,115 @@ class AnamnesisPdfService {
           pw.SizedBox(height: 12),
           _buildSection('HISTÓRICO', [
             ..._historicoRows(answers),
-            _line('*Uso de Estrogenio - nao pode usar eletrolifting .', _value(answers, 'estrogenioObs')),
           ]),
+          pw.SizedBox(height: 20),
+          pw.Text('*Uso de Estrogenio - nao pode usar eletrolifting .', style: pw.TextStyle(fontSize: 9, fontStyle: pw.FontStyle.italic)),
+          pw.SizedBox(height: 20),
           pw.NewPage(),
           pw.SizedBox(height: 12),
           _buildSection('Avaliação da Pele', [
-            _subTitle('BIOTIPO CUTÂNEO'),
-            _subTitle('Pele Oleosa (Lipídica)'),
-            _pairLine('Sensível', _optionValue(answers['peleOleosaSensivel']), 'Resistente', _optionValue(answers['peleOleosaResistente'])),
-            _pairLine('Pigmentada', _optionValue(answers['peleOleosaPigmentada']), 'Não pigmentada', _optionValue(answers['peleOleosaNaoPigmentada'])),
-            _pairLine('Firme', _optionValue(answers['peleOleosaFirme']), 'Propensa à rugas', _optionValue(answers['peleOleosaRugas'])),
-            _subTitle('Pele Seca (Alípica)'),
-            _pairLine('Sensível', _optionValue(answers['peleSecaSensivel']), 'Resistente', _optionValue(answers['peleSecaResistente'])),
-            _pairLine('Pigmentada', _optionValue(answers['peleSecaPigmentada']), 'Não pigmentada', _optionValue(answers['peleSecaNaoPigmentada'])),
-            _pairLine('Firme', _optionValue(answers['peleSecaFirme']), 'Propensa à rugas', _optionValue(answers['peleSecaRugas'])),
-            _subTitle('Pele mista'),
-            _pairLine('Sensível', _optionValue(answers['peleMistaSensivel']), 'Resistente', _optionValue(answers['peleMistaResistente'])),
-            _pairLine('Pigmentada', _optionValue(answers['peleMistaPigmentada']), 'Não pigmentada', _optionValue(answers['peleMistaNaoPigmentada'])),
-            _pairLine('Firme', _optionValue(answers['peleMistaFirme']), 'Propensa à rugas', _optionValue(answers['peleMistaRugas'])),
-            _subTitle('ANÁLISE DETALHADA DA PELE'),
-            _subTitle('Pele com acne'),
-            _wrapBullets(['Comedão', 'Pústula', 'Pápula', 'Nódulo', 'Hiperqueratinização', 'Mílium', 'Microcisto', 'Acne Inflamatória', 'Acne Não Inflamatória'], [
-              answers['comedao'],
-              answers['pustula'],
-              answers['papula'],
-              answers['nodulo'],
-              answers['hiperqueratinizacao'],
-              answers['milium'],
-              answers['microcisto'],
-              answers['acneInflamatoria'],
-              answers['acneNaoInflamatoria'],
+            _buildSubSection('BIOTIPO CUTANEO', [
+              _buildSubSection('Pele Oleosa (Lipídica)', [
+                _pairLine('Sensível', _checkboxSymbol(answers['peleOleosaSensivel']), 'Resistente', _checkboxSymbol(answers['peleOleosaResistente'])),
+                _pairLine('Pigmentada', _checkboxSymbol(answers['peleOleosaPigmentada']), 'Não pigmentada', _checkboxSymbol(answers['peleOleosaNaoPigmentada'])),
+                _pairLine('Firme', _checkboxSymbol(answers['peleOleosaFirme']), 'Propensa à rugas', _checkboxSymbol(answers['peleOleosaRugas'])),
+              ]),
+              pw.SizedBox(height: 8),
+              _buildSubSection('Pele Seca (Alípica)', [
+                _pairLine('Sensível', _checkboxSymbol(answers['peleSecaSensivel']), 'Resistente', _checkboxSymbol(answers['peleSecaResistente'])),
+                _pairLine('Pigmentada', _checkboxSymbol(answers['peleSecaPigmentada']), 'Não pigmentada', _checkboxSymbol(answers['peleSecaNaoPigmentada'])),
+                _pairLine('Firme', _checkboxSymbol(answers['peleSecaFirme']), 'Propensa à rugas', _checkboxSymbol(answers['peleSecaRugas'])),
+              ]),
+              pw.SizedBox(height: 8),
+              _buildSubSection('Pele Mista', [
+                _pairLine('Sensível', _checkboxSymbol(answers['peleMistaSensivel']), 'Resistente', _checkboxSymbol(answers['peleMistaResistente'])),
+                _pairLine('Pigmentada', _checkboxSymbol(answers['peleMistaPigmentada']), 'Não pigmentada', _checkboxSymbol(answers['peleMistaNaoPigmentada'])),
+                _pairLine('Firme', _checkboxSymbol(answers['peleMistaFirme']), 'Propensa à rugas', _checkboxSymbol(answers['peleMistaRugas'])),
+              ]),
             ]),
-            _subTitle('Lesões dermatológicas'),
-            _wrapBullets(['Telangiectasia/ Nevo', 'Queratose Actínica', 'Nevo Melanocítico', 'Dermatose Papulosa Nigra', 'Papiloma', 'Acrocórdon'], [
-              answers['telangiectasiaNevo'],
-              answers['queratoseActinica'],
-              answers['nevoMelanocitico'],
-              answers['dermatosePapulosaNigra'],
-              answers['papiloma'],
-              answers['acrocordon'],
+            pw.SizedBox(height: 12),
+            _buildSubSection('ANALISE DETALHADA DA PELE', [
+              pw.Row(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Expanded(
+                    child: _buildSubSection('Pele com acne', [
+                      _wrapBullets(['Comedão', 'Pústula', 'Pápula', 'Nódulo', 'Hiperqueratinização', 'Mílium', 'Microcisto', 'Acne Inflamatória', 'Acne Não Inflamatória'], [
+                        answers['comedao'],
+                        answers['pustula'],
+                        answers['papula'],
+                        answers['nodulo'],
+                        answers['hiperqueratinizacao'],
+                        answers['milium'],
+                        answers['microcisto'],
+                        answers['acneInflamatoria'],
+                        answers['acneNaoInflamatoria'],
+                      ]),
+                    ]),
+                  ),
+                  pw.SizedBox(width: 8),
+                  pw.Expanded(
+                    child: _buildSubSection('Lesoes dermatologicas', [
+                      _wrapBullets(['Telangiectasia/ Nevo', 'Queratose Actínica', 'Nevo Melanocítico', 'Dermatose Papulosa Nigra', 'Papiloma', 'Acrocórdon'], [
+                        answers['telangiectasiaNevo'],
+                        answers['queratoseActinica'],
+                        answers['nevoMelanocitico'],
+                        answers['dermatosePapulosaNigra'],
+                        answers['papiloma'],
+                        answers['acrocordon'],
+                      ]),
+                      _line('Outras', _value(answers, 'outrasLesoes')),
+                    ]),
+                  ),
+                  pw.SizedBox(width: 8),
+                  pw.Expanded(
+                    child: _buildSubSection('Dicromias', [
+                      _wrapBullets(['Hiperpimentação inflamatória', 'Fotoenvelhecimento', 'Melasma', 'Efelides', 'Hiperpigmentação orbicular', 'Hipocromia'], [
+                        answers['hiperpigmentacaoInflamatoria'],
+                        answers['fotoenvelhecimento'],
+                        answers['melasma'],
+                        answers['efelides'],
+                        answers['hiperpigmentacaoOrbicular'],
+                        answers['hipocromia'],
+                      ]),
+                      _line('Por quê? Quanto tempo?', _value(answers, 'discromiaJustificativa')),
+                    ]),
+                  ),
+                ],
+              ),
             ]),
-            _line('Outras', _value(answers, 'outrasLesoes')),
-            _subTitle('Discromias'),
-            _wrapBullets(['Hiperpimentação inflamatória', 'Fotoenvelhecimento', 'Melasma', 'Efelides', 'Hiperpigmentação orbicular', 'Hipocromia'], [
-              answers['hiperpigmentacaoInflamatoria'],
-              answers['fotoenvelhecimento'],
-              answers['melasma'],
-              answers['efelides'],
-              answers['hiperpigmentacaoOrbicular'],
-              answers['hipocromia'],
+            pw.SizedBox(height: 12),
+            _buildSubSection('FOTOTIPO', [
+              _line('FOTOTIPO - REATIVIDADE A LUZ ULTRAVIOLETA (Escala Fitzpatrick)', _value(answers, 'fototipo')),
             ]),
-            _line('Por quê? Quanto tempo?', _value(answers, 'discromiaJustificativa')),
-            _line('FOTOTIPO - REATIVIDADE A LUZ ULTRAVIOLETA (Escala Fitzpatrick)', _value(answers, 'fototipo')),
-            _pairLine('OUTROS: DERMATITE', _optionValue(answers['dermatite']), 'PSORIASE', _optionValue(answers['psoriase'])),
-            _line('TRATAMENTO INDICADO', _value(answers, 'tratamentoIndicado')),
-            _line('NÚMERO DE SESSÕES', _value(answers, 'numeroSessoes')),
-            _subTitle('CONTROLE PROCEDIMENTOS'),
-            _tableHeader(['Sessão', 'Data', 'Tratamento']),
-            _tableRow('1ª', _value(answers, 'sessao1Data'), _value(answers, 'sessao1')),
-            _tableRow('2ª', _value(answers, 'sessao2Data'), _value(answers, 'sessao2')),
-            _tableRow('3ª', _value(answers, 'sessao3Data'), _value(answers, 'sessao3')),
-            _tableRow('4ª', _value(answers, 'sessao4Data'), _value(answers, 'sessao4')),
-            _tableRow('5ª', _value(answers, 'sessao5Data'), _value(answers, 'sessao5')),
-            _tableRow('6ª', _value(answers, 'sessao6Data'), _value(answers, 'sessao6')),
-            _tableRow('7ª', _value(answers, 'sessao7Data'), _value(answers, 'sessao7')),
-            _tableRow('8ª', _value(answers, 'sessao8Data'), _value(answers, 'sessao8')),
-            _tableRow('9ª', _value(answers, 'sessao9Data'), _value(answers, 'sessao9')),
-            _tableRow('10ª', _value(answers, 'sessao10Data'), _value(answers, 'sessao10')),
-            _line('PRESCRIÇÃO COSMÉTICA (home care)', _value(answers, 'prescricaoCosmetica')),
+            pw.SizedBox(height: 12),
+            _buildSubSection('OUTROS', [
+              _pairLine('DERMATITE', _checkboxSymbol(answers['dermatite']), 'PSORIASE', _checkboxSymbol(answers['psoriase'])),
+              pw.SizedBox(height: 6),
+              _line('TRATAMENTO INDICADO', _value(answers, 'tratamentoIndicado')),
+              pw.SizedBox(height: 6),
+              _line('NUMERO DE SESSOES', _value(answers, 'numeroSessoes')),
+              pw.SizedBox(height: 6),
+              _subTitle('CONTROLE PROCEDIMENTOS'),
+              _tableHeader(['Sessão', 'Data', 'Tratamento']),
+              _tableRow('1ª', _value(answers, 'sessao1Data'), _value(answers, 'sessao1')),
+              _tableRow('2ª', _value(answers, 'sessao2Data'), _value(answers, 'sessao2')),
+              _tableRow('3ª', _value(answers, 'sessao3Data'), _value(answers, 'sessao3')),
+              _tableRow('4ª', _value(answers, 'sessao4Data'), _value(answers, 'sessao4')),
+              _tableRow('5ª', _value(answers, 'sessao5Data'), _value(answers, 'sessao5')),
+              _tableRow('6ª', _value(answers, 'sessao6Data'), _value(answers, 'sessao6')),
+              _tableRow('7ª', _value(answers, 'sessao7Data'), _value(answers, 'sessao7')),
+              _tableRow('8ª', _value(answers, 'sessao8Data'), _value(answers, 'sessao8')),
+              _tableRow('9ª', _value(answers, 'sessao9Data'), _value(answers, 'sessao9')),
+              _tableRow('10ª', _value(answers, 'sessao10Data'), _value(answers, 'sessao10')),
+            ]),
+            pw.SizedBox(height: 14),
+            _buildSubSection('PRESCRICAO COSMETICA (home care)', [
+              _line('', _value(answers, 'prescricaoCosmetica')),
+            ]),
           ]),
+          pw.SizedBox(height: 20),
+          _buildSignatureSection(client),
         ],
       ),
     );
@@ -119,13 +159,21 @@ class AnamnesisPdfService {
         border: pw.Border.all(color: PdfColors.grey700),
         borderRadius: pw.BorderRadius.circular(6),
       ),
-      child: pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
+      child: pw.Row(
         children: [
-          pw.Text('Ficha de Avaliação Facial', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
-          pw.SizedBox(height: 8),
-          pw.Text(_pdfSafe('Cliente: ${client.name}')),
-          pw.Text(_pdfSafe('Gerado em: ${anamnesis.createdAt.toLocal()}')),
+          pw.Expanded(
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text('Ficha de Avaliação Facial', style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
+                pw.SizedBox(height: 8),
+                pw.Text(_pdfSafe('Cliente: ${client.name}')),
+                pw.Text(_pdfSafe('Gerado em: ${anamnesis.createdAt.toLocal()}')),
+              ],
+            ),
+          ),
+          pw.SizedBox(width: 20),
+          _buildLogoPlaceholder(),
         ],
       ),
     );
@@ -143,6 +191,24 @@ class AnamnesisPdfService {
         children: [
           pw.Text(title, style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
           pw.SizedBox(height: 8),
+          ...lines,
+        ],
+      ),
+    );
+  }
+
+  pw.Widget _buildSubSection(String title, List<pw.Widget> lines) {
+    return pw.Container(
+      padding: const pw.EdgeInsets.all(8),
+      decoration: pw.BoxDecoration(
+        border: pw.Border.all(color: PdfColors.grey600, width: 0.5),
+        borderRadius: pw.BorderRadius.circular(4),
+      ),
+      child: pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text(title, style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold)),
+          pw.SizedBox(height: 6),
           ...lines,
         ],
       ),
@@ -174,6 +240,20 @@ class AnamnesisPdfService {
           pw.Expanded(child: pw.Text('$leftLabel: ${leftValue.isEmpty ? 'NÃO' : leftValue}', style: const pw.TextStyle(fontSize: 9))),
           pw.SizedBox(width: 12),
           pw.Expanded(child: pw.Text('$rightLabel: ${rightValue.isEmpty ? 'NÃO' : rightValue}', style: const pw.TextStyle(fontSize: 9))),
+        ],
+      ),
+    );
+  }
+
+  pw.Widget _stackedQuestion(String label, String value, String subLabel, String subValue) {
+    return pw.Padding(
+      padding: const pw.EdgeInsets.symmetric(vertical: 2),
+      child: pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text('$label: ${value.isEmpty ? 'NÃO' : value}', style: const pw.TextStyle(fontSize: 9)),
+          pw.SizedBox(height: 2),
+          pw.Text('$subLabel: ${subValue.isEmpty ? 'NÃO' : subValue}', style: const pw.TextStyle(fontSize: 9)),
         ],
       ),
     );
@@ -260,9 +340,8 @@ class AnamnesisPdfService {
         _yesNoQuestion('Autoriza divulgação de foto antes/após tratamento?', answers['autorizacaoFoto'], '', _value(answers, 'autorizacaoFotoObs')),
       ),
       _subTitle('Fuma ou Fumou'),
-      _pairLine('Fuma', _value(answers, 'fumaOuFumou'), 'Quanto tempo?', _value(answers, 'tempoTabagismo')),
-      _subTitle('Hipertensão ou Hipotensão?'),
-      _pairLine('Condição', _value(answers, 'pressao'), 'Compensada/descompensada', _value(answers, 'pressaoCompensada')),
+      _stackedQuestion('Fuma', _value(answers, 'fumaOuFumou'), 'Quanto tempo?', _value(answers, 'tempoTabagismo')),
+      _pressureQuestion(answers),
     ];
 
     return rows;
@@ -316,12 +395,14 @@ class AnamnesisPdfService {
   pw.Widget _wrapBullets(List<String> labels, List<dynamic> values) {
     return pw.Padding(
       padding: const pw.EdgeInsets.symmetric(vertical: 2),
-      child: pw.Wrap(
-        spacing: 10,
-        runSpacing: 4,
+      child: pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: List.generate(labels.length, (index) {
-          final value = _optionValue(values[index]);
-          return pw.Text('${labels[index]}: $value', style: const pw.TextStyle(fontSize: 9));
+          final value = _checkboxSymbol(values[index]);
+          return pw.Padding(
+            padding: const pw.EdgeInsets.only(bottom: 2),
+            child: pw.Text('${labels[index]}: $value', style: const pw.TextStyle(fontSize: 9)),
+          );
         }),
       ),
     );
@@ -380,22 +461,22 @@ class AnamnesisPdfService {
     return true;
   }
 
-  String _optionValue(dynamic value) {
-    if (value == null) return 'Não selecionado';
-    if (value is bool) return value ? 'Selecionado' : 'Não selecionado';
+  String _checkboxSymbol(dynamic value) {
+    if (value == null) return '[ ]';
+    if (value is bool) return value ? '[x]' : '[ ]';
 
     final normalized = value.toString().trim().toLowerCase();
-    if (normalized.isEmpty) return 'Não selecionado';
+    if (normalized.isEmpty) return '[ ]';
 
     if (normalized == 'true' || normalized == 'sim' || normalized == 'yes' || normalized == 'selecionado') {
-      return 'Selecionado';
+      return '[x]';
     }
 
     if (normalized == 'false' || normalized == 'nao' || normalized == 'não' || normalized == 'no' || normalized == 'não selecionado') {
-      return 'Não selecionado';
+      return '[ ]';
     }
 
-    return value.toString();
+    return '[ ]';
   }
 
   String _formatDate(String value) {
@@ -415,5 +496,67 @@ class AnamnesisPdfService {
         .replaceAll('☐', '[ ]')
         .replaceAll('☑', '[x]')
         .replaceAll('✓', 'v');
+  }
+
+  pw.Widget _buildLogoPlaceholder() {
+    return pw.Container(
+      width: 80,
+      height: 80,
+      decoration: pw.BoxDecoration(
+        border: pw.Border.all(color: PdfColors.grey400, width: 1),
+        borderRadius: pw.BorderRadius.circular(4),
+      ),
+      child: pw.Center(
+        child: pw.Text('[Logo]', style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600)),
+      ),
+    );
+  }
+
+  pw.Widget _buildSignatureSection(Client client) {
+    final currentDate = _formatBrazilianDate(DateTime.now());
+
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text('Assinatura da Paciente:', style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
+        pw.SizedBox(height: 60),
+        pw.Container(
+          width: double.infinity,
+          height: 1,
+          color: PdfColors.black,
+        ),
+        pw.SizedBox(height: 6),
+        pw.Text(_pdfSafe('Nome: ${client.name}'), style: const pw.TextStyle(fontSize: 9)),
+        pw.SizedBox(height: 2),
+        pw.Text(_pdfSafe('Data: $currentDate'), style: const pw.TextStyle(fontSize: 9)),
+      ],
+    );
+  }
+
+  String _formatBrazilianDate(DateTime date) {
+    final day = date.day.toString().padLeft(2, '0');
+    final month = date.month.toString().padLeft(2, '0');
+    final year = date.year.toString();
+    return '$day/$month/$year';
+  }
+
+  pw.Widget _pressureQuestion(Map<String, dynamic> answers) {
+    final pressureValue = _value(answers, 'pressao');
+    final pressureStatus = _value(answers, 'pressaoCompensada');
+    final hasPressure = pressureValue.isNotEmpty && pressureValue != 'NÃO';
+
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text('Hipertensão ou Hipotensão?', style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold)),
+        pw.SizedBox(height: 2),
+        if (hasPressure) ...[
+          pw.Text(_pdfSafe(pressureValue), style: const pw.TextStyle(fontSize: 9)),
+          pw.SizedBox(height: 2),
+          pw.Text(_pdfSafe('Compensada/descompensada: $pressureStatus'), style: const pw.TextStyle(fontSize: 9)),
+        ] else
+          pw.Text('NÃO', style: const pw.TextStyle(fontSize: 9)),
+      ],
+    );
   }
 }
