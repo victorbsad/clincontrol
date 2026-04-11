@@ -22,6 +22,14 @@ class _ClientRegisterState extends State<ClientRegister> {
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _notesController = TextEditingController();
+  final _maritalStatusController = TextEditingController();
+  final _nationalityController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _whatsappController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _dateOfBirthController = TextEditingController();
+  final _ageController = TextEditingController();
+  final _professionController = TextEditingController();
 
   //Regex numero telefone
   final _phoneFormatter = MaskTextInputFormatter(
@@ -39,6 +47,14 @@ class _ClientRegisterState extends State<ClientRegister> {
       _nameController.text = widget.client!.name;
       _phoneController.text = widget.client!.phone;
       _notesController.text = widget.client!.notes;
+      _maritalStatusController.text = widget.client!.maritalStatus;
+      _nationalityController.text = widget.client!.nationality;
+      _addressController.text = widget.client!.address;
+      _whatsappController.text = widget.client!.whatsapp;
+      _emailController.text = widget.client!.email;
+      _dateOfBirthController.text = widget.client!.dateOfBirth;
+      _ageController.text = widget.client!.age;
+      _professionController.text = widget.client!.profession;
     }
   }
 
@@ -48,6 +64,14 @@ class _ClientRegisterState extends State<ClientRegister> {
     _nameController.dispose();
     _phoneController.dispose();
     _notesController.dispose();
+    _maritalStatusController.dispose();
+    _nationalityController.dispose();
+    _addressController.dispose();
+    _whatsappController.dispose();
+    _emailController.dispose();
+    _dateOfBirthController.dispose();
+    _ageController.dispose();
+    _professionController.dispose();
     super.dispose();
   }
 
@@ -60,6 +84,14 @@ class _ClientRegisterState extends State<ClientRegister> {
       name: _nameController.text.trim(),
       phone: _phoneController.text.trim(),
       notes: _notesController.text.trim(),
+      maritalStatus: _maritalStatusController.text.trim(),
+      nationality: _nationalityController.text.trim(),
+      address: _addressController.text.trim(),
+      whatsapp: _whatsappController.text.trim(),
+      email: _emailController.text.trim(),
+      dateOfBirth: _dateOfBirthController.text.trim(),
+      age: _ageController.text.trim(),
+      profession: _professionController.text.trim(),
     );
 
     if(_editing) {
@@ -87,14 +119,14 @@ class _ClientRegisterState extends State<ClientRegister> {
             children: [
 
               // Campo Nome
-              const Text('Nome', style: TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
               TextFormField(
                 controller: _nameController,
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'[a-zA-ZÀ-ÿ\s]')),
                 ],
                 decoration: InputDecoration(
+                  labelText: 'Nome',
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w600),
                   hintText: 'Ex: Ana Silva',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -111,13 +143,13 @@ class _ClientRegisterState extends State<ClientRegister> {
               const SizedBox(height: 20),
 
               //Campo Telefone
-              const Text('Telefone', style: TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
               TextFormField(
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
                 inputFormatters: [_phoneFormatter],
                 decoration: InputDecoration(
+                  labelText: 'Telefone',
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w600),
                   hintText: 'Ex: (54) 99999-1234',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -133,13 +165,140 @@ class _ClientRegisterState extends State<ClientRegister> {
 
               const SizedBox(height: 20),
 
+              TextFormField(
+                controller: _maritalStatusController,
+                decoration: InputDecoration(
+                  labelText: 'Estado civil',
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w600),
+                  hintText: 'Ex: Solteira',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              TextFormField(
+                controller: _nationalityController,
+                decoration: InputDecoration(
+                  labelText: 'Nacionalidade',
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w600),
+                  hintText: 'Ex: Brasileira',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              TextFormField(
+                controller: _addressController,
+                maxLines: 2,
+                decoration: InputDecoration(
+                  labelText: 'Endereço',
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w600),
+                  hintText: 'Ex: Rua Exemplo, 123 - Bairro',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              TextFormField(
+                controller: _whatsappController,
+                keyboardType: TextInputType.phone,
+                inputFormatters: [_phoneFormatter],
+                decoration: InputDecoration(
+                  labelText: 'WhatsApp',
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w600),
+                  hintText: 'Ex: (54) 99999-1234',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              TextFormField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w600),
+                  hintText: 'Ex: nome@email.com',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) return null;
+                  final email = value.trim();
+                  final emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
+                  if (!emailRegex.hasMatch(email)) {
+                    return 'Email inválido';
+                  }
+                  return null;
+                },
+              ),
+
+              const SizedBox(height: 20),
+
+              TextFormField(
+                controller: _dateOfBirthController,
+                decoration: InputDecoration(
+                  labelText: 'Data de nascimento',
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w600),
+                  hintText: 'Ex: 1994-05-20',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              TextFormField(
+                controller: _ageController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration: InputDecoration(
+                  labelText: 'Idade',
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w600),
+                  hintText: 'Ex: 31',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              TextFormField(
+                controller: _professionController,
+                decoration: InputDecoration(
+                  labelText: 'Profissão',
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w600),
+                  hintText: 'Ex: Esteticista',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
               //Campo Observação
-              const Text('Observação', style: TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
               TextFormField(
                 controller: _notesController,
                 maxLines: 3,
                 decoration: InputDecoration(
+                  labelText: 'Observação',
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w600),
                   hintText: 'Pele sensível, alergias...',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),

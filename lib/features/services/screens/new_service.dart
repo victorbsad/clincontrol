@@ -109,49 +109,40 @@ class _NewServiceState extends State<NewService> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               //Campo Cliente
-              const Text(
-                'Cliente',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade400),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<Client>(
-                    hint: const Text('Selecionar cliente...'),
-                    value: _selectedClient,
-                    isExpanded: true,
-                    items: _clients.map((client) {
-                      return DropdownMenuItem<Client>(
-                        value: client,
-                        child: Text(client.name),
-                      );
-                    }).toList(),
-                    onChanged: (client) {
-                      setState(() => _selectedClient = client);
-                    },
+              DropdownButtonFormField<Client>(
+                decoration: InputDecoration(
+                  labelText: 'Cliente',
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w600),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
+                hint: const Text('Selecionar cliente...'),
+                initialValue: _selectedClient,
+                isExpanded: true,
+                items: _clients.map((client) {
+                  return DropdownMenuItem<Client>(
+                    value: client,
+                    child: Text(client.name),
+                  );
+                }).toList(),
+                onChanged: (client) {
+                  setState(() => _selectedClient = client);
+                },
               ),
 
               const SizedBox(height: 20),
 
               //Campo data
-              const Text('Data', style: TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
               GestureDetector(
                 onTap: _selectDate,
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade400),
-                    borderRadius: BorderRadius.circular(12),
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: 'Data',
+                    labelStyle: const TextStyle(fontWeight: FontWeight.w600),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -173,14 +164,11 @@ class _NewServiceState extends State<NewService> {
               const SizedBox(height: 20),
 
               //Camo Procedimento
-              const Text(
-                'Procedimento',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 8),
               TextFormField(
                 controller: _procedureController,
                 decoration: InputDecoration(
+                  labelText: 'Procedimento',
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w600),
                   hintText: 'Ex: Limpeza de pele, design de sobrancelha...',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -197,11 +185,6 @@ class _NewServiceState extends State<NewService> {
               const SizedBox(height: 20),
 
               //Campo Valor
-              const Text(
-                'Valor cobrado (R\$)',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 8),
               TextFormField(
                 controller: _amountController,
                 keyboardType: const TextInputType.numberWithOptions(
@@ -211,6 +194,8 @@ class _NewServiceState extends State<NewService> {
                   FilteringTextInputFormatter.allow(RegExp(r'[0-9,.]')),
                 ],
                 decoration: InputDecoration(
+                  labelText: 'Valor cobrado (R\$)',
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w600),
                   hintText: '0,00',
                   prefixText: 'R\$',
                   border: OutlineInputBorder(

@@ -15,6 +15,14 @@ class DevMockModels {
       name: name ?? 'Cliente Dev $timestamp',
       phone: '(11) 99999-0000',
       notes: '$notesMarker Gerado para laboratorio de CRUD.',
+      maritalStatus: 'Solteira',
+      nationality: 'Brasileira',
+      address: 'Rua Exemplo, 123 - Centro',
+      whatsapp: '(11) 98888-0000',
+      email: 'cliente.dev.$timestamp@example.com',
+      dateOfBirth: '1994-05-20',
+      age: '31',
+      profession: 'Profissao de Teste',
     );
   }
 
@@ -50,10 +58,6 @@ class DevMockModels {
 
   static Map<String, dynamic> sampleAnswers() {
     return {
-      AnamnesisKeys.maritalStatus: 'Solteira',
-      AnamnesisKeys.nationality: 'Brasileira',
-      AnamnesisKeys.profession: 'Profissao de Teste',
-      AnamnesisKeys.age: 30,
       AnamnesisKeys.hasAllergies: false,
       AnamnesisKeys.visitReason: 'Validacao de fluxo em desenvolvimento',
     };

@@ -32,25 +32,25 @@ class AnamnesisPdfService {
             _line('Nome', client.name),
             _pairLine(
               'Estado civil',
-              _value(answers, AnamnesisKeys.maritalStatus),
+              _clientValue(client.maritalStatus),
               'Nacionalidade',
-              _value(answers, AnamnesisKeys.nationality),
+              _clientValue(client.nationality),
             ),
-            _line('Endereço completo', _value(answers, AnamnesisKeys.address)),
+            _line('Endereço completo', _clientValue(client.address)),
             _pairLine(
               'Telefone',
-              _value(answers, AnamnesisKeys.phone),
+              _clientValue(client.phone),
               'WhatsApp',
-              _value(answers, AnamnesisKeys.whatsapp),
+              _clientValue(client.whatsapp),
             ),
-            _line('Email', _value(answers, AnamnesisKeys.email)),
+            _line('Email', _clientValue(client.email)),
             _pairLine(
               'Data de nascimento',
-              _formatDate(_value(answers, AnamnesisKeys.dateOfBirth)),
+              _formatDate(_clientValue(client.dateOfBirth)),
               'Idade',
-              _value(answers, AnamnesisKeys.age),
+              _clientValue(client.age),
             ),
-            _line('Profissão', _value(answers, AnamnesisKeys.profession)),
+            _line('Profissão', _clientValue(client.profession)),
             _line('Motivo da visita', _motivoVisitaLine(answers)),
           ]),
           pw.SizedBox(height: 12),
@@ -137,6 +137,12 @@ class AnamnesisPdfService {
 
   String _motivoVisitaLine(Map<String, dynamic> answers) {
     return _value(answers, AnamnesisKeys.visitReason);
+  }
+
+  String _clientValue(String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return 'NÃO';
+    return trimmed;
   }
 
   pw.Widget _wrapBullets(List<String> labels, List<dynamic> values) {
