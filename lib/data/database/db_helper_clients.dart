@@ -1,22 +1,51 @@
 part of 'db_helper.dart';
 
 extension DbHelperClientOperations on DbHelper {
-  Future<int> insertClient(Client client) async {
-    final db = await database;
-    return await db.insert('clients', {
+  Map<String, Object?> _clientToDbMap(Client client, {bool includeDeletedAt = true}) {
+    final map = <String, Object?>{
       'name': client.name,
       'phone': client.phone,
       'notes': client.notes,
-      'maritalStatus': client.maritalStatus,
+      'marital_status': client.maritalStatus,
       'nationality': client.nationality,
       'address': client.address,
       'whatsapp': client.whatsapp,
       'email': client.email,
-      'dateOfBirth': client.dateOfBirth,
+      'date_of_birth': client.dateOfBirth,
       'age': client.age,
       'profession': client.profession,
-      'deleted_at': client.deletedAt?.toIso8601String(),
-    });
+    };
+
+    if (includeDeletedAt) {
+      map['deleted_at'] = client.deletedAt?.toIso8601String();
+    }
+
+    return map;
+  }
+
+  Client _clientFromDbMap(Map<String, Object?> map) {
+    return Client(
+      id: map['id'] as int?,
+      name: (map['name'] as String?) ?? '',
+      phone: (map['phone'] as String?) ?? '',
+      notes: (map['notes'] as String?) ?? '',
+      maritalStatus: (map['marital_status'] as String?) ?? '',
+      nationality: (map['nationality'] as String?) ?? '',
+      address: (map['address'] as String?) ?? '',
+      whatsapp: (map['whatsapp'] as String?) ?? '',
+      email: (map['email'] as String?) ?? '',
+      dateOfBirth: (map['date_of_birth'] as String?) ?? '',
+      age: (map['age'] as String?) ?? '',
+      profession: (map['profession'] as String?) ?? '',
+      deletedAt: map['deleted_at'] != null
+          ? DateTime.tryParse(map['deleted_at'] as String)
+          : null,
+    );
+  }
+
+  Future<int> insertClient(Client client) async {
+    final db = await database;
+    return await db.insert('clients', _clientToDbMap(client));
   }
 
   Future<List<Client>> fetchClients({bool includeDeleted = false}) async {
@@ -26,27 +55,7 @@ extension DbHelperClientOperations on DbHelper {
       where: includeDeleted ? null : 'deleted_at IS NULL',
     );
 
-    return rows
-        .map(
-          (map) => Client(
-            id: map['id'],
-            name: map['name'],
-            phone: map['phone'] ?? '',
-            notes: map['notes'] ?? '',
-            maritalStatus: map['maritalStatus'] ?? '',
-            nationality: map['nationality'] ?? '',
-            address: map['address'] ?? '',
-            whatsapp: map['whatsapp'] ?? '',
-            email: map['email'] ?? '',
-            dateOfBirth: map['dateOfBirth'] ?? '',
-            age: map['age'] ?? '',
-            profession: map['profession'] ?? '',
-            deletedAt: map['deleted_at'] != null
-                ? DateTime.tryParse(map['deleted_at'] as String)
-                : null,
-          ),
-        )
-        .toList();
+    return rows.map(_clientFromDbMap).toList();
   }
 
   Future<Client?> fetchClientById(int id) async {
@@ -59,43 +68,14 @@ extension DbHelperClientOperations on DbHelper {
     );
 
     if (rows.isEmpty) return null;
-    final map = rows.first;
-    return Client(
-      id: map['id'],
-      name: map['name'],
-      phone: map['phone'] ?? '',
-      notes: map['notes'] ?? '',
-      maritalStatus: map['maritalStatus'] ?? '',
-      nationality: map['nationality'] ?? '',
-      address: map['address'] ?? '',
-      whatsapp: map['whatsapp'] ?? '',
-      email: map['email'] ?? '',
-      dateOfBirth: map['dateOfBirth'] ?? '',
-      age: map['age'] ?? '',
-      profession: map['profession'] ?? '',
-      deletedAt: map['deleted_at'] != null
-          ? DateTime.tryParse(map['deleted_at'] as String)
-          : null,
-    );
+    return _clientFromDbMap(rows.first);
   }
 
   Future<int> updateClient(Client client) async {
     final db = await database;
     return await db.update(
       'clients',
-      {
-        'name': client.name,
-        'phone': client.phone,
-        'notes': client.notes,
-        'maritalStatus': client.maritalStatus,
-        'nationality': client.nationality,
-        'address': client.address,
-        'whatsapp': client.whatsapp,
-        'email': client.email,
-        'dateOfBirth': client.dateOfBirth,
-        'age': client.age,
-        'profession': client.profession,
-      },
+      _clientToDbMap(client, includeDeletedAt: false),
       where: 'id = ? AND deleted_at IS NULL',
       whereArgs: [client.id],
     );
