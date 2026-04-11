@@ -170,7 +170,7 @@ class AnamnesisPdfService {
                           'Acrocórdon',
                         ],
                         [
-                          _getAnswer(answers, AnamnesisKeys.hasTelangiecatsiaNevus),
+                          _getAnswer(answers, AnamnesisKeys.hasTelangiectasiaNevus),
                           _getAnswer(answers, AnamnesisKeys.hasActinicKeratosis),
                           _getAnswer(answers, AnamnesisKeys.hasMelanocyticNevus),
                           _getAnswer(answers, AnamnesisKeys.hasDermatosisPapulosa),

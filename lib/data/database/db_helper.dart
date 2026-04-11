@@ -375,7 +375,7 @@ class DbHelper {
       AnamnesisKeys.hasMicrocyst: false,
       AnamnesisKeys.hasInflammatoryAcne: false,
       AnamnesisKeys.hasNonInflammatoryAcne: true,
-      AnamnesisKeys.hasTelangiecatsiaNevus: false,
+      AnamnesisKeys.hasTelangiectasiaNevus: false,
       AnamnesisKeys.hasActinicKeratosis: false,
       AnamnesisKeys.hasMelanocyticNevus: true,
       AnamnesisKeys.hasDermatosisPapulosa: false,

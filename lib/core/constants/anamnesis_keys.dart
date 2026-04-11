@@ -173,7 +173,7 @@ class AnamnesisKeys {
   static const String hasNonInflammatoryAcne = 'hasNonInflammatoryAcne';
 
   // ========== LESÕES DERMATOLÓGICAS (Dermatological Lesions) ==========
-  static const String hasTelangiecatsiaNevus = 'hasTelangiecatsiaNevus';
+  static const String hasTelangiectasiaNevus = 'hasTelangiectasiaNevus';
   static const String hasActinicKeratosis = 'hasActinicKeratosis';
   static const String hasMelanocyticNevus = 'hasMelanocyticNevus';
   static const String hasDermatosisPapulosa = 'hasDermatosisPapulosa';
