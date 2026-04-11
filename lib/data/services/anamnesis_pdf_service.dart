@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:pdf/pdf.dart';
+import 'package:pdf/google_fonts.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import '../../core/constants/anamnesis_keys.dart';
@@ -10,20 +11,38 @@ import '../models/client.dart';
 class AnamnesisPdfService {
   const AnamnesisPdfService();
 
-  static final titleFont = pw.Font.helveticaBold();
-  static final regularFont = pw.Font.helvetica();
+  static Future<pw.ThemeData>? _cachedThemeFuture;
+
+  static Future<pw.ThemeData> _loadPdfTheme() {
+    _cachedThemeFuture ??= _buildPdfTheme();
+    return _cachedThemeFuture!;
+  }
+
+  static Future<pw.ThemeData> _buildPdfTheme() async {
+    final regular = await PdfGoogleFonts.notoSansRegular();
+    final bold = await PdfGoogleFonts.notoSansBold();
+    final italic = await PdfGoogleFonts.notoSansItalic();
+    final boldItalic = await PdfGoogleFonts.notoSansBoldItalic();
+
+    return pw.ThemeData.withFont(
+      base: regular,
+      bold: bold,
+      italic: italic,
+      boldItalic: boldItalic,
+    );
+  }
 
   //Style constants
-  static final titleStyle = pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, font: titleFont);
-  static final subTitleStyle = pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold, font: titleFont);
-  static final textStyle = pw.TextStyle(fontSize: 9, font: regularFont);
-  static final boldStyle = pw.TextStyle (fontSize: 10, fontWeight: pw.FontWeight.bold, font: regularFont);
+  static final titleStyle = pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold);
+  static final subTitleStyle = pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold);
+  static final textStyle = pw.TextStyle(fontSize: 9);
+  static final boldStyle = pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold);
 
   Future<Uint8List> generate({
     required Client client,
     required Anamnesis anamnesis,
   }) async {
-    final document = pw.Document();
+    final document = pw.Document(theme: await _loadPdfTheme());
     final answers = anamnesis.answers;
 
     document.addPage(
