@@ -8,7 +8,7 @@ import '../../../data/repositories/client_repository.dart';
 import '../../../data/repositories/service_repository.dart';
 import '../../../data/services/anamnesis_pdf_service.dart';
 import '../../clients/screens/client_list.dart';
-import '../../debug/screens/crud_test_page.dart';
+import '../../debug/debug_navigation.dart';
 import '../../services/screens/new_service.dart';
 
 // ─── DASHBOARD ───────────────────────────────────────
@@ -243,14 +243,7 @@ class _DashboardState extends State<Dashboard> {
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const CrudTestPage(),
-                            ),
-                          );
-                        },
+                        onPressed: () => DebugNavigation.openCrudLab(context),
                         icon: const Icon(Icons.science_outlined),
                         label: const Text('Lab CRUD (teste)'),
                         style: OutlinedButton.styleFrom(
