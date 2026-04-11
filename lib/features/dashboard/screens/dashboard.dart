@@ -47,9 +47,7 @@ class _DashboardState extends State<Dashboard> {
 
   Future<void> _openSeedPdf() async {
     try {
-      final clients = await _clientRepository.findAll();
-      final matchingClients = clients.where((item) => item.id == 1).toList();
-      final client = matchingClients.isNotEmpty ? matchingClients.first : null;
+      final client = await _clientRepository.findById(1);
       final anamneses = await _anamnesisRepository.findByClientId(1);
       final anamnesis = anamneses.isNotEmpty ? anamneses.first : null;
 
