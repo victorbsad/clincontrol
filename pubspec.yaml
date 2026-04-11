@@ -12,6 +12,8 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  pdf: ^3.11.3
+  printing: ^5.14.2
   sqflite: ^2.3.0
   sqflite_common_ffi: ^2.3.0
   sqflite_common_ffi_web: ^1.1.1
