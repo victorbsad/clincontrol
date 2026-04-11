@@ -87,13 +87,14 @@ class DbHelper {
 
   Future<int> insertAnamnesis(Anamnesis anamnesis) async {
     final db = await database;
-    final now = (anamnesis.createdAt).toIso8601String();
+    final createdAt = anamnesis.createdAt.toIso8601String();
+    final updatedAt = anamnesis.updatedAt.toIso8601String();
 
     return await db.transaction((txn) async {
       final anamnesisId = await txn.insert('anamneses', {
         'client_id': anamnesis.clientId,
-        'created_at': now,
-        'updated_at': now,
+        'created_at': createdAt,
+        'updated_at': updatedAt,
       });
 
       for (final entry in _normalizeAnswers(anamnesis.answers)) {
@@ -193,7 +194,7 @@ class DbHelper {
     }
 
     final db = await database;
-    final updatedAt = DateTime.now().toIso8601String();
+    final updatedAt = anamnesis.updatedAt.toIso8601String();
 
     return await db.transaction((txn) async {
       await txn.update(

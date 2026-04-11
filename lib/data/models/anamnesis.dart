@@ -12,7 +12,7 @@ class Anamnesis {
     DateTime? updatedAt,
     Map<String, dynamic>? answers,
   })  : createdAt = createdAt ?? DateTime.now(),
-        updatedAt = updatedAt ?? DateTime.now(),
+        updatedAt = updatedAt ?? createdAt ?? DateTime.now(),
         answers = answers ?? {};
 }
 
