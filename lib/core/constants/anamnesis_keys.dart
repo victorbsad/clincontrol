@@ -613,7 +613,7 @@ class AnamnesisKeys {
     session8: 'sessao8',
     session9Date: 'sessao9Data',
     session9: 'sessao9',
-    session10Date: 'sessao10Date',
+    session10Date: 'sessao10Data',
     session10: 'sessao10',
     // Prescrição
     cosmeticPrescription: 'prescricaoCosmetica',
