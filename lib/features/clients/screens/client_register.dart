@@ -14,7 +14,7 @@ class ClientRegister extends StatefulWidget{
 }
 
 class _ClientRegisterState extends State<ClientRegister> {
-  final ClientRepository _repository = ClientRepository();
+  final ClientRepository _clientRepository = ClientRepository();
   final _formKey = GlobalKey<FormState>();
   bool _saving = false;
 
@@ -63,9 +63,9 @@ class _ClientRegisterState extends State<ClientRegister> {
     );
 
     if(_editing) {
-      await _repository.update(client);
+      await _clientRepository.update(client);
     } else {
-      await _repository.save(client);
+      await _clientRepository.save(client);
     }
 
     // Volta para a tela anterior

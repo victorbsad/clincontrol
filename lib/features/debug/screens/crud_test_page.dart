@@ -99,12 +99,12 @@ class _CrudTestPageState extends State<CrudTestPage> {
     final output = StringBuffer();
     output.writeln('Total de clientes: ${clients.length}');
     output.writeln('');
-    for (final c in clients) {
+    for (final clientItem in clients) {
       output.writeln('---');
-      output.writeln('ID: ${c.id}');
-      output.writeln('Nome: ${c.name}');
-      output.writeln('Telefone: ${c.phone}');
-      output.writeln('Notas: ${c.notes}');
+      output.writeln('id: ${clientItem.id}');
+      output.writeln('name: ${clientItem.name}');
+      output.writeln('phone: ${clientItem.phone}');
+      output.writeln('notes: ${clientItem.notes}');
       output.writeln('');
     }
 
