@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../../data/models/anamnesis.dart';
 import '../../../data/models/client.dart';
 import '../../../data/models/service.dart';
+import '../../../data/repositories/anamnesis_repository.dart';
 import '../../../data/repositories/client_repository.dart';
 import '../../../data/repositories/service_repository.dart';
 
@@ -15,6 +17,7 @@ class CrudTestPage extends StatefulWidget {
 class _CrudTestPageState extends State<CrudTestPage> {
   final ClientRepository _clientRepository = ClientRepository();
   final ServiceRepository _serviceRepository = ServiceRepository();
+  final AnamnesisRepository _anamnesisRepository = AnamnesisRepository();
 
   bool _isRunning = false;
   final List<String> _logs = [];
@@ -34,6 +37,21 @@ class _CrudTestPageState extends State<CrudTestPage> {
     setState(() {
       _logs.insert(0, '[$stamp] $text');
     });
+  }
+
+  String _formatJson(dynamic obj) {
+    if (obj == null) return 'null';
+    if (obj is String || obj is num || obj is bool) return obj.toString();
+    if (obj is List) {
+      return '[\n  ${obj.map((item) => _formatJson(item)).join(',\n  ')}\n]';
+    }
+    if (obj is Map) {
+      final entries = obj.entries
+          .map((e) => '"${e.key}": ${_formatJson(e.value)}')
+          .join(',\n  ');
+      return '{\n  $entries\n}';
+    }
+    return obj.toString();
   }
 
   Future<void> _runAction(
@@ -77,12 +95,19 @@ class _CrudTestPageState extends State<CrudTestPage> {
       return 'findAll retornou lista vazia';
     }
 
-    final preview = clients
-        .take(5)
-        .map((c) => 'id=${c.id} | nome=${c.name} | telefone=${c.phone}')
-        .join('\n');
+    final output = StringBuffer();
+    output.writeln('Total de clientes: ${clients.length}');
+    output.writeln('');
+    for (final c in clients) {
+      output.writeln('---');
+      output.writeln('ID: ${c.id}');
+      output.writeln('Nome: ${c.name}');
+      output.writeln('Telefone: ${c.phone}');
+      output.writeln('Notas: ${c.notes}');
+      output.writeln('');
+    }
 
-    return 'Total de clientes: ${clients.length}\n$preview';
+    return output.toString();
   }
 
   Future<String> _updateFirstClient() async {
@@ -158,6 +183,122 @@ class _CrudTestPageState extends State<CrudTestPage> {
     final count = await _serviceRepository.getMonthlyCount(now.month, now.year);
 
     return 'Quantidade de atendimentos do mês ${now.month}/${now.year}: $count';
+  }
+
+  Future<String> _saveAnamnesis() async {
+    var clients = await _clientRepository.findAll();
+    if (clients.isEmpty) {
+      final id = await _clientRepository.save(
+        Client(
+          name: 'Cliente Base Anamnese',
+          phone: '(11) 98888-0000',
+          notes: 'Criado automaticamente para teste de anamnese',
+        ),
+      );
+      _addLog('Cliente base criado automaticamente: id=$id');
+      clients = await _clientRepository.findAll();
+    }
+
+    final client = clients.first;
+    final anamnesis = Anamnesis(
+      clientId: client.id!,
+      answers: {
+        'estadoCivil': 'Solteira',
+        'nacionalidade': 'Brasileira',
+        'profissao': 'Teste Profissão',
+        'idade': 30,
+      },
+    );
+
+    final id = await _anamnesisRepository.save(anamnesis);
+    return 'Anamnese criada: id=$id para client_id=${client.id}';
+  }
+
+  Future<String> _findAnamnesisForFirstClient() async {
+    final clients = await _clientRepository.findAll();
+    if (clients.isEmpty) {
+      return 'Não há clientes para buscar anamneses';
+    }
+
+    final anamneses = await _anamnesisRepository.findByClientId(
+      clients.first.id!,
+    );
+    if (anamneses.isEmpty) {
+      return 'Nenhuma anamnese encontrada para cliente id=${clients.first.id}';
+    }
+
+    final output = StringBuffer();
+    output.writeln('Total de anamneses encontradas: ${anamneses.length}');
+    output.writeln('');
+    for (final a in anamneses) {
+      output.writeln('---');
+      output.writeln('ID: ${a.id}');
+      output.writeln('Cliente ID: ${a.clientId}');
+      output.writeln('Criado em: ${a.createdAt}');
+      output.writeln('Atualizado em: ${a.updatedAt}');
+      output.writeln('Respostas: ${_formatJson(a.answers)}');
+      output.writeln('');
+    }
+
+    return output.toString();
+  }
+
+  Future<String> _findAnamnesisById() async {
+    final anamneses = await _anamnesisRepository.findByClientId(1);
+    if (anamneses.isEmpty) {
+      return 'Nenhuma anamnese encontrada';
+    }
+
+    final first = anamneses.first;
+    final found = await _anamnesisRepository.findById(first.id!);
+    if (found == null) {
+      return 'Anamnese não encontrada com id=${first.id}';
+    }
+
+    final output = StringBuffer();
+    output.writeln('Anamnese encontrada:');
+    output.writeln('ID: ${found.id}');
+    output.writeln('Cliente ID: ${found.clientId}');
+    output.writeln('Criado em: ${found.createdAt}');
+    output.writeln('Atualizado em: ${found.updatedAt}');
+    output.writeln('Respostas:');
+    output.writeln(_formatJson(found.answers));
+
+    return output.toString();
+  }
+
+  Future<String> _updateAnamnesis() async {
+    final anamneses = await _anamnesisRepository.findByClientId(1);
+    if (anamneses.isEmpty) {
+      return 'Não há anamneses para atualizar';
+    }
+
+    final first = anamneses.first;
+    final updated = Anamnesis(
+      id: first.id,
+      clientId: first.clientId,
+      createdAt: first.createdAt,
+      answers: {
+        ...first.answers,
+        'profissao': 'Profissão Atualizada',
+        'atualizadoEm': 'Lab Teste',
+      },
+    );
+
+    final rows = await _anamnesisRepository.update(updated);
+    return 'Linhas afetadas: $rows | Anamnese id=${first.id}';
+  }
+
+  Future<String> _deleteAnamnesis() async {
+    final anamnese = await _anamnesisRepository.findByClientId(1);
+    if (anamnese.isEmpty) {
+      return 'Não há anamneses para remover';
+    }
+
+    final last = anamnese.last;
+    final rows = await _anamnesisRepository.delete(last.id!);
+
+    return 'Linhas afetadas: $rows | Anamnese removida id=${last.id}';
   }
 
   Widget _methodCard({
@@ -266,6 +407,37 @@ class _CrudTestPageState extends State<CrudTestPage> {
                   method:
                       'ServiceRepository.getMonthlyCount(int month, int year)',
                   onRun: _getMonthlyCount,
+                ),
+                const Divider(height: 24),
+                const Text(
+                  'ANAMNESE',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(height: 12),
+                _methodCard(
+                  title: 'Anamnese: criar',
+                  method: 'AnamnesisRepository.save(Anamnesis anamnesis)',
+                  onRun: _saveAnamnesis,
+                ),
+                _methodCard(
+                  title: 'Anamnese: listar por cliente',
+                  method: 'AnamnesisRepository.findByClientId(int clientId)',
+                  onRun: _findAnamnesisForFirstClient,
+                ),
+                _methodCard(
+                  title: 'Anamnese: buscar por ID',
+                  method: 'AnamnesisRepository.findById(int id)',
+                  onRun: _findAnamnesisById,
+                ),
+                _methodCard(
+                  title: 'Anamnese: atualizar primeira',
+                  method: 'AnamnesisRepository.update(Anamnesis anamnesis)',
+                  onRun: _updateAnamnesis,
+                ),
+                _methodCard(
+                  title: 'Anamnese: remover última',
+                  method: 'AnamnesisRepository.delete(int id)',
+                  onRun: _deleteAnamnesis,
                 ),
               ],
             ),
