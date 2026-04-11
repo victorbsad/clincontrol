@@ -1,36 +1,15 @@
 import 'dart:typed_data';
 
 import 'package:pdf/pdf.dart';
-import 'package:printing/printing.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import '../../core/constants/anamnesis_keys.dart';
 import '../models/anamnesis.dart';
 import '../models/client.dart';
+import 'pdf/pdf_theme_provider.dart';
 
 class AnamnesisPdfService {
   const AnamnesisPdfService();
-
-  static Future<pw.ThemeData>? _cachedThemeFuture;
-
-  static Future<pw.ThemeData> _loadPdfTheme() {
-    _cachedThemeFuture ??= _buildPdfTheme();
-    return _cachedThemeFuture!;
-  }
-
-  static Future<pw.ThemeData> _buildPdfTheme() async {
-    final regular = await PdfGoogleFonts.notoSansRegular();
-    final bold = await PdfGoogleFonts.notoSansBold();
-    final italic = await PdfGoogleFonts.notoSansItalic();
-    final boldItalic = await PdfGoogleFonts.notoSansBoldItalic();
-
-    return pw.ThemeData.withFont(
-      base: regular,
-      bold: bold,
-      italic: italic,
-      boldItalic: boldItalic,
-    );
-  }
 
   //Style constants
   static final titleStyle = pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold);
@@ -42,7 +21,7 @@ class AnamnesisPdfService {
     required Client client,
     required Anamnesis anamnesis,
   }) async {
-    final document = pw.Document(theme: await _loadPdfTheme());
+    final document = pw.Document(theme: await PdfThemeProvider.loadTheme());
     final answers = anamnesis.answers;
 
     document.addPage(

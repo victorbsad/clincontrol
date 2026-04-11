@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../core/utils/app_date_formatter.dart';
 import '../../../data/models/service.dart';
 import '../../../data/repositories/service_repository.dart';
 import '../../../data/repositories/client_repository.dart';
@@ -62,15 +63,11 @@ class _NewServiceState extends State<NewService> {
   }
 
   String get _formattedDate {
-    return '${_selectedDate.day.toString().padLeft(2, '0')}/'
-        '${_selectedDate.month.toString().padLeft(2, '0')}/'
-        '${_selectedDate.year}';
+    return AppDateFormatter.toPtBr(_selectedDate);
   }
 
   String get _dateToDatabase {
-    return '${_selectedDate.year}-'
-        '${_selectedDate.month.toString().padLeft(2, '0')}-'
-        '${_selectedDate.day.toString().padLeft(2, '0')}';
+    return AppDateFormatter.toDatabaseIsoDate(_selectedDate);
   }
 
   Future<void> _save() async {
