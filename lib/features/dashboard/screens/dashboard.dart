@@ -76,6 +76,7 @@ class _DashboardState extends State<Dashboard> {
       final bytes = await _pdfService.generate(
         client: client,
         anamnesis: anamnesis,
+        professionalName: AppEnvironment.professionalName,
       );
 
       await Printing.layoutPdf(

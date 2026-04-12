@@ -18,6 +18,7 @@ class AnamnesisPdfService {
   Future<Uint8List> generate({
     required Client client,
     required Anamnesis anamnesis,
+    String? professionalName,
   }) async {
     final document = pw.Document(theme: await PdfThemeProvider.loadTheme());
     final answers = anamnesis.answers;
@@ -66,7 +67,7 @@ class AnamnesisPdfService {
           pw.SizedBox(height: 12),
           _buildSection('Avaliação da Pele', _skinSectionRows(answers)),
           pw.SizedBox(height: 20),
-          _buildSignatureSection(client),
+          _buildSignatureSection(client, professionalName: professionalName),
         ],
       ),
     );
@@ -238,9 +239,13 @@ class AnamnesisPdfService {
         .replaceAll('✓', 'v');
   }
 
-  pw.Widget _buildSignatureSection(Client client) {
+  pw.Widget _buildSignatureSection(
+    Client client, {
+    String? professionalName,
+  }) {
     return AnamnesisPdfLayout.buildSignatureSection(
       client: client,
+      professionalName: professionalName,
       formatDate: _formatBrazilianDate,
       pdfSafe: _pdfSafe,
     );
