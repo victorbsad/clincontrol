@@ -12,7 +12,7 @@ class ClientList extends StatefulWidget {
 }
 
 class _ClientListState extends State<ClientList> {
-  final ClientRepository _repository = ClientRepository();
+  final ClientRepository _clientRepository = ClientRepository();
   List<Client> _clients = [];
   bool _isLoading = true;
 
@@ -23,7 +23,7 @@ class _ClientListState extends State<ClientList> {
   }
 
   Future<void> _loadClients() async {
-    final clients = await _repository.findAll();
+    final clients = await _clientRepository.findAll();
     setState(() {
       _clients = clients;
       _isLoading = false;

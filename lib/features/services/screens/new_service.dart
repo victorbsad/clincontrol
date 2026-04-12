@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../core/utils/app_date_formatter.dart';
 import '../../../data/models/service.dart';
 import '../../../data/repositories/service_repository.dart';
 import '../../../data/repositories/client_repository.dart';
@@ -43,42 +44,38 @@ class _NewServiceState extends State<NewService> {
   }
 
   Future<void> _loadClients() async {
-    final clientes = await _clientRepository.findAll();
-    setState(() => _clients = clientes);
+    final clients = await _clientRepository.findAll();
+    setState(() => _clients = clients);
   }
 
   //Abre o seletor de data
-  Future<void> _selecionarData() async {
-    final data = await showDatePicker(
+  Future<void> _selectDate() async {
+    final selectedDate = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime(2024),
       lastDate: DateTime.now(),
       locale: const Locale('pt', 'BR'),
     );
-    if (data != null) {
-      setState(() => _selectedDate = data);
+    if (selectedDate != null) {
+      setState(() => _selectedDate = selectedDate);
     }
   }
 
   String get _formattedDate {
-    return '${_selectedDate.day.toString().padLeft(2, '0')}/'
-        '${_selectedDate.month.toString().padLeft(2, '0')}/'
-        '${_selectedDate.year}';
+    return AppDateFormatter.toPtBr(_selectedDate);
   }
 
   String get _dateToDatabase {
-    return '${_selectedDate.year}-'
-        '${_selectedDate.month.toString().padLeft(2, '0')}-'
-        '${_selectedDate.day.toString().padLeft(2, '0')}';
+    return AppDateFormatter.toDatabaseIsoDate(_selectedDate);
   }
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedClient == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Selecione um cliente')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Selecione um cliente')));
       return;
     }
 
@@ -93,7 +90,7 @@ class _NewServiceState extends State<NewService> {
 
     await _serviceRepository.save(service);
 
-    if(mounted) Navigator.pop(context);
+    if (mounted) Navigator.pop(context);
   }
 
   @override
@@ -111,54 +108,54 @@ class _NewServiceState extends State<NewService> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               //Campo Cliente
-              const Text('Cliente', style: TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade400),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<Client>(
-                    hint: const Text('Selecionar cliente...'),
-                    value: _selectedClient,
-                    isExpanded: true,
-                    items: _clients.map((client) {
-                      return DropdownMenuItem<Client>(
-                        value: client,
-                        child: Text(client.name),
-                      );
-                    }).toList(),
-                    onChanged: (client) {
-                      setState(() => _selectedClient = client);
-                    },
+              DropdownButtonFormField<Client>(
+                decoration: InputDecoration(
+                  labelText: 'Cliente',
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w600),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
+                hint: const Text('Selecionar cliente...'),
+                initialValue: _selectedClient,
+                isExpanded: true,
+                items: _clients.map((client) {
+                  return DropdownMenuItem<Client>(
+                    value: client,
+                    child: Text(client.name),
+                  );
+                }).toList(),
+                onChanged: (client) {
+                  setState(() => _selectedClient = client);
+                },
               ),
 
               const SizedBox(height: 20),
 
               //Campo data
-              const Text('Data', style: TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
               GestureDetector(
-                onTap: _selecionarData,
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade400),
-                    borderRadius: BorderRadius.circular(12),
+                onTap: _selectDate,
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: 'Data',
+                    labelStyle: const TextStyle(fontWeight: FontWeight.w600),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.calendar_today, color: Colors.purple, size: 20),
+                      const Icon(
+                        Icons.calendar_today,
+                        color: Colors.purple,
+                        size: 20,
+                      ),
                       const SizedBox(width: 12),
-                      Text(_formattedDate, style: const TextStyle(fontSize: 15)),
+                      Text(
+                        _formattedDate,
+                        style: const TextStyle(fontSize: 15),
+                      ),
                     ],
                   ),
                 ),
@@ -167,11 +164,11 @@ class _NewServiceState extends State<NewService> {
               const SizedBox(height: 20),
 
               //Camo Procedimento
-              const Text('Procedimento', style: TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
               TextFormField(
                 controller: _procedureController,
                 decoration: InputDecoration(
+                  labelText: 'Procedimento',
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w600),
                   hintText: 'Ex: Limpeza de pele, design de sobrancelha...',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -188,15 +185,17 @@ class _NewServiceState extends State<NewService> {
               const SizedBox(height: 20),
 
               //Campo Valor
-              const Text('Valor cobrado (R\$)', style: TextStyle(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
               TextFormField(
                 controller: _amountController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'[0-9,.]')),
                 ],
                 decoration: InputDecoration(
+                  labelText: 'Valor cobrado (R\$)',
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w600),
                   hintText: '0,00',
                   prefixText: 'R\$',
                   border: OutlineInputBorder(
@@ -208,8 +207,8 @@ class _NewServiceState extends State<NewService> {
                   if (value == null || value.trim().isEmpty) {
                     return 'Informe o valor';
                   }
-                  final valor = double.tryParse(value.replaceAll(',', '.'));
-                  if (valor == null || valor <= 0) {
+                  final amount = double.tryParse(value.replaceAll(',', '.'));
+                  if (amount == null || amount <= 0) {
                     return 'Valor inválido';
                   }
                   return null;
@@ -236,7 +235,6 @@ class _NewServiceState extends State<NewService> {
                       : const Text('Salvar', style: TextStyle(fontSize: 16)),
                 ),
               ),
-
             ],
           ),
         ),

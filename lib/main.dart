@@ -1,22 +1,27 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'core/config/app_environment.dart';
 import 'core/theme/app_theme.dart';
-import 'data/database/db_helper.dart';
 import 'data/database/database_config.dart';
+import 'data/dev/development_seeder.dart';
 import 'features/dashboard/screens/dashboard.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   configureDatabaseFactory();
-  if (kDebugMode) {
-    await DbHelper().seedDevelopmentData();
+  if (AppEnvironment.devToolsEnabled) {
+    try {
+      await DevelopmentSeeder().seed();
+    } catch (e, stackTrace) {
+      debugPrint('Seed de desenvolvimento falhou: $e');
+      debugPrint('$stackTrace');
+    }
   }
-  runApp(const MeuApp());
+  runApp(const MyApp());
 }
 
-class MeuApp extends StatelessWidget {
-  const MeuApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +34,7 @@ class MeuApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('pt', 'BR'),
-      ],
+      supportedLocales: const [Locale('pt', 'BR')],
       home: const Dashboard(),
     );
   }
