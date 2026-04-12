@@ -18,6 +18,7 @@ class AnamnesisPdfService {
   Future<Uint8List> generate({
     required Client client,
     required Anamnesis anamnesis,
+    String? professionalName,
   }) async {
     final document = pw.Document(theme: await PdfThemeProvider.loadTheme());
     final answers = anamnesis.answers;
@@ -66,7 +67,7 @@ class AnamnesisPdfService {
           pw.SizedBox(height: 12),
           _buildSection('Avaliação da Pele', _skinSectionRows(answers)),
           pw.SizedBox(height: 20),
-          _buildSignatureSection(client),
+          _buildSignatureSection(client, professionalName: professionalName),
         ],
       ),
     );
@@ -98,10 +99,6 @@ class AnamnesisPdfService {
     );
   }
 
-  pw.Widget _subTitle(String title) {
-    return AnamnesisPdfLayout.subTitle(title, _pdfSafe);
-  }
-
   pw.Widget _pairLine(
     String leftLabel,
     String leftValue,
@@ -126,10 +123,7 @@ class AnamnesisPdfService {
       buildSubSection: _buildSubSection,
       pairLine: _pairLine,
       line: _line,
-      subTitle: _subTitle,
       wrapBullets: _wrapBullets,
-      tableHeader: _tableHeader,
-      tableRow: _tableRow,
       value: _value,
       getAnswer: _getAnswer,
       checkboxSymbolForKey: _checkboxSymbolForKey,
@@ -160,19 +154,6 @@ class AnamnesisPdfService {
       labels: labels,
       values: values,
       checkboxSymbol: _checkboxSymbol,
-    );
-  }
-
-  pw.Widget _tableHeader(List<String> columns) {
-    return AnamnesisPdfLayout.tableHeader(columns);
-  }
-
-  pw.Widget _tableRow(String session, String date, String treatment) {
-    return AnamnesisPdfLayout.tableRow(
-      session: session,
-      date: date,
-      treatment: treatment,
-      pdfSafe: _pdfSafe,
     );
   }
 
@@ -258,9 +239,13 @@ class AnamnesisPdfService {
         .replaceAll('✓', 'v');
   }
 
-  pw.Widget _buildSignatureSection(Client client) {
+  pw.Widget _buildSignatureSection(
+    Client client, {
+    String? professionalName,
+  }) {
     return AnamnesisPdfLayout.buildSignatureSection(
       client: client,
+      professionalName: professionalName,
       formatDate: _formatBrazilianDate,
       pdfSafe: _pdfSafe,
     );

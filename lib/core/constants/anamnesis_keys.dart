@@ -12,9 +12,9 @@ class AnamnesisKeys {
   static const String age = 'age';
   static const String profession = 'profession';
 
-    // ========== MOTIVO DA VISITA (Visit Reason) ==========
-    static const String visitReasonOption = 'visitReasonOption';
-    static const String visitReasonOther = 'visitReasonOther';
+  // ========== MOTIVO DA VISITA (Visit Reason) ==========
+  static const String visitReasonOption = 'visitReasonOption';
+  static const String visitReasonOther = 'visitReasonOther';
 
   // ========== HISTÓRICO ESTÉTICO (Aesthetic History) ==========
   static const String hadAestheticTreatment = 'hadAestheticTreatment';
@@ -46,15 +46,15 @@ class AnamnesisKeys {
   static const String drinks2LitersWater = 'drinks2LitersWater';
   static const String waterIntakeAmount = 'waterIntakeAmount';
   static const String consumesAlcohol = 'consumesAlcohol';
-    static const String alcoholFrequency = 'alcoholFrequency';
-    static const String alcoholFrequencyOther = 'alcoholFrequencyOther';
+  static const String alcoholFrequency = 'alcoholFrequency';
+  static const String alcoholFrequencyOther = 'alcoholFrequencyOther';
   static const String usesDrugs = 'usesDrugs';
   static const String drugType = 'drugType';
   static const String hormoneImbalance = 'hormoneImbalance';
   static const String hormoneImbalanceType = 'hormoneImbalanceType';
 
-    // ========== FUMO (Smoking) ==========
-    static const String smokingStatus = 'smokingStatus';
+  // ========== FUMO (Smoking) ==========
+  static const String smokingStatus = 'smokingStatus';
   static const String smokingDuration = 'smokingDuration';
 
   // ========== SONO & INTESTINO (Sleep & Bowels) ==========
@@ -63,9 +63,9 @@ class AnamnesisKeys {
   static const String regularBowelMovements = 'regularBowelMovements';
   static const String bowelComment = 'bowelComment';
 
-    // ========== PRESSÃO ARTERIAL (Blood Pressure) ==========
-    static const String hypertensionStatus = 'hypertensionStatus';
-    static const String hypotensionStatus = 'hypotensionStatus';
+  // ========== PRESSÃO ARTERIAL (Blood Pressure) ==========
+  static const String hypertensionStatus = 'hypertensionStatus';
+  static const String hypotensionStatus = 'hypotensionStatus';
 
   // ========== CONDIÇÕES MÉDICAS (Medical Conditions) ==========
   static const String hasDiabetes = 'hasDiabetes';
@@ -94,13 +94,13 @@ class AnamnesisKeys {
   static const String sunscreenType = 'sunscreenType';
 
   // ========== FREQUÊNCIA DE PROTETOR SOLAR (Sunscreen Frequency) ==========
-    static const String sunscreenFrequency = 'sunscreenFrequency';
-    static const String sunscreenFrequencyOther = 'sunscreenFrequencyOther';
+  static const String sunscreenFrequency = 'sunscreenFrequency';
+  static const String sunscreenFrequencyOther = 'sunscreenFrequencyOther';
 
   // ========== SOL & MAQUIAGEM (Sun Exposure & Makeup) ==========
   static const String exposedToSun = 'exposedToSun';
-    static const String sunExposureFrequency = 'sunExposureFrequency';
-    static const String sunExposureFrequencyOther = 'sunExposureFrequencyOther';
+  static const String sunExposureFrequency = 'sunExposureFrequency';
+  static const String sunExposureFrequencyOther = 'sunExposureFrequencyOther';
   static const String hasPermanentMakeup = 'hasPermanentMakeup';
   static const String permanentMakeupLocation = 'permanentMakeupLocation';
 
@@ -108,9 +108,9 @@ class AnamnesisKeys {
   static const String usedBotulinum = 'usedBotulinum';
   static const String botulinumLocation = 'botulinumLocation';
 
-    // ========== ALERGIAS (Allergies) ==========
-    static const String hasAllergies = 'hasAllergies';
-    static const String allergiesDetails = 'allergiesDetails';
+  // ========== ALERGIAS (Allergies) ==========
+  static const String hasAllergies = 'hasAllergies';
+  static const String allergiesDetails = 'allergiesDetails';
 
   // ========== GESTAÇÃO (Pregnancy) ==========
   static const String isPregnant = 'isPregnant';
@@ -205,29 +205,8 @@ class AnamnesisKeys {
   static const String hasDermatitis = 'hasDermatitis';
   static const String hasPsoriasis = 'hasPsoriasis';
 
-  // ========== TRATAMENTO & SESSÕES (Treatment & Sessions) ==========
+  // ========== TRATAMENTO (Treatment) ==========
   static const String treatmentIndicated = 'treatmentIndicated';
-  static const String numberOfSessions = 'numberOfSessions';
-  static const String session1Date = 'session1Date';
-  static const String session1 = 'session1';
-  static const String session2Date = 'session2Date';
-  static const String session2 = 'session2';
-  static const String session3Date = 'session3Date';
-  static const String session3 = 'session3';
-  static const String session4Date = 'session4Date';
-  static const String session4 = 'session4';
-  static const String session5Date = 'session5Date';
-  static const String session5 = 'session5';
-  static const String session6Date = 'session6Date';
-  static const String session6 = 'session6';
-  static const String session7Date = 'session7Date';
-  static const String session7 = 'session7';
-  static const String session8Date = 'session8Date';
-  static const String session8 = 'session8';
-  static const String session9Date = 'session9Date';
-  static const String session9 = 'session9';
-  static const String session10Date = 'session10Date';
-  static const String session10 = 'session10';
 
   // ========== PRESCRIÇÃO (Prescription) ==========
   static const String cosmeticPrescription = 'cosmeticPrescription';

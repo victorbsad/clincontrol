@@ -4,7 +4,7 @@ import '../../../data/models/anamnesis.dart';
 import '../../../data/models/client.dart';
 import '../../../data/database/db_helper.dart';
 
-class AnamnesisScreen extends StatefulWidget{
+class AnamnesisScreen extends StatefulWidget {
   final Client client;
 
   const AnamnesisScreen({required this.client});
@@ -18,7 +18,7 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, dynamic> _formData = {};
   final Map<String, bool> _checkboxValues = {};
-  
+
   @override
   void initState() {
     super.initState();
@@ -51,7 +51,9 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Anamnese de ${widget.client.name} salva com sucesso!')), 
+        SnackBar(
+          content: Text('Anamnese de ${widget.client.name} salva com sucesso!'),
+        ),
       );
 
       Navigator.pop(context);
@@ -74,10 +76,13 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Nome: ${widget.client.name}', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(
+                      'Nome: ${widget.client.name}',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     SizedBox(height: 8),
                     Text('Telefone: ${widget.client.phone}'),
-                    if (widget.client.notes != null)
+                    if (widget.client.notes.trim().isNotEmpty)
                       Text('Notas: ${widget.client.notes}'),
                   ],
                 ),
@@ -120,10 +125,7 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
             }).toList(),
 
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: saveData,
-              child: Text('Salvar Anamnese'),
-            ),
+            ElevatedButton(onPressed: saveData, child: Text('Salvar Anamnese')),
           ],
         ),
       ),

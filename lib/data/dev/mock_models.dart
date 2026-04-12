@@ -1,6 +1,6 @@
 import '../models/anamnesis.dart';
 import '../models/client.dart';
-import '../models/service.dart';
+import '../models/session.dart';
 import '../../core/constants/anamnesis_enums.dart';
 import '../../core/constants/anamnesis_keys.dart';
 import '../../core/utils/app_date_formatter.dart';
@@ -27,20 +27,27 @@ class DevMockModels {
     );
   }
 
-  static Service buildService({
+  static Session buildSession({
     required int clientId,
     DateTime? date,
     double amount = 100.0,
     String procedure = 'Procedimento Teste',
+    String notes = 'Observacoes de teste',
+    String status = Session.statusScheduled,
   }) {
     final targetDate = date ?? DateTime.now();
     final dbDate = AppDateFormatter.toDatabaseIsoDate(targetDate);
+    final now = DateTime.now();
 
-    return Service(
+    return Session(
       clientId: clientId,
       procedure: procedure,
+      notes: notes,
       amount: amount,
+      status: status,
       date: dbDate,
+      createdAt: now,
+      updatedAt: now,
     );
   }
 
@@ -205,27 +212,6 @@ class DevMockModels {
       AnamnesisKeys.hasPsoriasis: true,
       AnamnesisKeys.treatmentIndicated:
           'Tratamento combinado com limpeza de pele, peeling e home care',
-      AnamnesisKeys.numberOfSessions: 8,
-      AnamnesisKeys.session1Date: '15/04/2026',
-      AnamnesisKeys.session1: 'Limpeza de pele profunda',
-      AnamnesisKeys.session2Date: '22/04/2026',
-      AnamnesisKeys.session2: 'Peeling enzimatico',
-      AnamnesisKeys.session3Date: '29/04/2026',
-      AnamnesisKeys.session3: 'Hidracao intensiva',
-      AnamnesisKeys.session4Date: '06/05/2026',
-      AnamnesisKeys.session4: 'Microagulhamento facial',
-      AnamnesisKeys.session5Date: '13/05/2026',
-      AnamnesisKeys.session5: 'LED terapia',
-      AnamnesisKeys.session6Date: '20/05/2026',
-      AnamnesisKeys.session6: 'Peeling de manutencao',
-      AnamnesisKeys.session7Date: '27/05/2026',
-      AnamnesisKeys.session7: 'Controle fotografico',
-      AnamnesisKeys.session8Date: '03/06/2026',
-      AnamnesisKeys.session8: 'Reavaliacao global',
-      AnamnesisKeys.session9Date: '10/06/2026',
-      AnamnesisKeys.session9: 'Sessao complementar',
-      AnamnesisKeys.session10Date: '17/06/2026',
-      AnamnesisKeys.session10: 'Finalizacao e alta programada',
       AnamnesisKeys.cosmeticPrescription:
           'Limpeza suave, hidratante reparador, FPS 50 e antioxidante diurno.',
     };

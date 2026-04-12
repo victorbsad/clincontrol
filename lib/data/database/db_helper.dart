@@ -4,14 +4,15 @@ import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../../core/constants/anamnesis_field_specs.dart';
-import 'migrations/migration_runner.dart';
 import '../models/client.dart';
 import '../models/anamnesis.dart';
-import '../models/service.dart';
+import '../models/session.dart';
+import '../models/user.dart';
 
 part 'db_helper_anamnesis.dart';
 part 'db_helper_clients.dart';
-part 'db_helper_services.dart';
+part 'db_helper_sessions.dart';
+part 'db_helper_users.dart';
 
 class DbHelper {
   static Database? _database;
@@ -29,21 +30,34 @@ class DbHelper {
 
     return await openDatabase(
       path,
-      version: 6,
+      version: 1,
       onConfigure: (db) async {
         await db.execute('PRAGMA foreign_keys = ON');
       },
       onCreate: (db, version) async {
         await _createBaseSchema(db);
+        await _createSessionsSchema(db);
         await _createAnamnesisSchema(db);
-      },
-      onUpgrade: (db, oldVersion, newVersion) async {
-        await DatabaseMigrationRunner.run(db, oldVersion, newVersion);
       },
     );
   }
 
   Future<void> _createBaseSchema(Database db) async {
+    await db.execute('''
+      CREATE TABLE users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL,
+        is_current INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        CHECK (is_current IN (0, 1))
+      )
+    ''');
+
+    await db.execute('CREATE INDEX idx_users_is_current ON users(is_current)');
+
     await db.execute('''
       CREATE TABLE clients (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -61,17 +75,30 @@ class DbHelper {
         deleted_at TEXT
       )
     ''');
+  }
 
+  Future<void> _createSessionsSchema(Database db) async {
     await db.execute('''
-      CREATE TABLE services (
+      CREATE TABLE sessions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         client_id INTEGER NOT NULL,
         procedure TEXT NOT NULL,
+        notes TEXT,
         amount REAL NOT NULL,
+        status TEXT NOT NULL DEFAULT 'AGENDADO',
         date TEXT NOT NULL,
-        FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE,
+        CHECK (status IN ('AGENDADO', 'PAGO', 'CANCELADO')),
+        CHECK (amount >= 0)
       )
     ''');
+
+    await db.execute(
+      'CREATE INDEX idx_sessions_client_id ON sessions(client_id)',
+    );
+    await db.execute('CREATE INDEX idx_sessions_date ON sessions(date)');
   }
 
   Future<void> _createAnamnesisSchema(Database db) async {

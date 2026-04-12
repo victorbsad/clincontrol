@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:printing/printing.dart';
 import '../../../data/models/client.dart';
 import '../../../data/repositories/client_repository.dart';
+import '../../../data/repositories/session_repository.dart';
+import '../../../data/services/session_history_pdf_service.dart';
 import 'client_register.dart';
 import '../../anamnesis/screens/anamnesis.dart';
+import '../../sessions/screens/session_list.dart';
 
 class ClientList extends StatefulWidget {
   const ClientList({super.key});
@@ -13,6 +17,9 @@ class ClientList extends StatefulWidget {
 
 class _ClientListState extends State<ClientList> {
   final ClientRepository _clientRepository = ClientRepository();
+  final SessionRepository _sessionRepository = SessionRepository();
+  final SessionHistoryPdfService _sessionPdfService =
+      const SessionHistoryPdfService();
   List<Client> _clients = [];
   bool _isLoading = true;
 
@@ -24,6 +31,7 @@ class _ClientListState extends State<ClientList> {
 
   Future<void> _loadClients() async {
     final clients = await _clientRepository.findAll();
+    if (!mounted) return;
     setState(() {
       _clients = clients;
       _isLoading = false;
@@ -49,13 +57,36 @@ class _ClientListState extends State<ClientList> {
       ),
     );
 
+    if (!mounted) return;
     if (confirm == true) {
       await _clientRepository.delete(clientId);
-      _loadClients();
+      await _loadClients();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Cliente deletado com sucesso!')),
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Cliente deletado com sucesso!')));
+    }
+  }
+
+  Future<void> _openSessionsPdf(Client client) async {
+    try {
+      final sessions = await _sessionRepository.findByClientId(client.id!);
+      final bytes = await _sessionPdfService.generate(
+        client: client,
+        sessions: sessions,
       );
+
+      await Printing.layoutPdf(
+        onLayout: (format) async => bytes,
+        name: 'historico-sessoes-${client.name}.pdf',
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Erro ao gerar PDF: $error')));
     }
   }
 
@@ -70,8 +101,8 @@ class _ClientListState extends State<ClientList> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _clients.isEmpty
-              ? _emptyScreen()
-              : _clientList(),
+          ? _emptyScreen()
+          : _clientList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await Navigator.push(
@@ -180,7 +211,8 @@ class _ClientListState extends State<ClientList> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => ClientRegister(client: client),
+                                  builder: (_) =>
+                                      ClientRegister(client: client),
                                 ),
                               );
                             },
@@ -194,14 +226,39 @@ class _ClientListState extends State<ClientList> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => AnamnesisScreen(client: client),
+                                  builder: (_) =>
+                                      AnamnesisScreen(client: client),
                                 ),
                               );
                             },
                           ),
                           ListTile(
+                            leading: Icon(Icons.event_note_outlined),
+                            title: Text('Sessoes de Atendimento'),
+                            onTap: () {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => SessionList(client: client),
+                                ),
+                              );
+                            },
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.picture_as_pdf_outlined),
+                            title: Text('PDF de Sessoes'),
+                            onTap: () {
+                              Navigator.pop(context);
+                              _openSessionsPdf(client);
+                            },
+                          ),
+                          ListTile(
                             leading: Icon(Icons.delete, color: Colors.red),
-                            title: Text('Deletar', style: TextStyle(color: Colors.red)),
+                            title: Text(
+                              'Deletar',
+                              style: TextStyle(color: Colors.red),
+                            ),
                             onTap: () {
                               Navigator.pop(context);
                               //Deletar cliente

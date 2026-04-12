@@ -210,22 +210,57 @@ class AnamnesisPdfLayout {
 
   static pw.Widget buildSignatureSection({
     required Client client,
+    String? professionalName,
     required DateFormatter formatDate,
     required PdfSafeText pdfSafe,
   }) {
     final currentDate = formatDate(DateTime.now());
+    final resolvedProfessionalName =
+        (professionalName ?? '').trim().isEmpty
+        ? '________________________'
+        : professionalName!.trim();
 
+    return pw.Row(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Expanded(
+          child: _signatureBlock(
+            title: 'Assinatura da Paciente:',
+            name: client.name,
+            currentDate: currentDate,
+            pdfSafe: pdfSafe,
+          ),
+        ),
+        pw.SizedBox(width: 24),
+        pw.Expanded(
+          child: _signatureBlock(
+            title: 'Assinatura da Profissional:',
+            name: resolvedProfessionalName,
+            currentDate: currentDate,
+            pdfSafe: pdfSafe,
+          ),
+        ),
+      ],
+    );
+  }
+
+  static pw.Widget _signatureBlock({
+    required String title,
+    required String name,
+    required String currentDate,
+    required PdfSafeText pdfSafe,
+  }) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         pw.Text(
-          'Assinatura da Paciente:',
+          title,
           style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
         ),
         pw.SizedBox(height: 60),
         pw.Container(width: double.infinity, height: 1, color: PdfColors.black),
         pw.SizedBox(height: 6),
-        pw.Text(pdfSafe('Nome: ${client.name}'), style: AnamnesisPdfStyles.text),
+        pw.Text(pdfSafe('Nome: $name'), style: AnamnesisPdfStyles.text),
         pw.SizedBox(height: 2),
         pw.Text(pdfSafe('Data: $currentDate'), style: AnamnesisPdfStyles.text),
       ],

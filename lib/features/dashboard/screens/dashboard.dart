@@ -5,11 +5,14 @@ import '../../../data/dev/mock_models.dart';
 import '../../../data/models/client.dart';
 import '../../../data/repositories/anamnesis_repository.dart';
 import '../../../data/repositories/client_repository.dart';
-import '../../../data/repositories/service_repository.dart';
+import '../../../data/repositories/user_repository.dart';
 import '../../../data/services/anamnesis_pdf_service.dart';
+import '../../../data/repositories/session_repository.dart';
+import '../../../data/services/session_history_pdf_service.dart';
 import '../../clients/screens/client_list.dart';
 import '../../debug/debug_navigation.dart';
-import '../../services/screens/new_service.dart';
+import '../../sessions/screens/session_form.dart';
+import '../../users/screens/user_profile_screen.dart';
 
 // ─── DASHBOARD ───────────────────────────────────────
 class Dashboard extends StatefulWidget {
@@ -20,10 +23,13 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  final ServiceRepository _repository = ServiceRepository();
   final ClientRepository _clientRepository = ClientRepository();
   final AnamnesisRepository _anamnesisRepository = AnamnesisRepository();
+  final UserRepository _userRepository = UserRepository();
   final AnamnesisPdfService _pdfService = const AnamnesisPdfService();
+  final SessionRepository _sessionRepository = SessionRepository();
+  final SessionHistoryPdfService _sessionPdfService =
+      const SessionHistoryPdfService();
   double _total = 0;
   int _count = 0;
   bool _isLoading = true;
@@ -37,8 +43,8 @@ class _DashboardState extends State<Dashboard> {
 
   Future<void> _loadData() async {
     final now = DateTime.now();
-    final total = await _repository.getMonthlyTotal(now.month, now.year);
-    final count = await _repository.getMonthlyCount(now.month, now.year);
+    final total = await _sessionRepository.getMonthlyTotal(now.month, now.year);
+    final count = await _sessionRepository.getMonthlyCount(now.month, now.year);
 
     setState(() {
       _total = total;
@@ -73,11 +79,51 @@ class _DashboardState extends State<Dashboard> {
       final bytes = await _pdfService.generate(
         client: client,
         anamnesis: anamnesis,
+        professionalName:
+            (await _userRepository.getCurrentUser())?.name ??
+            AppEnvironment.professionalName,
       );
 
       await Printing.layoutPdf(
         onLayout: (format) async => bytes,
         name: 'anamnese-cliente-dev.pdf',
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Erro ao gerar PDF: $error')));
+    }
+  }
+
+  Future<void> _openSeedSessionsPdf() async {
+    try {
+      final clients = await _clientRepository.findAll();
+      Client? client;
+      for (final item in clients) {
+        if (DevMockModels.isDevMockClient(item)) {
+          client = item;
+          break;
+        }
+      }
+
+      if (client == null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Cliente seed não encontrado.')),
+        );
+        return;
+      }
+
+      final sessions = await _sessionRepository.findByClientId(client.id!);
+      final bytes = await _sessionPdfService.generate(
+        client: client,
+        sessions: sessions,
+      );
+
+      await Printing.layoutPdf(
+        onLayout: (format) async => bytes,
+        name: 'historico-sessoes-cliente-dev.pdf',
       );
     } catch (error) {
       if (!mounted) return;
@@ -95,11 +141,25 @@ class _DashboardState extends State<Dashboard> {
         backgroundColor: Colors.purple,
         foregroundColor: Colors.white,
         actions: [
+          IconButton(
+            tooltip: 'Usuario do app',
+            icon: const Icon(Icons.person_outline),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const UserProfileScreen()),
+            ),
+          ),
           if (AppEnvironment.devToolsEnabled)
             IconButton(
-              tooltip: 'Gerar PDF de teste',
+              tooltip: 'PDF de anamnese (teste)',
               icon: const Icon(Icons.picture_as_pdf_outlined),
               onPressed: _openSeedPdf,
+            ),
+          if (AppEnvironment.devToolsEnabled)
+            IconButton(
+              tooltip: 'PDF de sessoes (teste)',
+              icon: const Icon(Icons.receipt_long_outlined),
+              onPressed: _openSeedSessionsPdf,
             ),
         ],
       ),
@@ -193,12 +253,14 @@ class _DashboardState extends State<Dashboard> {
                       onPressed: () async {
                         await Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const NewService()),
+                          MaterialPageRoute(
+                            builder: (_) => const SessionForm(),
+                          ),
                         );
                         _loadData();
                       },
                       icon: const Icon(Icons.add),
-                      label: const Text('Novo Atendimento'),
+                      label: const Text('Nova Sessao'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.purple,
                         foregroundColor: Colors.white,

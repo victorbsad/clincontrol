@@ -151,7 +151,6 @@ class AnamnesisFieldSpecs {
   static const Set<String> _integerKeys = {
     AnamnesisKeys.pregnancyMonths,
     AnamnesisKeys.numberOfChildren,
-    AnamnesisKeys.numberOfSessions,
   };
 
   static const Set<String> _decimalKeys = {
@@ -161,16 +160,6 @@ class AnamnesisFieldSpecs {
 
   static const Set<String> _dateKeys = {
     AnamnesisKeys.dateOfBirth,
-    AnamnesisKeys.session1Date,
-    AnamnesisKeys.session2Date,
-    AnamnesisKeys.session3Date,
-    AnamnesisKeys.session4Date,
-    AnamnesisKeys.session5Date,
-    AnamnesisKeys.session6Date,
-    AnamnesisKeys.session7Date,
-    AnamnesisKeys.session8Date,
-    AnamnesisKeys.session9Date,
-    AnamnesisKeys.session10Date,
     AnamnesisKeys.updatedAt,
   };
 
@@ -264,16 +253,6 @@ class AnamnesisFieldSpecs {
     AnamnesisKeys.hasOtherLesions,
     AnamnesisKeys.chromaticAbnormalityJustification,
     AnamnesisKeys.treatmentIndicated,
-    AnamnesisKeys.session1,
-    AnamnesisKeys.session2,
-    AnamnesisKeys.session3,
-    AnamnesisKeys.session4,
-    AnamnesisKeys.session5,
-    AnamnesisKeys.session6,
-    AnamnesisKeys.session7,
-    AnamnesisKeys.session8,
-    AnamnesisKeys.session9,
-    AnamnesisKeys.session10,
     AnamnesisKeys.cosmeticPrescription,
   };
 
