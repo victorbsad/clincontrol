@@ -1,6 +1,6 @@
 import '../models/anamnesis.dart';
 import '../models/client.dart';
-import '../models/service.dart';
+import '../models/session.dart';
 import '../../core/constants/anamnesis_enums.dart';
 import '../../core/constants/anamnesis_keys.dart';
 import '../../core/utils/app_date_formatter.dart';
@@ -27,20 +27,25 @@ class DevMockModels {
     );
   }
 
-  static Service buildService({
+  static Session buildSession({
     required int clientId,
     DateTime? date,
     double amount = 100.0,
     String procedure = 'Procedimento Teste',
+    String notes = 'Observacoes de teste',
   }) {
     final targetDate = date ?? DateTime.now();
     final dbDate = AppDateFormatter.toDatabaseIsoDate(targetDate);
+    final now = DateTime.now();
 
-    return Service(
+    return Session(
       clientId: clientId,
       procedure: procedure,
+      notes: notes,
       amount: amount,
       date: dbDate,
+      createdAt: now,
+      updatedAt: now,
     );
   }
 

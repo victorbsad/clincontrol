@@ -40,7 +40,7 @@ class _SessionListState extends State<SessionList> {
       context,
       MaterialPageRoute(
         builder: (_) =>
-            SessionForm(clientId: widget.client.id!, session: session),
+            SessionForm(clientId: widget.client.id, session: session),
       ),
     );
 

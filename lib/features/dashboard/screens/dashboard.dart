@@ -5,13 +5,12 @@ import '../../../data/dev/mock_models.dart';
 import '../../../data/models/client.dart';
 import '../../../data/repositories/anamnesis_repository.dart';
 import '../../../data/repositories/client_repository.dart';
-import '../../../data/repositories/service_repository.dart';
 import '../../../data/services/anamnesis_pdf_service.dart';
 import '../../../data/repositories/session_repository.dart';
 import '../../../data/services/session_history_pdf_service.dart';
 import '../../clients/screens/client_list.dart';
 import '../../debug/debug_navigation.dart';
-import '../../services/screens/new_service.dart';
+import '../../sessions/screens/session_form.dart';
 
 // ─── DASHBOARD ───────────────────────────────────────
 class Dashboard extends StatefulWidget {
@@ -22,7 +21,6 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  final ServiceRepository _repository = ServiceRepository();
   final ClientRepository _clientRepository = ClientRepository();
   final AnamnesisRepository _anamnesisRepository = AnamnesisRepository();
   final AnamnesisPdfService _pdfService = const AnamnesisPdfService();
@@ -42,8 +40,8 @@ class _DashboardState extends State<Dashboard> {
 
   Future<void> _loadData() async {
     final now = DateTime.now();
-    final total = await _repository.getMonthlyTotal(now.month, now.year);
-    final count = await _repository.getMonthlyCount(now.month, now.year);
+    final total = await _sessionRepository.getMonthlyTotal(now.month, now.year);
+    final count = await _sessionRepository.getMonthlyCount(now.month, now.year);
 
     setState(() {
       _total = total;
@@ -241,12 +239,14 @@ class _DashboardState extends State<Dashboard> {
                       onPressed: () async {
                         await Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const NewService()),
+                          MaterialPageRoute(
+                            builder: (_) => const SessionForm(),
+                          ),
                         );
                         _loadData();
                       },
                       icon: const Icon(Icons.add),
-                      label: const Text('Novo Atendimento'),
+                      label: const Text('Nova Sessao'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.purple,
                         foregroundColor: Colors.white,

@@ -77,4 +77,34 @@ extension DbHelperSessionOperations on DbHelper {
     final db = await database;
     return await db.delete('sessions', where: 'id = ?', whereArgs: [id]);
   }
+
+  Future<double> fetchSessionsMonthlyTotal(int month, int year) async {
+    final db = await database;
+    final result = await db.rawQuery(
+      '''
+      SELECT SUM(amount) as total
+      FROM sessions
+      WHERE strftime('%m', date) = ?
+      AND strftime('%Y', date) = ?
+    ''',
+      [month.toString().padLeft(2, '0'), year.toString()],
+    );
+
+    return result.first['total'] as double? ?? 0.0;
+  }
+
+  Future<int> fetchSessionsMonthlyCount(int month, int year) async {
+    final db = await database;
+    final result = await db.rawQuery(
+      '''
+      SELECT COUNT(*) as count
+      FROM sessions
+      WHERE strftime('%m', date) = ?
+      AND strftime('%Y', date) = ?
+    ''',
+      [month.toString().padLeft(2, '0'), year.toString()],
+    );
+
+    return result.first['count'] as int? ?? 0;
+  }
 }

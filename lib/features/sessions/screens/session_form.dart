@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../core/utils/app_date_formatter.dart';
+import '../../../data/models/client.dart';
 import '../../../data/models/session.dart';
+import '../../../data/repositories/client_repository.dart';
 import '../../../data/repositories/session_repository.dart';
 
 class SessionForm extends StatefulWidget {
-  final int clientId;
+  final int? clientId;
   final Session? session;
 
-  const SessionForm({super.key, required this.clientId, this.session});
+  const SessionForm({super.key, this.clientId, this.session});
 
   @override
   State<SessionForm> createState() => _SessionFormState();
@@ -17,6 +19,7 @@ class SessionForm extends StatefulWidget {
 
 class _SessionFormState extends State<SessionForm> {
   final SessionRepository _repository = SessionRepository();
+  final ClientRepository _clientRepository = ClientRepository();
   final _formKey = GlobalKey<FormState>();
 
   final _procedureController = TextEditingController();
@@ -25,19 +28,25 @@ class _SessionFormState extends State<SessionForm> {
 
   DateTime _selectedDate = DateTime.now();
   bool _saving = false;
+  bool _loadingClients = false;
+  int? _selectedClientId;
+  List<Client> _clients = [];
 
   bool get _isEdit => widget.session != null;
 
   @override
   void initState() {
     super.initState();
+    _selectedClientId = widget.clientId;
     final session = widget.session;
     if (session != null) {
+      _selectedClientId ??= session.clientId;
       _procedureController.text = session.procedure;
       _notesController.text = session.notes;
       _amountController.text = session.amount.toStringAsFixed(2);
       _selectedDate = _parseDatabaseDate(session.date) ?? DateTime.now();
     }
+    _loadClients();
   }
 
   @override
@@ -73,8 +82,28 @@ class _SessionFormState extends State<SessionForm> {
     }
   }
 
+  Future<void> _loadClients() async {
+    setState(() => _loadingClients = true);
+    final clients = await _clientRepository.findAll();
+
+    setState(() {
+      _clients = clients;
+      _loadingClients = false;
+      if (_selectedClientId == null && clients.length == 1) {
+        _selectedClientId = clients.first.id;
+      }
+    });
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
+    final clientId = _selectedClientId;
+    if (clientId == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Selecione um cliente')));
+      return;
+    }
 
     setState(() => _saving = true);
     try {
@@ -85,7 +114,7 @@ class _SessionFormState extends State<SessionForm> {
         final current = widget.session!;
         final updated = Session(
           id: current.id,
-          clientId: widget.clientId,
+          clientId: clientId,
           procedure: _procedureController.text.trim(),
           notes: _notesController.text.trim(),
           amount: amount,
@@ -96,7 +125,7 @@ class _SessionFormState extends State<SessionForm> {
         await _repository.update(updated);
       } else {
         final session = Session(
-          clientId: widget.clientId,
+          clientId: clientId,
           procedure: _procedureController.text.trim(),
           notes: _notesController.text.trim(),
           amount: amount,
@@ -131,6 +160,34 @@ class _SessionFormState extends State<SessionForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (_loadingClients)
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 20),
+                  child: LinearProgressIndicator(),
+                ),
+              if (widget.clientId == null) ...[
+                DropdownButtonFormField<int>(
+                  decoration: InputDecoration(
+                    labelText: 'Cliente',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  initialValue: _selectedClientId,
+                  items: _clients
+                      .map(
+                        (client) => DropdownMenuItem<int>(
+                          value: client.id,
+                          child: Text(client.name),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() => _selectedClientId = value);
+                  },
+                ),
+                const SizedBox(height: 20),
+              ],
               GestureDetector(
                 onTap: _selectDate,
                 child: InputDecorator(

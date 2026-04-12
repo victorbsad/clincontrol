@@ -7,12 +7,10 @@ import '../../core/constants/anamnesis_field_specs.dart';
 import 'migrations/migration_runner.dart';
 import '../models/client.dart';
 import '../models/anamnesis.dart';
-import '../models/service.dart';
 import '../models/session.dart';
 
 part 'db_helper_anamnesis.dart';
 part 'db_helper_clients.dart';
-part 'db_helper_services.dart';
 part 'db_helper_sessions.dart';
 
 class DbHelper {
@@ -62,17 +60,6 @@ class DbHelper {
         age TEXT,
         profession TEXT,
         deleted_at TEXT
-      )
-    ''');
-
-    await db.execute('''
-      CREATE TABLE services (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        client_id INTEGER NOT NULL,
-        procedure TEXT NOT NULL,
-        amount REAL NOT NULL,
-        date TEXT NOT NULL,
-        FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
       )
     ''');
   }

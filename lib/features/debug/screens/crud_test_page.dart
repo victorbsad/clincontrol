@@ -8,7 +8,7 @@ import '../../../data/models/client.dart';
 import '../../../data/dev/mock_models.dart';
 import '../../../data/repositories/anamnesis_repository.dart';
 import '../../../data/repositories/client_repository.dart';
-import '../../../data/repositories/service_repository.dart';
+import '../../../data/repositories/session_repository.dart';
 
 class CrudTestPage extends StatefulWidget {
   const CrudTestPage({super.key});
@@ -19,7 +19,7 @@ class CrudTestPage extends StatefulWidget {
 
 class _CrudTestPageState extends State<CrudTestPage> {
   final ClientRepository _clientRepository = ClientRepository();
-  final ServiceRepository _serviceRepository = ServiceRepository();
+  final SessionRepository _sessionRepository = SessionRepository();
   final AnamnesisRepository _anamnesisRepository = AnamnesisRepository();
 
   bool _isRunning = false;
@@ -136,27 +136,27 @@ class _CrudTestPageState extends State<CrudTestPage> {
     return 'Linhas afetadas: $rows | Cliente removido id=${last.id}';
   }
 
-  Future<String> _saveService() async {
+  Future<String> _saveSession() async {
     final client = await _ensureMockClient();
-    final id = await _serviceRepository.save(
-      DevMockModels.buildService(clientId: client.id!),
+    final id = await _sessionRepository.save(
+      DevMockModels.buildSession(clientId: client.id!),
     );
 
-    return 'Atendimento criado: id=$id para client_id=${client.id}';
+    return 'Sessao criada: id=$id para client_id=${client.id}';
   }
 
   Future<String> _getMonthlyTotal() async {
     final now = DateTime.now();
-    final total = await _serviceRepository.getMonthlyTotal(now.month, now.year);
+    final total = await _sessionRepository.getMonthlyTotal(now.month, now.year);
 
     return 'Total do mês ${now.month}/${now.year}: R\$ ${total.toStringAsFixed(2)}';
   }
 
   Future<String> _getMonthlyCount() async {
     final now = DateTime.now();
-    final count = await _serviceRepository.getMonthlyCount(now.month, now.year);
+    final count = await _sessionRepository.getMonthlyCount(now.month, now.year);
 
-    return 'Quantidade de atendimentos do mês ${now.month}/${now.year}: $count';
+    return 'Quantidade de sessoes do mês ${now.month}/${now.year}: $count';
   }
 
   Future<String> _saveAnamnesis() async {
@@ -397,20 +397,20 @@ class _CrudTestPageState extends State<CrudTestPage> {
                   onRun: _deleteLastClient,
                 ),
                 _methodCard(
-                  title: 'Atendimentos: criar',
-                  method: 'ServiceRepository.save(Service atendimento)',
-                  onRun: _saveService,
+                  title: 'Sessoes: criar',
+                  method: 'SessionRepository.save(Session sessao)',
+                  onRun: _saveSession,
                 ),
                 _methodCard(
-                  title: 'Atendimentos: total mensal',
+                  title: 'Sessoes: total mensal',
                   method:
-                      'ServiceRepository.getMonthlyTotal(int month, int year)',
+                      'SessionRepository.getMonthlyTotal(int month, int year)',
                   onRun: _getMonthlyTotal,
                 ),
                 _methodCard(
-                  title: 'Atendimentos: quantidade mensal',
+                  title: 'Sessoes: quantidade mensal',
                   method:
-                      'ServiceRepository.getMonthlyCount(int month, int year)',
+                      'SessionRepository.getMonthlyCount(int month, int year)',
                   onRun: _getMonthlyCount,
                 ),
                 const Divider(height: 24),
