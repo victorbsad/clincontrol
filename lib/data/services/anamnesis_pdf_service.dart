@@ -98,10 +98,6 @@ class AnamnesisPdfService {
     );
   }
 
-  pw.Widget _subTitle(String title) {
-    return AnamnesisPdfLayout.subTitle(title, _pdfSafe);
-  }
-
   pw.Widget _pairLine(
     String leftLabel,
     String leftValue,
@@ -126,10 +122,7 @@ class AnamnesisPdfService {
       buildSubSection: _buildSubSection,
       pairLine: _pairLine,
       line: _line,
-      subTitle: _subTitle,
       wrapBullets: _wrapBullets,
-      tableHeader: _tableHeader,
-      tableRow: _tableRow,
       value: _value,
       getAnswer: _getAnswer,
       checkboxSymbolForKey: _checkboxSymbolForKey,
@@ -160,19 +153,6 @@ class AnamnesisPdfService {
       labels: labels,
       values: values,
       checkboxSymbol: _checkboxSymbol,
-    );
-  }
-
-  pw.Widget _tableHeader(List<String> columns) {
-    return AnamnesisPdfLayout.tableHeader(columns);
-  }
-
-  pw.Widget _tableRow(String session, String date, String treatment) {
-    return AnamnesisPdfLayout.tableRow(
-      session: session,
-      date: date,
-      treatment: treatment,
-      pdfSafe: _pdfSafe,
     );
   }
 

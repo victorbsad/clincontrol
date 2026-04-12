@@ -8,10 +8,12 @@ import 'migrations/migration_runner.dart';
 import '../models/client.dart';
 import '../models/anamnesis.dart';
 import '../models/service.dart';
+import '../models/session.dart';
 
 part 'db_helper_anamnesis.dart';
 part 'db_helper_clients.dart';
 part 'db_helper_services.dart';
+part 'db_helper_sessions.dart';
 
 class DbHelper {
   static Database? _database;
@@ -29,12 +31,13 @@ class DbHelper {
 
     return await openDatabase(
       path,
-      version: 6,
+      version: 7,
       onConfigure: (db) async {
         await db.execute('PRAGMA foreign_keys = ON');
       },
       onCreate: (db, version) async {
         await _createBaseSchema(db);
+        await _createSessionsSchema(db);
         await _createAnamnesisSchema(db);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
@@ -72,6 +75,28 @@ class DbHelper {
         FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
       )
     ''');
+  }
+
+  Future<void> _createSessionsSchema(Database db) async {
+    await db.execute('''
+      CREATE TABLE sessions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        client_id INTEGER NOT NULL,
+        procedure TEXT NOT NULL,
+        notes TEXT,
+        amount REAL NOT NULL,
+        date TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE,
+        CHECK (amount >= 0)
+      )
+    ''');
+
+    await db.execute(
+      'CREATE INDEX idx_sessions_client_id ON sessions(client_id)',
+    );
+    await db.execute('CREATE INDEX idx_sessions_date ON sessions(date)');
   }
 
   Future<void> _createAnamnesisSchema(Database db) async {

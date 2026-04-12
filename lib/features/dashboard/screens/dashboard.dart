@@ -7,6 +7,8 @@ import '../../../data/repositories/anamnesis_repository.dart';
 import '../../../data/repositories/client_repository.dart';
 import '../../../data/repositories/service_repository.dart';
 import '../../../data/services/anamnesis_pdf_service.dart';
+import '../../../data/repositories/session_repository.dart';
+import '../../../data/services/session_history_pdf_service.dart';
 import '../../clients/screens/client_list.dart';
 import '../../debug/debug_navigation.dart';
 import '../../services/screens/new_service.dart';
@@ -24,6 +26,9 @@ class _DashboardState extends State<Dashboard> {
   final ClientRepository _clientRepository = ClientRepository();
   final AnamnesisRepository _anamnesisRepository = AnamnesisRepository();
   final AnamnesisPdfService _pdfService = const AnamnesisPdfService();
+  final SessionRepository _sessionRepository = SessionRepository();
+  final SessionHistoryPdfService _sessionPdfService =
+      const SessionHistoryPdfService();
   double _total = 0;
   int _count = 0;
   bool _isLoading = true;
@@ -87,6 +92,43 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+  Future<void> _openSeedSessionsPdf() async {
+    try {
+      final clients = await _clientRepository.findAll();
+      Client? client;
+      for (final item in clients) {
+        if (DevMockModels.isDevMockClient(item)) {
+          client = item;
+          break;
+        }
+      }
+
+      if (client == null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Cliente seed não encontrado.')),
+        );
+        return;
+      }
+
+      final sessions = await _sessionRepository.findByClientId(client.id!);
+      final bytes = await _sessionPdfService.generate(
+        client: client,
+        sessions: sessions,
+      );
+
+      await Printing.layoutPdf(
+        onLayout: (format) async => bytes,
+        name: 'historico-sessoes-cliente-dev.pdf',
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Erro ao gerar PDF: $error')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,9 +139,15 @@ class _DashboardState extends State<Dashboard> {
         actions: [
           if (AppEnvironment.devToolsEnabled)
             IconButton(
-              tooltip: 'Gerar PDF de teste',
+              tooltip: 'PDF de anamnese (teste)',
               icon: const Icon(Icons.picture_as_pdf_outlined),
               onPressed: _openSeedPdf,
+            ),
+          if (AppEnvironment.devToolsEnabled)
+            IconButton(
+              tooltip: 'PDF de sessoes (teste)',
+              icon: const Icon(Icons.receipt_long_outlined),
+              onPressed: _openSeedSessionsPdf,
             ),
         ],
       ),

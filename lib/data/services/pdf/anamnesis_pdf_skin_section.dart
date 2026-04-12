@@ -18,12 +18,8 @@ class AnamnesisPdfSkinSection {
     )
     pairLine,
     required pw.Widget Function(String label, String value) line,
-    required pw.Widget Function(String title) subTitle,
     required pw.Widget Function(List<String> labels, List<dynamic> values)
     wrapBullets,
-    required pw.Widget Function(List<String> columns) tableHeader,
-    required pw.Widget Function(String session, String date, String treatment)
-    tableRow,
     required String Function(Map<String, dynamic> answers, String key) value,
     required dynamic Function(Map<String, dynamic> answers, String key)
     getAnswer,
@@ -223,64 +219,6 @@ class AnamnesisPdfSkinSection {
         line(
           'TRATAMENTO INDICADO',
           value(answers, AnamnesisKeys.treatmentIndicated),
-        ),
-        pw.SizedBox(height: 6),
-        line(
-          'NUMERO DE SESSOES',
-          value(answers, AnamnesisKeys.numberOfSessions),
-        ),
-        pw.SizedBox(height: 6),
-        subTitle('CONTROLE PROCEDIMENTOS'),
-        tableHeader(['Sessão', 'Data', 'Tratamento']),
-        tableRow(
-          '1ª',
-          value(answers, AnamnesisKeys.session1Date),
-          value(answers, AnamnesisKeys.session1),
-        ),
-        tableRow(
-          '2ª',
-          value(answers, AnamnesisKeys.session2Date),
-          value(answers, AnamnesisKeys.session2),
-        ),
-        tableRow(
-          '3ª',
-          value(answers, AnamnesisKeys.session3Date),
-          value(answers, AnamnesisKeys.session3),
-        ),
-        tableRow(
-          '4ª',
-          value(answers, AnamnesisKeys.session4Date),
-          value(answers, AnamnesisKeys.session4),
-        ),
-        tableRow(
-          '5ª',
-          value(answers, AnamnesisKeys.session5Date),
-          value(answers, AnamnesisKeys.session5),
-        ),
-        tableRow(
-          '6ª',
-          value(answers, AnamnesisKeys.session6Date),
-          value(answers, AnamnesisKeys.session6),
-        ),
-        tableRow(
-          '7ª',
-          value(answers, AnamnesisKeys.session7Date),
-          value(answers, AnamnesisKeys.session7),
-        ),
-        tableRow(
-          '8ª',
-          value(answers, AnamnesisKeys.session8Date),
-          value(answers, AnamnesisKeys.session8),
-        ),
-        tableRow(
-          '9ª',
-          value(answers, AnamnesisKeys.session9Date),
-          value(answers, AnamnesisKeys.session9),
-        ),
-        tableRow(
-          '10ª',
-          value(answers, AnamnesisKeys.session10Date),
-          value(answers, AnamnesisKeys.session10),
         ),
       ]),
       pw.SizedBox(height: 14),
