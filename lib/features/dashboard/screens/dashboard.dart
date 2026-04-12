@@ -5,12 +5,14 @@ import '../../../data/dev/mock_models.dart';
 import '../../../data/models/client.dart';
 import '../../../data/repositories/anamnesis_repository.dart';
 import '../../../data/repositories/client_repository.dart';
+import '../../../data/repositories/user_repository.dart';
 import '../../../data/services/anamnesis_pdf_service.dart';
 import '../../../data/repositories/session_repository.dart';
 import '../../../data/services/session_history_pdf_service.dart';
 import '../../clients/screens/client_list.dart';
 import '../../debug/debug_navigation.dart';
 import '../../sessions/screens/session_form.dart';
+import '../../users/screens/user_profile_screen.dart';
 
 // ─── DASHBOARD ───────────────────────────────────────
 class Dashboard extends StatefulWidget {
@@ -23,6 +25,7 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   final ClientRepository _clientRepository = ClientRepository();
   final AnamnesisRepository _anamnesisRepository = AnamnesisRepository();
+  final UserRepository _userRepository = UserRepository();
   final AnamnesisPdfService _pdfService = const AnamnesisPdfService();
   final SessionRepository _sessionRepository = SessionRepository();
   final SessionHistoryPdfService _sessionPdfService =
@@ -76,7 +79,9 @@ class _DashboardState extends State<Dashboard> {
       final bytes = await _pdfService.generate(
         client: client,
         anamnesis: anamnesis,
-        professionalName: AppEnvironment.professionalName,
+        professionalName:
+            (await _userRepository.getCurrentUser())?.name ??
+            AppEnvironment.professionalName,
       );
 
       await Printing.layoutPdf(
@@ -136,6 +141,14 @@ class _DashboardState extends State<Dashboard> {
         backgroundColor: Colors.purple,
         foregroundColor: Colors.white,
         actions: [
+          IconButton(
+            tooltip: 'Usuario do app',
+            icon: const Icon(Icons.person_outline),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const UserProfileScreen()),
+            ),
+          ),
           if (AppEnvironment.devToolsEnabled)
             IconButton(
               tooltip: 'PDF de anamnese (teste)',
