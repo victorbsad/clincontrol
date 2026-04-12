@@ -7,10 +7,12 @@ import '../../core/constants/anamnesis_field_specs.dart';
 import '../models/client.dart';
 import '../models/anamnesis.dart';
 import '../models/session.dart';
+import '../models/user.dart';
 
 part 'db_helper_anamnesis.dart';
 part 'db_helper_clients.dart';
 part 'db_helper_sessions.dart';
+part 'db_helper_users.dart';
 
 class DbHelper {
   static Database? _database;
@@ -41,6 +43,21 @@ class DbHelper {
   }
 
   Future<void> _createBaseSchema(Database db) async {
+    await db.execute('''
+      CREATE TABLE users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL,
+        is_current INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        CHECK (is_current IN (0, 1))
+      )
+    ''');
+
+    await db.execute('CREATE INDEX idx_users_is_current ON users(is_current)');
+
     await db.execute('''
       CREATE TABLE clients (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
