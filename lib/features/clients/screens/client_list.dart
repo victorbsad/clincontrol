@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../data/models/client.dart';
 import '../../../data/repositories/client_repository.dart';
 import 'client_register.dart';
+import '../../anamnesis/screens/anamnesis.dart';
 
 class ClientList extends StatefulWidget {
   const ClientList({super.key});
@@ -27,6 +28,35 @@ class _ClientListState extends State<ClientList> {
       _clients = clients;
       _isLoading = false;
     });
+  }
+
+  void _deleteClient(int clientId) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Confrimar exclusão'),
+        content: Text('Tem certeza que deseja deletar este cliente?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text('Deletar', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      await _repository.delete(clientId);
+      _loadClients();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Cliente deletado com sucesso!')),
+      );
+    }
   }
 
   @override
@@ -132,12 +162,54 @@ class _ClientListState extends State<ClientList> {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.edit_outlined, color: Colors.purple),
-                onPressed: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ClientRegister(client: client),
+                icon: const Icon(Icons.more_vert),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => Container(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            leading: Icon(Icons.edit),
+                            title: Text('Visualizar/Editar'),
+                            onTap: () {
+                              Navigator.pop(context);
+                              //Editar cliente
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => ClientRegister(client: client),
+                                ),
+                              );
+                            },
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.description),
+                            title: Text('Ficha de Anamnese'),
+                            onTap: () {
+                              Navigator.pop(context);
+                              //Abrir ficha de anamnese
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => AnamnesisScreen(client: client),
+                                ),
+                              );
+                            },
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.delete, color: Colors.red),
+                            title: Text('Deletar', style: TextStyle(color: Colors.red)),
+                            onTap: () {
+                              Navigator.pop(context);
+                              //Deletar cliente
+                              _deleteClient(client.id!);
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
