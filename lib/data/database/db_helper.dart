@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../../core/constants/anamnesis_field_specs.dart';
-import 'migrations/migration_runner.dart';
 import '../models/client.dart';
 import '../models/anamnesis.dart';
 import '../models/session.dart';
@@ -37,9 +36,6 @@ class DbHelper {
         await _createBaseSchema(db);
         await _createSessionsSchema(db);
         await _createAnamnesisSchema(db);
-      },
-      onUpgrade: (db, oldVersion, newVersion) async {
-        await DatabaseMigrationRunner.run(db, oldVersion, newVersion);
       },
     );
   }
