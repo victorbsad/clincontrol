@@ -2,12 +2,19 @@ part of 'db_helper.dart';
 
 extension DbHelperSessionOperations on DbHelper {
   Session _sessionFromDbRow(Map<String, Object?> row) {
+    final rawStatus = row['status'] as String?;
+    final parsedStatus =
+        rawStatus != null && Session.allowedStatuses.contains(rawStatus)
+        ? rawStatus
+        : Session.statusScheduled;
+
     return Session(
       id: row['id'] as int?,
       clientId: row['client_id'] as int,
       procedure: (row['procedure'] as String?) ?? '',
       notes: (row['notes'] as String?) ?? '',
       amount: (row['amount'] as num?)?.toDouble() ?? 0,
+      status: parsedStatus,
       date: (row['date'] as String?) ?? '',
       createdAt:
           DateTime.tryParse((row['created_at'] as String?) ?? '') ??
@@ -25,18 +32,43 @@ extension DbHelperSessionOperations on DbHelper {
       'procedure': session.procedure,
       'notes': session.notes,
       'amount': session.amount,
+      'status': session.status,
       'date': session.date,
       'created_at': session.createdAt.toIso8601String(),
       'updated_at': session.updatedAt.toIso8601String(),
     });
   }
 
-  Future<List<Session>> fetchSessionsByClient(int clientId) async {
+  Future<List<Session>> fetchSessionsByClient(
+    int clientId, {
+    String? status,
+    String? startDate,
+    String? endDate,
+  }) async {
     final db = await database;
+
+    final whereClauses = <String>['client_id = ?'];
+    final whereArgs = <Object>[clientId];
+
+    if (status != null && Session.allowedStatuses.contains(status)) {
+      whereClauses.add('status = ?');
+      whereArgs.add(status);
+    }
+
+    if (startDate != null) {
+      whereClauses.add('date >= ?');
+      whereArgs.add(startDate);
+    }
+
+    if (endDate != null) {
+      whereClauses.add('date <= ?');
+      whereArgs.add(endDate);
+    }
+
     final rows = await db.query(
       'sessions',
-      where: 'client_id = ?',
-      whereArgs: [clientId],
+      where: whereClauses.join(' AND '),
+      whereArgs: whereArgs,
       orderBy: 'date DESC, id DESC',
     );
 
@@ -65,6 +97,7 @@ extension DbHelperSessionOperations on DbHelper {
         'procedure': session.procedure,
         'notes': session.notes,
         'amount': session.amount,
+        'status': session.status,
         'date': session.date,
         'updated_at': session.updatedAt.toIso8601String(),
       },

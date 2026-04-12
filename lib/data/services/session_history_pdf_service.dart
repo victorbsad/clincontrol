@@ -23,6 +23,15 @@ class SessionHistoryPdfService {
       0,
       (acc, session) => acc + session.amount,
     );
+    final scheduledCount = orderedSessions
+      .where((session) => session.status == Session.statusScheduled)
+      .length;
+    final paidCount = orderedSessions
+      .where((session) => session.status == Session.statusPaid)
+      .length;
+    final canceledCount = orderedSessions
+      .where((session) => session.status == Session.statusCanceled)
+      .length;
 
     document.addPage(
       pw.MultiPage(
@@ -37,6 +46,9 @@ class SessionHistoryPdfService {
           pw.Text('Cliente: ${client.name}'),
           pw.Text('Telefone: ${client.phone.isEmpty ? '-' : client.phone}'),
           pw.Text('Total de sessoes: ${orderedSessions.length}'),
+          pw.Text('Agendadas: $scheduledCount'),
+          pw.Text('Sessoes pagas: $paidCount'),
+          pw.Text('Canceladas: $canceledCount'),
           pw.Text('Valor total: R\$ ${_formatCurrency(totalAmount)}'),
           pw.SizedBox(height: 12),
           if (orderedSessions.isEmpty)
@@ -62,8 +74,9 @@ class SessionHistoryPdfService {
         0: const pw.FixedColumnWidth(30),
         1: const pw.FixedColumnWidth(72),
         2: const pw.FlexColumnWidth(),
-        3: const pw.FixedColumnWidth(92),
-        4: const pw.FixedColumnWidth(60),
+        3: const pw.FixedColumnWidth(68),
+        4: const pw.FixedColumnWidth(92),
+        5: const pw.FixedColumnWidth(60),
       },
       children: [
         pw.TableRow(
@@ -72,6 +85,7 @@ class SessionHistoryPdfService {
             _cell('N', isHeader: true),
             _cell('Data', isHeader: true),
             _cell('Procedimento', isHeader: true),
+            _cell('Status', isHeader: true),
             _cell('Observacoes', isHeader: true),
             _cell('Valor', isHeader: true),
           ],
@@ -88,6 +102,7 @@ class SessionHistoryPdfService {
               _cell('${index + 1}'),
               _cell(_formatDate(session.date)),
               _cell(session.procedure),
+              _cell(session.status),
               _cell(session.notes.isEmpty ? '-' : session.notes),
               _cell('R\$ ${_formatCurrency(session.amount)}'),
             ],

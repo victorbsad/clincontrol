@@ -33,6 +33,7 @@ class DevMockModels {
     double amount = 100.0,
     String procedure = 'Procedimento Teste',
     String notes = 'Observacoes de teste',
+    String status = Session.statusScheduled,
   }) {
     final targetDate = date ?? DateTime.now();
     final dbDate = AppDateFormatter.toDatabaseIsoDate(targetDate);
@@ -43,6 +44,7 @@ class DevMockModels {
       procedure: procedure,
       notes: notes,
       amount: amount,
+      status: status,
       date: dbDate,
       createdAt: now,
       updatedAt: now,

@@ -29,7 +29,7 @@ class DbHelper {
 
     return await openDatabase(
       path,
-      version: 7,
+      version: 9,
       onConfigure: (db) async {
         await db.execute('PRAGMA foreign_keys = ON');
       },
@@ -72,10 +72,12 @@ class DbHelper {
         procedure TEXT NOT NULL,
         notes TEXT,
         amount REAL NOT NULL,
+        status TEXT NOT NULL DEFAULT 'AGENDADO',
         date TEXT NOT NULL,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL,
         FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE,
+        CHECK (status IN ('AGENDADO', 'PAGO', 'CANCELADO')),
         CHECK (amount >= 0)
       )
     ''');

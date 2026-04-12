@@ -27,6 +27,7 @@ class _SessionFormState extends State<SessionForm> {
   final _amountController = TextEditingController();
 
   DateTime _selectedDate = DateTime.now();
+  String _status = Session.statusScheduled;
   bool _saving = false;
   bool _loadingClients = false;
   int? _selectedClientId;
@@ -44,6 +45,7 @@ class _SessionFormState extends State<SessionForm> {
       _procedureController.text = session.procedure;
       _notesController.text = session.notes;
       _amountController.text = session.amount.toStringAsFixed(2);
+      _status = session.status;
       _selectedDate = _parseDatabaseDate(session.date) ?? DateTime.now();
     }
     _loadClients();
@@ -118,6 +120,7 @@ class _SessionFormState extends State<SessionForm> {
           procedure: _procedureController.text.trim(),
           notes: _notesController.text.trim(),
           amount: amount,
+          status: _status,
           date: AppDateFormatter.toDatabaseIsoDate(_selectedDate),
           createdAt: current.createdAt,
           updatedAt: now,
@@ -129,6 +132,7 @@ class _SessionFormState extends State<SessionForm> {
           procedure: _procedureController.text.trim(),
           notes: _notesController.text.trim(),
           amount: amount,
+          status: _status,
           date: AppDateFormatter.toDatabaseIsoDate(_selectedDate),
           createdAt: now,
           updatedAt: now,
@@ -258,6 +262,34 @@ class _SessionFormState extends State<SessionForm> {
                     return 'Valor invalido';
                   }
                   return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  labelText: 'Status',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                initialValue: _status,
+                items: const [
+                  DropdownMenuItem(
+                    value: Session.statusScheduled,
+                    child: Text('AGENDADO'),
+                  ),
+                  DropdownMenuItem(
+                    value: Session.statusPaid,
+                    child: Text('PAGO'),
+                  ),
+                  DropdownMenuItem(
+                    value: Session.statusCanceled,
+                    child: Text('CANCELADO'),
+                  ),
+                ],
+                onChanged: (value) {
+                  if (value == null) return;
+                  setState(() => _status = value);
                 },
               ),
               const SizedBox(height: 32),

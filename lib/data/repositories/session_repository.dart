@@ -6,8 +6,17 @@ class SessionRepository {
 
   Future<int> save(Session session) => _db.insertSession(session);
   Future<Session?> findById(int id) => _db.fetchSessionById(id);
-  Future<List<Session>> findByClientId(int clientId) =>
-      _db.fetchSessionsByClient(clientId);
+  Future<List<Session>> findByClientId(
+    int clientId, {
+    String? status,
+    String? startDate,
+    String? endDate,
+  }) => _db.fetchSessionsByClient(
+    clientId,
+    status: status,
+    startDate: startDate,
+    endDate: endDate,
+  );
   Future<double> getMonthlyTotal(int month, int year) =>
       _db.fetchSessionsMonthlyTotal(month, year);
   Future<int> getMonthlyCount(int month, int year) =>
