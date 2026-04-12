@@ -34,7 +34,7 @@ class _ClientListState extends State<ClientList> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Confrimar exclusão'),
+        title: Text('Confirmar exclusão'),
         content: Text('Tem certeza que deseja deletar este cliente?'),
         actions: [
           TextButton(
@@ -50,7 +50,7 @@ class _ClientListState extends State<ClientList> {
     );
 
     if (confirm == true) {
-      await _repository.delete(clientId);
+      await _clientRepository.delete(clientId);
       _loadClients();
 
       ScaffoldMessenger.of(context).showSnackBar(
