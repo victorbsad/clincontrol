@@ -31,6 +31,7 @@ class _ClientListState extends State<ClientList> {
 
   Future<void> _loadClients() async {
     final clients = await _clientRepository.findAll();
+    if (!mounted) return;
     setState(() {
       _clients = clients;
       _isLoading = false;
@@ -56,9 +57,12 @@ class _ClientListState extends State<ClientList> {
       ),
     );
 
+    if (!mounted) return;
     if (confirm == true) {
       await _clientRepository.delete(clientId);
-      _loadClients();
+      await _loadClients();
+
+      if (!mounted) return;
 
       ScaffoldMessenger.of(
         context,

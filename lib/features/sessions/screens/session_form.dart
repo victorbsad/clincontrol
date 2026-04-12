@@ -79,15 +79,18 @@ class _SessionFormState extends State<SessionForm> {
       locale: const Locale('pt', 'BR'),
     );
 
+    if (!mounted) return;
     if (picked != null) {
       setState(() => _selectedDate = picked);
     }
   }
 
   Future<void> _loadClients() async {
+    if (!mounted) return;
     setState(() => _loadingClients = true);
     final clients = await _clientRepository.findAll();
 
+    if (!mounted) return;
     setState(() {
       _clients = clients;
       _loadingClients = false;

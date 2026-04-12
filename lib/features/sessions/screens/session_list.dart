@@ -40,6 +40,7 @@ class _SessionListState extends State<SessionList> {
           ? AppDateFormatter.toDatabaseIsoDate(_dateRangeFilter!.end)
           : null,
     );
+    if (!mounted) return;
     setState(() {
       _sessions = sessions;
       _loading = false;
@@ -56,6 +57,7 @@ class _SessionListState extends State<SessionList> {
       locale: const Locale('pt', 'BR'),
     );
 
+    if (!mounted) return;
     if (picked == null) return;
 
     setState(() {
