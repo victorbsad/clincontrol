@@ -1,0 +1,11 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Localizar banco de dados",
+			"type": "shell",
+			"command": "dart run -S lib/main.dart 2>&1 | Select-Object -First 20",
+			"group": "none"
+		}
+	]
+}
