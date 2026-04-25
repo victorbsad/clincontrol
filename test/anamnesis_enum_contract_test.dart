@@ -15,9 +15,6 @@ void main() {
       final frequencyCanonicals = AnamnesisFrequency.values
           .map((e) => e.canonical)
           .toList();
-      final visitReasonCanonicals = AnamnesisVisitReasonOption.values
-          .map((e) => e.canonical)
-          .toList();
       final phototypeCanonicals = AnamnesisSkinPhototype.values
           .map((e) => e.canonical)
           .toList();
@@ -25,7 +22,6 @@ void main() {
       expect(smokingCanonicals, AnamnesisFieldSpecs.smokingStatusEnumValues);
       expect(pressureCanonicals, AnamnesisFieldSpecs.yesNoEnumValues);
       expect(frequencyCanonicals, AnamnesisFieldSpecs.frequencyEnumValues);
-      expect(visitReasonCanonicals, AnamnesisFieldSpecs.visitReasonEnumValues);
       expect(phototypeCanonicals, AnamnesisFieldSpecs.skinPhototypeEnumValues);
     });
 
@@ -50,13 +46,6 @@ void main() {
           'semanal',
         ),
         'Semanal',
-      );
-      expect(
-        AnamnesisEnumHumanizer.humanize(
-          AnamnesisKeys.visitReasonOption,
-          'avaliacao_inicial',
-        ),
-        'Avaliacao inicial',
       );
     });
 

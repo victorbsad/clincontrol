@@ -32,7 +32,7 @@ class AnamnesisFieldSpecs {
   ];
 
   static const List<String> smokingStatusEnumValues = [
-    'nunca',
+    'nao',
     'ex_fumante',
     'sim',
   ];
@@ -146,6 +146,14 @@ class AnamnesisFieldSpecs {
     AnamnesisKeys.hasHypochromia,
     AnamnesisKeys.hasDermatitis,
     AnamnesisKeys.hasPsoriasis,
+    AnamnesisKeys.visitReasonInitialEvaluation,
+    AnamnesisKeys.visitReasonAcne,
+    AnamnesisKeys.visitReasonMelasma,
+    AnamnesisKeys.visitReasonSpots,
+    AnamnesisKeys.visitReasonWrinkles,
+    AnamnesisKeys.visitReasonOiliness,
+    AnamnesisKeys.visitReasonSensitivity,
+    AnamnesisKeys.visitReasonMaintenance,
   };
 
   static const Set<String> _integerKeys = {

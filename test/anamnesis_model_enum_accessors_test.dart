@@ -8,7 +8,6 @@ void main() {
     test('setters persist canonical values in answers map', () {
       final anamnesis = Anamnesis(clientId: 1);
 
-      anamnesis.visitReasonOption = AnamnesisVisitReasonOption.acne;
       anamnesis.smokingStatus = AnamnesisSmokingStatus.exSmoker;
       anamnesis.hypertensionStatus = AnamnesisPressureStatus.compensated;
       anamnesis.hypotensionStatus = AnamnesisPressureStatus.no;
@@ -17,7 +16,6 @@ void main() {
       anamnesis.sunExposureFrequency = AnamnesisFrequency.rare;
       anamnesis.skinPhototype = AnamnesisSkinPhototype.iii;
 
-      expect(anamnesis.answers[AnamnesisKeys.visitReasonOption], 'acne');
       expect(anamnesis.answers[AnamnesisKeys.smokingStatus], 'ex_fumante');
       expect(anamnesis.answers[AnamnesisKeys.hypertensionStatus], 'compensada');
       expect(anamnesis.answers[AnamnesisKeys.hypotensionStatus], 'nao');
@@ -31,7 +29,6 @@ void main() {
       final anamnesis = Anamnesis(
         clientId: 1,
         answers: {
-          AnamnesisKeys.visitReasonOption: 'outro',
           AnamnesisKeys.smokingStatus: 'sim',
           AnamnesisKeys.hypertensionStatus: 'descompensada',
           AnamnesisKeys.hypotensionStatus: 'nao',
@@ -42,7 +39,6 @@ void main() {
         },
       );
 
-      expect(anamnesis.visitReasonOption, AnamnesisVisitReasonOption.other);
       expect(anamnesis.smokingStatus, AnamnesisSmokingStatus.yes);
       expect(
         anamnesis.hypertensionStatus,
