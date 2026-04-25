@@ -15,6 +15,14 @@ class AnamnesisKeys {
   // ========== MOTIVO DA VISITA (Visit Reason) ==========
   static const String visitReasonOption = 'visitReasonOption';
   static const String visitReasonOther = 'visitReasonOther';
+  static const String visitReasonInitialEvaluation = 'visitReasonInitialEvaluation';
+  static const String visitReasonAcne = 'visitReasonAcne';
+  static const String visitReasonMelasma = 'visitReasonMelasma';
+  static const String visitReasonSpots = 'visitReasonSpots';
+  static const String visitReasonWrinkles = 'visitReasonWrinkles';
+  static const String visitReasonOiliness = 'visitReasonOiliness';
+  static const String visitReasonSensitivity = 'visitReasonSensitivity';
+  static const String visitReasonMaintenance = 'visitReasonMaintenance';
 
   // ========== HISTÓRICO ESTÉTICO (Aesthetic History) ==========
   static const String hadAestheticTreatment = 'hadAestheticTreatment';

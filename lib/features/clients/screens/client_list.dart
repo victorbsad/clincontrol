@@ -145,133 +145,135 @@ class _ClientListState extends State<ClientList> {
       itemBuilder: (context, index) {
         final client = _clients[index];
 
-        return Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.purple.shade100),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.purple.shade50,
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              CircleAvatar(
-                backgroundColor: Colors.purple,
-                child: Text(
-                  client.name[0].toUpperCase(),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+        return Material(
+          child: InkWell(
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (context) => Container(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ListTile(
+                        leading: Icon(Icons.edit),
+                        title: Text('Visualizar/Editar'),
+                        onTap: () {
+                          Navigator.pop(context);
+                          //Editar cliente
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  ClientRegister(client: client),
+                            ),
+                          );
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.description),
+                        title: Text('Ficha de Anamnese'),
+                        onTap: () {
+                          Navigator.pop(context);
+                          //Abrir ficha de anamnese
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  AnamnesisScreen(client: client),
+                            ),
+                          );
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.event_note_outlined),
+                        title: Text('Sessoes de Atendimento'),
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => SessionList(client: client),
+                            ),
+                          );
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.picture_as_pdf_outlined),
+                        title: Text('PDF de Sessoes'),
+                        onTap: () {
+                          Navigator.pop(context);
+                          _openSessionsPdf(client);
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.delete, color: Colors.red),
+                        title: Text(
+                          'Deletar',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        onTap: () {
+                          Navigator.pop(context);
+                          //Deletar cliente
+                          _deleteClient(client.id!);
+                        },
+                      ),
+                    ],
                   ),
                 ),
+              );
+            },
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.purple.shade100),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.purple.shade50,
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      client.name,
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    backgroundColor: Colors.purple,
+                    child: Text(
+                      client.name[0].toUpperCase(),
                       style: const TextStyle(
-                        fontSize: 16,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      client.phone.isEmpty ? 'Sem telefone' : client.phone,
-                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          client.name,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          client.phone.isEmpty ? 'Sem telefone' : client.phone,
+                          style: const TextStyle(fontSize: 14, color: Colors.grey),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              IconButton(
-                icon: const Icon(Icons.more_vert),
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) => Container(
-                      padding: EdgeInsets.all(16),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ListTile(
-                            leading: Icon(Icons.edit),
-                            title: Text('Visualizar/Editar'),
-                            onTap: () {
-                              Navigator.pop(context);
-                              //Editar cliente
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      ClientRegister(client: client),
-                                ),
-                              );
-                            },
-                          ),
-                          ListTile(
-                            leading: Icon(Icons.description),
-                            title: Text('Ficha de Anamnese'),
-                            onTap: () {
-                              Navigator.pop(context);
-                              //Abrir ficha de anamnese
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      AnamnesisScreen(client: client),
-                                ),
-                              );
-                            },
-                          ),
-                          ListTile(
-                            leading: Icon(Icons.event_note_outlined),
-                            title: Text('Sessoes de Atendimento'),
-                            onTap: () {
-                              Navigator.pop(context);
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => SessionList(client: client),
-                                ),
-                              );
-                            },
-                          ),
-                          ListTile(
-                            leading: Icon(Icons.picture_as_pdf_outlined),
-                            title: Text('PDF de Sessoes'),
-                            onTap: () {
-                              Navigator.pop(context);
-                              _openSessionsPdf(client);
-                            },
-                          ),
-                          ListTile(
-                            leading: Icon(Icons.delete, color: Colors.red),
-                            title: Text(
-                              'Deletar',
-                              style: TextStyle(color: Colors.red),
-                            ),
-                            onTap: () {
-                              Navigator.pop(context);
-                              //Deletar cliente
-                              _deleteClient(client.id!);
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
+            ),
           ),
         );
       },

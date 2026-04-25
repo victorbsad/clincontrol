@@ -63,8 +63,8 @@ class DevMockModels {
 
   static Map<String, dynamic> sampleAnswers() {
     return {
-      AnamnesisKeys.visitReasonOption:
-          AnamnesisVisitReasonOption.other.canonical,
+      AnamnesisKeys.visitReasonAcne: true,
+      AnamnesisKeys.visitReasonMelasma: true,
       AnamnesisKeys.visitReasonOther:
           'Validacao de fluxo em desenvolvimento para anamnese facial completa.',
       AnamnesisKeys.hadAestheticTreatment: true,

@@ -131,16 +131,52 @@ class AnamnesisPdfService {
   }
 
   String _motivoVisitaLine(Map<String, dynamic> answers) {
-    final raw =
-        answers[AnamnesisKeys.visitReasonOption]?.toString().trim() ?? '';
-    if (raw == AnamnesisVisitReasonOption.other.canonical) {
-      return _value(answers, AnamnesisKeys.visitReasonOther);
+    final reasons = <String>[];
+    
+    // Verifica cada motivo da visita
+    if (_isTruthy(answers[AnamnesisKeys.visitReasonInitialEvaluation])) {
+      reasons.add('Avaliação Inicial');
     }
-    if (raw.isEmpty) return 'NÃO';
-    return AnamnesisEnumHumanizer.humanize(
-      AnamnesisKeys.visitReasonOption,
-      raw,
-    );
+    if (_isTruthy(answers[AnamnesisKeys.visitReasonAcne])) {
+      reasons.add('Acne');
+    }
+    if (_isTruthy(answers[AnamnesisKeys.visitReasonMelasma])) {
+      reasons.add('Melasma');
+    }
+    if (_isTruthy(answers[AnamnesisKeys.visitReasonSpots])) {
+      reasons.add('Manchas');
+    }
+    if (_isTruthy(answers[AnamnesisKeys.visitReasonWrinkles])) {
+      reasons.add('Rugas');
+    }
+    if (_isTruthy(answers[AnamnesisKeys.visitReasonOiliness])) {
+      reasons.add('Oleosidade');
+    }
+    if (_isTruthy(answers[AnamnesisKeys.visitReasonSensitivity])) {
+      reasons.add('Sensibilidade');
+    }
+    if (_isTruthy(answers[AnamnesisKeys.visitReasonMaintenance])) {
+      reasons.add('Manutenção');
+    }
+    
+    // Adiciona "outro" se estiver preenchido
+    final other = answers[AnamnesisKeys.visitReasonOther]?.toString().trim() ?? '';
+    if (other.isNotEmpty) {
+      reasons.add('Outro: $other');
+    }
+    
+    if (reasons.isEmpty) return 'NÃO';
+    return reasons.join(', ');
+  }
+
+  bool _isTruthy(dynamic value) {
+    if (value == null) return false;
+    if (value is bool) return value;
+    if (value is String) {
+      final normalized = value.toString().trim().toLowerCase();
+      return normalized == 'true' || normalized == 'sim' || normalized == 'yes';
+    }
+    return false;
   }
 
   String _clientValue(String value) {

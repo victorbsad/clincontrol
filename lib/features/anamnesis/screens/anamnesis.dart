@@ -32,206 +32,213 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
       if (field['type'] == 'bool') {
         _checkboxValues[field['key']] = false;
       } else if (field['type'] == 'enum') {
-        _enumValues[field['key']] = null;
+        _enumValues[field['key']] = field['defaultValue'] as String?;
       }
     }
   }
 
   final List<Map<String, dynamic>> fields = [
     // ========== MOTIVO DA VISITA ==========
-    {'key': 'visitReasonOption', 'label': 'Motivo da Visita', 'type': 'enum'},
-    {'key': 'visitReasonOther', 'label': 'Outro Motivo', 'type': 'text', 'dependsOn': 'visitReasonOption', 'dependsOnValue': 'outro'},
+    {'key': 'visitReasonInitialEvaluation', 'label': 'Avaliação Inicial', 'type': 'bool', 'section': 'MOTIVO DA VISITA'},
+    {'key': 'visitReasonAcne', 'label': 'Acne', 'type': 'bool', 'section': 'MOTIVO DA VISITA'},
+    {'key': 'visitReasonMelasma', 'label': 'Melasma', 'type': 'bool', 'section': 'MOTIVO DA VISITA'},
+    {'key': 'visitReasonSpots', 'label': 'Manchas', 'type': 'bool', 'section': 'MOTIVO DA VISITA'},
+    {'key': 'visitReasonWrinkles', 'label': 'Rugas', 'type': 'bool', 'section': 'MOTIVO DA VISITA'},
+    {'key': 'visitReasonOiliness', 'label': 'Oleosidade', 'type': 'bool', 'section': 'MOTIVO DA VISITA'},
+    {'key': 'visitReasonSensitivity', 'label': 'Sensibilidade', 'type': 'bool', 'section': 'MOTIVO DA VISITA'},
+    {'key': 'visitReasonMaintenance', 'label': 'Manutenção', 'type': 'bool', 'section': 'MOTIVO DA VISITA'},
+    {'key': 'visitReasonOther', 'label': 'Outro Motivo', 'type': 'text', 'section': 'MOTIVO DA VISITA'},
 
     // ========== HISTÓRICO ESTÉTICO ==========
-    {'key': 'hadAestheticTreatment', 'label': 'Fez Tratamento Estético?', 'type': 'bool'},
-    {'key': 'aestheticTreatmentType', 'label': 'Tipo de Tratamento Estético', 'type': 'text', 'dependsOn': 'hadAestheticTreatment'},
-    {'key': 'keloidScarring', 'label': 'Tendência a Cicatrizes Queloides?', 'type': 'bool'},
-    {'key': 'scarringComment', 'label': 'Observações sobre Cicatrização', 'type': 'text', 'dependsOn': 'keloidScarring'},
-    {'key': 'usesMedication', 'label': 'Usa Medicação?', 'type': 'bool'},
-    {'key': 'medicationType', 'label': 'Tipo de Medicação', 'type': 'text', 'dependsOn': 'usesMedication'},
-    {'key': 'isotretinoin6Months', 'label': 'Usou Isotretinoína nos últimos 6 meses?', 'type': 'bool'},
-    {'key': 'isotretinoin6MonthsComment', 'label': 'Observações sobre Isotretinoína', 'type': 'text', 'dependsOn': 'isotretinoin6Months'},
+    {'key': 'hadAestheticTreatment', 'label': 'Fez Tratamento Estético?', 'type': 'bool', 'section': 'HISTÓRICO ESTÉTICO'},
+    {'key': 'aestheticTreatmentType', 'label': 'Tipo de Tratamento Estético', 'type': 'text', 'dependsOn': 'hadAestheticTreatment', 'section': 'HISTÓRICO ESTÉTICO'},
+    {'key': 'keloidScarring', 'label': 'Tendência a Cicatrizes Queloides?', 'type': 'bool', 'section': 'HISTÓRICO ESTÉTICO'},
+    {'key': 'scarringComment', 'label': 'Observações sobre Cicatrização', 'type': 'text', 'dependsOn': 'keloidScarring', 'section': 'HISTÓRICO ESTÉTICO'},
+    {'key': 'usesMedication', 'label': 'Usa Medicação?', 'type': 'bool', 'section': 'HISTÓRICO ESTÉTICO'},
+    {'key': 'medicationType', 'label': 'Tipo de Medicação', 'type': 'text', 'dependsOn': 'usesMedication', 'section': 'HISTÓRICO ESTÉTICO'},
+    {'key': 'isotretinoin6Months', 'label': 'Usou Isotretinoína nos últimos 6 meses?', 'type': 'bool', 'section': 'HISTÓRICO ESTÉTICO'},
+    {'key': 'isotretinoin6MonthsComment', 'label': 'Observações sobre Isotretinoína', 'type': 'text', 'dependsOn': 'isotretinoin6Months', 'section': 'HISTÓRICO ESTÉTICO'},
 
     // ========== HISTÓRICO MÉDICO ==========
-    {'key': 'hadMedicalTreatment', 'label': 'Fez Tratamento Médico?', 'type': 'bool'},
-    {'key': 'healthProblemType', 'label': 'Tipo de Problema de Saúde', 'type': 'text', 'dependsOn': 'hadMedicalTreatment'},
-    {'key': 'thrombosis', 'label': 'Teve Trombose?', 'type': 'bool'},
-    {'key': 'thrombosisLocation', 'label': 'Localização da Trombose', 'type': 'text', 'dependsOn': 'thrombosis'},
-    {'key': 'hadSurgery', 'label': 'Fez Cirurgia?', 'type': 'bool'},
-    {'key': 'surgeryType', 'label': 'Tipo de Cirurgia', 'type': 'text', 'dependsOn': 'hadSurgery'},
-    {'key': 'hasOncologicalHistory', 'label': 'Histórico de Câncer?', 'type': 'bool'},
-    {'key': 'oncologicalComment', 'label': 'Observações sobre Câncer', 'type': 'text', 'dependsOn': 'hasOncologicalHistory'},
-    {'key': 'infectiousDiseaseHistory', 'label': 'Histórico de Doença Infecciosa?', 'type': 'bool'},
-    {'key': 'infectiousDiseaseType', 'label': 'Tipo de Doença Infecciosa', 'type': 'text', 'dependsOn': 'infectiousDiseaseHistory'},
+    {'key': 'hadMedicalTreatment', 'label': 'Fez Tratamento Médico?', 'type': 'bool', 'section': 'HISTÓRICO MÉDICO'},
+    {'key': 'healthProblemType', 'label': 'Tipo de Problema de Saúde', 'type': 'text', 'dependsOn': 'hadMedicalTreatment', 'section': 'HISTÓRICO MÉDICO'},
+    {'key': 'thrombosis', 'label': 'Teve Trombose?', 'type': 'bool', 'section': 'HISTÓRICO MÉDICO'},
+    {'key': 'thrombosisLocation', 'label': 'Localização da Trombose', 'type': 'text', 'dependsOn': 'thrombosis', 'section': 'HISTÓRICO MÉDICO'},
+    {'key': 'hadSurgery', 'label': 'Fez Cirurgia?', 'type': 'bool', 'section': 'HISTÓRICO MÉDICO'},
+    {'key': 'surgeryType', 'label': 'Tipo de Cirurgia', 'type': 'text', 'dependsOn': 'hadSurgery', 'section': 'HISTÓRICO MÉDICO'},
+    {'key': 'hasOncologicalHistory', 'label': 'Histórico de Câncer?', 'type': 'bool', 'section': 'HISTÓRICO MÉDICO'},
+    {'key': 'oncologicalComment', 'label': 'Observações sobre Câncer', 'type': 'text', 'dependsOn': 'hasOncologicalHistory', 'section': 'HISTÓRICO MÉDICO'},
+    {'key': 'infectiousDiseaseHistory', 'label': 'Histórico de Doença Infecciosa?', 'type': 'bool', 'section': 'HISTÓRICO MÉDICO'},
+    {'key': 'infectiousDiseaseType', 'label': 'Tipo de Doença Infecciosa', 'type': 'text', 'dependsOn': 'infectiousDiseaseHistory', 'section': 'HISTÓRICO MÉDICO'},
 
     // ========== HÁBITOS DE VIDA ==========
-    {'key': 'exercisesRegularly', 'label': 'Pratica Exercício Regularmente?', 'type': 'bool'},
-    {'key': 'exerciseType', 'label': 'Tipo de Exercício', 'type': 'text', 'dependsOn': 'exercisesRegularly'},
-    {'key': 'balancedDiet', 'label': 'Segue Alimentação Balanceada?', 'type': 'bool'},
-    {'key': 'dietComment', 'label': 'Observações sobre Dieta', 'type': 'text', 'dependsOn': 'balancedDiet'},
-    {'key': 'drinks2LitersWater', 'label': 'Bebe 2 litros de Água?', 'type': 'bool'},
-    {'key': 'waterIntakeAmount', 'label': 'Quantidade de Água Ingerida', 'type': 'text', 'dependsOn': 'drinks2LitersWater'},
-    {'key': 'consumesAlcohol', 'label': 'Consome Álcool?', 'type': 'bool'},
-    {'key': 'alcoholFrequency', 'label': 'Frequência de Álcool', 'type': 'enum', 'dependsOn': 'consumesAlcohol'},
-    {'key': 'alcoholFrequencyOther', 'label': 'Outra Frequência de Álcool', 'type': 'text', 'dependsOn': 'alcoholFrequency', 'dependsOnValue': 'outro'},
-    {'key': 'usesDrugs', 'label': 'Usa Drogas?', 'type': 'bool'},
-    {'key': 'drugType', 'label': 'Tipo de Droga', 'type': 'text', 'dependsOn': 'usesDrugs'},
-    {'key': 'hormoneImbalance', 'label': 'Desequilíbrio Hormonal?', 'type': 'bool'},
-    {'key': 'hormoneImbalanceType', 'label': 'Tipo de Desequilíbrio Hormonal', 'type': 'text', 'dependsOn': 'hormoneImbalance'},
+    {'key': 'exercisesRegularly', 'label': 'Pratica Exercício Regularmente?', 'type': 'bool', 'section': 'HÁBITOS DE VIDA'},
+    {'key': 'exerciseType', 'label': 'Tipo de Exercício', 'type': 'text', 'dependsOn': 'exercisesRegularly', 'section': 'HÁBITOS DE VIDA'},
+    {'key': 'balancedDiet', 'label': 'Segue Alimentação Balanceada?', 'type': 'bool', 'section': 'HÁBITOS DE VIDA'},
+    {'key': 'dietComment', 'label': 'Observações sobre Dieta', 'type': 'text', 'dependsOn': 'balancedDiet', 'section': 'HÁBITOS DE VIDA'},
+    {'key': 'drinks2LitersWater', 'label': 'Bebe 2 litros de Água?', 'type': 'bool', 'section': 'HÁBITOS DE VIDA'},
+    {'key': 'waterIntakeAmount', 'label': 'Quantidade de Água Ingerida', 'type': 'text', 'dependsOn': 'drinks2LitersWater', 'section': 'HÁBITOS DE VIDA'},
+    {'key': 'consumesAlcohol', 'label': 'Consome Álcool?', 'type': 'bool', 'section': 'HÁBITOS DE VIDA'},
+    {'key': 'alcoholFrequency', 'label': 'Frequência de Álcool', 'type': 'enum', 'dependsOn': 'consumesAlcohol', 'section': 'HÁBITOS DE VIDA'},
+    {'key': 'alcoholFrequencyOther', 'label': 'Outra Frequência de Álcool', 'type': 'text', 'dependsOn': 'alcoholFrequency', 'dependsOnValue': 'outro', 'section': 'HÁBITOS DE VIDA'},
+    {'key': 'usesDrugs', 'label': 'Usa Drogas?', 'type': 'bool', 'section': 'HÁBITOS DE VIDA'},
+    {'key': 'drugType', 'label': 'Tipo de Droga', 'type': 'text', 'dependsOn': 'usesDrugs', 'section': 'HÁBITOS DE VIDA'},
+    {'key': 'hormoneImbalance', 'label': 'Desequilíbrio Hormonal?', 'type': 'bool', 'section': 'HÁBITOS DE VIDA'},
+    {'key': 'hormoneImbalanceType', 'label': 'Tipo de Desequilíbrio Hormonal', 'type': 'text', 'dependsOn': 'hormoneImbalance', 'section': 'HÁBITOS DE VIDA'},
 
     // ========== FUMO ==========
-    {'key': 'smokingStatus', 'label': 'Status de Fumo', 'type': 'enum'},
-    {'key': 'smokingDuration', 'label': 'Duração do Fumo', 'type': 'text', 'dependsOn': 'smokingStatus', 'dependsOnValue': '!nunca'},
+    {'key': 'smokingStatus', 'label': 'Fumante?', 'type': 'enum', 'section': 'TABAGISMO', 'defaultValue': 'nao'},
+    {'key': 'smokingDuration', 'label': 'Quanto tempo?', 'type': 'text', 'dependsOn': 'smokingStatus', 'dependsOnValue': '!nao', 'section': 'TABAGISMO'},
 
     // ========== SONO & INTESTINO ==========
-    {'key': 'sleepsWell', 'label': 'Dorme Bem?', 'type': 'bool'},
-    {'key': 'sleepHours', 'label': 'Horas de Sono', 'type': 'number'},
-    {'key': 'regularBowelMovements', 'label': 'Evacuação Regular?', 'type': 'bool'},
-    {'key': 'bowelComment', 'label': 'Observações sobre Evacuação', 'type': 'text', 'dependsOn': 'regularBowelMovements'},
+    {'key': 'sleepsWell', 'label': 'Dorme Bem?', 'type': 'bool', 'section': 'SONO & INTESTINO'},
+    {'key': 'sleepHours', 'label': 'Horas de Sono', 'type': 'number', 'section': 'SONO & INTESTINO'},
+    {'key': 'regularBowelMovements', 'label': 'Evacuação Regular?', 'type': 'bool', 'section': 'SONO & INTESTINO'},
+    {'key': 'bowelComment', 'label': 'Observações sobre Evacuação', 'type': 'text', 'dependsOn': 'regularBowelMovements', 'section': 'SONO & INTESTINO'},
 
     // ========== PRESSÃO ARTERIAL ==========
-    {'key': 'hypertensionStatus', 'label': 'Hipertensão?', 'type': 'enum'},
-    {'key': 'hypotensionStatus', 'label': 'Hipotensão?', 'type': 'enum'},
+    {'key': 'hypertensionStatus', 'label': 'Hipertensão?', 'type': 'enum', 'section': 'PRESSÃO ARTERIAL', 'defaultValue': 'nao'},
+    {'key': 'hypotensionStatus', 'label': 'Hipotensão?', 'type': 'enum', 'section': 'PRESSÃO ARTERIAL', 'defaultValue': 'nao'},
 
     // ========== CONDIÇÕES MÉDICAS ==========
-    {'key': 'hasDiabetes', 'label': 'Tem Diabetes?', 'type': 'bool'},
-    {'key': 'diabetesControlled', 'label': 'Diabetes Controlada?', 'type': 'bool', 'dependsOn': 'hasDiabetes'},
-    {'key': 'hasCardiacCondition', 'label': 'Doença Cardíaca?', 'type': 'bool'},
-    {'key': 'cardiacConditionType', 'label': 'Tipo de Doença Cardíaca', 'type': 'text', 'dependsOn': 'hasCardiacCondition'},
-    {'key': 'hasDepression', 'label': 'Depressão?', 'type': 'bool'},
-    {'key': 'depressionTreatment', 'label': 'Tratamento para Depressão', 'type': 'text', 'dependsOn': 'hasDepression'},
-    {'key': 'hasEpilepsy', 'label': 'Epilepsia?', 'type': 'bool'},
-    {'key': 'epilepsyComment', 'label': 'Observações sobre Epilepsia', 'type': 'text', 'dependsOn': 'hasEpilepsy'},
-    {'key': 'hasDentalImplants', 'label': 'Implante Dental?', 'type': 'bool'},
-    {'key': 'dentalImplantLocation', 'label': 'Localização do Implante Dental', 'type': 'text', 'dependsOn': 'hasDentalImplants'},
-    {'key': 'hasDentures', 'label': 'Prótese Dentária?', 'type': 'bool'},
-    {'key': 'denturesComment', 'label': 'Observações sobre Prótese', 'type': 'text', 'dependsOn': 'hasDentures'},
+    {'key': 'hasDiabetes', 'label': 'Tem Diabetes?', 'type': 'bool', 'section': 'CONDIÇÕES MÉDICAS'},
+    {'key': 'diabetesControlled', 'label': 'Diabetes Controlada?', 'type': 'bool', 'dependsOn': 'hasDiabetes', 'section': 'CONDIÇÕES MÉDICAS'},
+    {'key': 'hasCardiacCondition', 'label': 'Doença Cardíaca?', 'type': 'bool', 'section': 'CONDIÇÕES MÉDICAS'},
+    {'key': 'cardiacConditionType', 'label': 'Tipo de Doença Cardíaca', 'type': 'text', 'dependsOn': 'hasCardiacCondition', 'section': 'CONDIÇÕES MÉDICAS'},
+    {'key': 'hasDepression', 'label': 'Depressão?', 'type': 'bool', 'section': 'CONDIÇÕES MÉDICAS'},
+    {'key': 'depressionTreatment', 'label': 'Tratamento para Depressão', 'type': 'text', 'dependsOn': 'hasDepression', 'section': 'CONDIÇÕES MÉDICAS'},
+    {'key': 'hasEpilepsy', 'label': 'Epilepsia?', 'type': 'bool', 'section': 'CONDIÇÕES MÉDICAS'},
+    {'key': 'epilepsyComment', 'label': 'Observações sobre Epilepsia', 'type': 'text', 'dependsOn': 'hasEpilepsy', 'section': 'CONDIÇÕES MÉDICAS'},
+    {'key': 'hasDentalImplants', 'label': 'Implante Dental?', 'type': 'bool', 'section': 'CONDIÇÕES MÉDICAS'},
+    {'key': 'dentalImplantLocation', 'label': 'Localização do Implante Dental', 'type': 'text', 'dependsOn': 'hasDentalImplants', 'section': 'CONDIÇÕES MÉDICAS'},
+    {'key': 'hasDentures', 'label': 'Prótese Dentária?', 'type': 'bool', 'section': 'CONDIÇÕES MÉDICAS'},
+    {'key': 'denturesComment', 'label': 'Observações sobre Prótese', 'type': 'text', 'dependsOn': 'hasDentures', 'section': 'CONDIÇÕES MÉDICAS'},
 
     // ========== LENTES DE CONTATO ==========
-    {'key': 'wearsContactLenses', 'label': 'Usa Lentes de Contato?', 'type': 'bool'},
-    {'key': 'contactLensesComment', 'label': 'Observações sobre Lentes', 'type': 'text', 'dependsOn': 'wearsContactLenses'},
+    {'key': 'wearsContactLenses', 'label': 'Lentes de Contato?', 'type': 'bool', 'section': 'LENTES DE CONTATO'},
+    {'key': 'contactLensesComment', 'label': 'Observações sobre Lentes', 'type': 'text', 'dependsOn': 'wearsContactLenses', 'section': 'LENTES DE CONTATO'},
 
     // ========== ÁCIDOS & COSMÉTICOS ==========
-    {'key': 'usesAcids', 'label': 'Usa Ácidos?', 'type': 'bool'},
-    {'key': 'acidType', 'label': 'Tipo de Ácido', 'type': 'text', 'dependsOn': 'usesAcids'},
-    {'key': 'usesCosmeticProducts', 'label': 'Usa Produtos Cosméticos?', 'type': 'bool'},
-    {'key': 'cosmeticProductTypes', 'label': 'Tipo de Produto Cosmético', 'type': 'text', 'dependsOn': 'usesCosmeticProducts'},
-    {'key': 'usesSunscreen', 'label': 'Usa Protetor Solar?', 'type': 'bool'},
-    {'key': 'sunscreenType', 'label': 'Tipo de Protetor Solar', 'type': 'text', 'dependsOn': 'usesSunscreen'},
+    {'key': 'usesAcids', 'label': 'Ácidos?', 'type': 'bool', 'section': 'ÁCIDOS & COSMÉTICOS'},
+    {'key': 'acidType', 'label': 'Tipo de Ácido', 'type': 'text', 'dependsOn': 'usesAcids', 'section': 'ÁCIDOS & COSMÉTICOS'},
+    {'key': 'usesCosmeticProducts', 'label': 'Produtos Cosméticos?', 'type': 'bool', 'section': 'ÁCIDOS & COSMÉTICOS'},
+    {'key': 'cosmeticProductTypes', 'label': 'Tipo de Produto Cosmético', 'type': 'text', 'dependsOn': 'usesCosmeticProducts', 'section': 'ÁCIDOS & COSMÉTICOS'},
+    {'key': 'usesSunscreen', 'label': 'Protetor Solar?', 'type': 'bool', 'section': 'ÁCIDOS & COSMÉTICOS'},
+    {'key': 'sunscreenType', 'label': 'Tipo de Protetor Solar', 'type': 'text', 'dependsOn': 'usesSunscreen', 'section': 'ÁCIDOS & COSMÉTICOS'},
 
     // ========== FREQUÊNCIA DE PROTETOR SOLAR ==========
-    {'key': 'sunscreenFrequency', 'label': 'Frequência de Protetor Solar', 'type': 'enum', 'dependsOn': 'usesSunscreen'},
-    {'key': 'sunscreenFrequencyOther', 'label': 'Outra Frequência de Protetor', 'type': 'text', 'dependsOn': 'sunscreenFrequency', 'dependsOnValue': 'outro'},
+    {'key': 'sunscreenFrequency', 'label': 'Frequência de Protetor Solar', 'type': 'enum', 'dependsOn': 'usesSunscreen', 'section': 'PROTETOR SOLAR'},
+    {'key': 'sunscreenFrequencyOther', 'label': 'Outra Frequência de Protetor', 'type': 'text', 'dependsOn': 'sunscreenFrequency', 'dependsOnValue': 'outro', 'section': 'PROTETOR SOLAR'},
 
     // ========== SOL & MAQUIAGEM ==========
-    {'key': 'exposedToSun', 'label': 'Exposto ao Sol?', 'type': 'bool'},
-    {'key': 'sunExposureFrequency', 'label': 'Frequência de Exposição Solar', 'type': 'enum', 'dependsOn': 'exposedToSun'},
-    {'key': 'sunExposureFrequencyOther', 'label': 'Outra Frequência de Exposição', 'type': 'text', 'dependsOn': 'sunExposureFrequency', 'dependsOnValue': 'outro'},
-    {'key': 'hasPermanentMakeup', 'label': 'Maquiagem Permanente?', 'type': 'bool'},
-    {'key': 'permanentMakeupLocation', 'label': 'Localização da Maquiagem Permanente', 'type': 'text', 'dependsOn': 'hasPermanentMakeup'},
+    {'key': 'exposedToSun', 'label': 'Exposto ao Sol?', 'type': 'bool', 'section': 'SOL & MAQUIAGEM'},
+    {'key': 'sunExposureFrequency', 'label': 'Frequência de Exposição Solar', 'type': 'enum', 'dependsOn': 'exposedToSun', 'section': 'SOL & MAQUIAGEM'},
+    {'key': 'sunExposureFrequencyOther', 'label': 'Outra Frequência de Exposição', 'type': 'text', 'dependsOn': 'sunExposureFrequency', 'dependsOnValue': 'outro', 'section': 'SOL & MAQUIAGEM'},
+    {'key': 'hasPermanentMakeup', 'label': 'Maquiagem Permanente?', 'type': 'bool', 'section': 'SOL & MAQUIAGEM'},
+    {'key': 'permanentMakeupLocation', 'label': 'Localização da Maquiagem Permanente', 'type': 'text', 'dependsOn': 'hasPermanentMakeup', 'section': 'SOL & MAQUIAGEM'},
 
     // ========== TOXINA BOTULÍNICA ==========
-    {'key': 'usedBotulinum', 'label': 'Usou Toxina Botulínica?', 'type': 'bool'},
-    {'key': 'botulinumLocation', 'label': 'Localização da Toxina Botulínica', 'type': 'text', 'dependsOn': 'usedBotulinum'},
+    {'key': 'usedBotulinum', 'label': 'Usou Toxina Botulínica?', 'type': 'bool', 'section': 'TOXINA BOTULÍNICA'},
+    {'key': 'botulinumLocation', 'label': 'Localização da Toxina Botulínica', 'type': 'text', 'dependsOn': 'usedBotulinum', 'section': 'TOXINA BOTULÍNICA'},
 
     // ========== ALERGIAS ==========
-    {'key': 'hasAllergies', 'label': 'Tem Alergias?', 'type': 'bool'},
-    {'key': 'allergiesDetails', 'label': 'Detalhes das Alergias', 'type': 'text', 'dependsOn': 'hasAllergies'},
+    {'key': 'hasAllergies', 'label': 'Tem Alergias?', 'type': 'bool', 'section': 'ALERGIAS'},
+    {'key': 'allergiesDetails', 'label': 'Detalhes das Alergias', 'type': 'text', 'dependsOn': 'hasAllergies', 'section': 'ALERGIAS'},
 
     // ========== GESTAÇÃO ==========
-    {'key': 'isPregnant', 'label': 'Grávida?', 'type': 'bool'},
-    {'key': 'pregnancyMonths', 'label': 'Meses de Gestação', 'type': 'number', 'dependsOn': 'isPregnant'},
+    {'key': 'isPregnant', 'label': 'Grávida?', 'type': 'bool', 'section': 'GESTAÇÃO'},
+    {'key': 'pregnancyMonths', 'label': 'Meses de Gestação', 'type': 'number', 'dependsOn': 'isPregnant', 'section': 'GESTAÇÃO'},
 
     // ========== FILHOS ==========
-    {'key': 'hasChildren', 'label': 'Tem Filhos?', 'type': 'bool'},
-    {'key': 'numberOfChildren', 'label': 'Quantidade de Filhos', 'type': 'number', 'dependsOn': 'hasChildren'},
+    {'key': 'hasChildren', 'label': 'Tem Filhos?', 'type': 'bool', 'section': 'FILHOS'},
+    {'key': 'numberOfChildren', 'label': 'Quantidade de Filhos', 'type': 'number', 'dependsOn': 'hasChildren', 'section': 'FILHOS'},
 
     // ========== CICLO MENSTRUAL ==========
-    {'key': 'regularMenstrualCycle', 'label': 'Ciclo Menstrual Regular?', 'type': 'bool'},
-    {'key': 'menstrualCycleComment', 'label': 'Observações sobre Ciclo Menstrual', 'type': 'text', 'dependsOn': 'regularMenstrualCycle'},
+    {'key': 'regularMenstrualCycle', 'label': 'Ciclo Menstrual Regular?', 'type': 'bool', 'section': 'CICLO MENSTRUAL'},
+    {'key': 'menstrualCycleComment', 'label': 'Observações sobre Ciclo Menstrual', 'type': 'text', 'dependsOn': 'regularMenstrualCycle', 'section': 'CICLO MENSTRUAL'},
 
     // ========== HERPES & CONTRACEPTIVOS ==========
-    {'key': 'hasHerpesHistory', 'label': 'Histórico de Herpes?', 'type': 'bool'},
-    {'key': 'herpesDuration', 'label': 'Duração do Herpes', 'type': 'text', 'dependsOn': 'hasHerpesHistory'},
-    {'key': 'usesContraceptive', 'label': 'Usa Contraceptivo?', 'type': 'bool'},
-    {'key': 'contraceptiveType', 'label': 'Tipo de Contraceptivo', 'type': 'text', 'dependsOn': 'usesContraceptive'},
+    {'key': 'hasHerpesHistory', 'label': 'Histórico de Herpes?', 'type': 'bool', 'section': 'SAÚDE REPRODUTIVA'},
+    {'key': 'herpesDuration', 'label': 'Duração do Herpes', 'type': 'text', 'dependsOn': 'hasHerpesHistory', 'section': 'SAÚDE REPRODUTIVA'},
+    {'key': 'usesContraceptive', 'label': 'Contraceptivo?', 'type': 'bool', 'section': 'SAÚDE REPRODUTIVA'},
+    {'key': 'contraceptiveType', 'label': 'Tipo de Contraceptivo', 'type': 'text', 'dependsOn': 'usesContraceptive', 'section': 'SAÚDE REPRODUTIVA'},
 
     // ========== HORMÔNIOS ==========
-    {'key': 'takesHormones', 'label': 'Toma Hormônios?', 'type': 'bool'},
-    {'key': 'hormoneType', 'label': 'Tipo de Hormônio', 'type': 'text', 'dependsOn': 'takesHormones'},
+    {'key': 'takesHormones', 'label': 'Toma Hormônios?', 'type': 'bool', 'section': 'HORMÔNIOS'},
+    {'key': 'hormoneType', 'label': 'Tipo de Hormônio', 'type': 'text', 'dependsOn': 'takesHormones', 'section': 'HORMÔNIOS'},
 
     // ========== AUTORIZAÇÃO DE FOTOS ==========
-    {'key': 'authorizedForPhotos', 'label': 'Autoriza Fotos?', 'type': 'bool'},
-    {'key': 'photoAuthorizationComment', 'label': 'Observações sobre Autorização', 'type': 'text', 'dependsOn': 'authorizedForPhotos'},
+    {'key': 'authorizedForPhotos', 'label': 'Autoriza Fotos?', 'type': 'bool', 'section': 'FOTOS'},
+    {'key': 'photoAuthorizationComment', 'label': 'Observações sobre Autorização', 'type': 'text', 'dependsOn': 'authorizedForPhotos', 'section': 'FOTOS'},
 
     // ========== ESTRÓGÊNIO ==========
-    {'key': 'estrogenComment', 'label': 'Observações sobre Estrógênio', 'type': 'text'},
+    {'key': 'estrogenComment', 'label': 'Observações sobre Estrógênio', 'type': 'text', 'section': 'HORMÔNIOS'},
 
     // ========== PELE OLEOSA ==========
-    {'key': 'oilySkinSensitive', 'label': 'Pele Oleosa Sensível?', 'type': 'bool'},
-    {'key': 'oilySkinResistant', 'label': 'Pele Oleosa Resistente?', 'type': 'bool'},
-    {'key': 'oilySkinPigmented', 'label': 'Pele Oleosa Pigmentada?', 'type': 'bool'},
-    {'key': 'oilySkinNonPigmented', 'label': 'Pele Oleosa Não Pigmentada?', 'type': 'bool'},
-    {'key': 'oilySkinFirm', 'label': 'Pele Oleosa Firme?', 'type': 'bool'},
-    {'key': 'oilySkinWrinkled', 'label': 'Pele Oleosa Enrugada?', 'type': 'bool'},
+    {'key': 'oilySkinSensitive', 'label': 'Sensível?', 'type': 'bool', 'section': 'ANÁLISE DE PELE - OLEOSA'},
+    {'key': 'oilySkinResistant', 'label': 'Resistente?', 'type': 'bool', 'section': 'ANÁLISE DE PELE - OLEOSA'},
+    {'key': 'oilySkinPigmented', 'label': 'Pigmentada?', 'type': 'bool', 'section': 'ANÁLISE DE PELE - OLEOSA'},
+    {'key': 'oilySkinNonPigmented', 'label': 'Não Pigmentada?', 'type': 'bool', 'section': 'ANÁLISE DE PELE - OLEOSA'},
+    {'key': 'oilySkinFirm', 'label': 'Firme?', 'type': 'bool', 'section': 'ANÁLISE DE PELE - OLEOSA'},
+    {'key': 'oilySkinWrinkled', 'label': 'Oleosa Enrugada?', 'type': 'bool', 'section': 'ANÁLISE DE PELE - OLEOSA'},
 
     // ========== PELE SECA ==========
-    {'key': 'drySkinSensitive', 'label': 'Pele Seca Sensível?', 'type': 'bool'},
-    {'key': 'drySkinResistant', 'label': 'Pele Seca Resistente?', 'type': 'bool'},
-    {'key': 'drySkinPigmented', 'label': 'Pele Seca Pigmentada?', 'type': 'bool'},
-    {'key': 'drySkinNonPigmented', 'label': 'Pele Seca Não Pigmentada?', 'type': 'bool'},
-    {'key': 'drySkinFirm', 'label': 'Pele Seca Firme?', 'type': 'bool'},
-    {'key': 'drySkinWrinkled', 'label': 'Pele Seca Enrugada?', 'type': 'bool'},
+    {'key': 'drySkinSensitive', 'label': 'Sensível?', 'type': 'bool', 'section': 'ANÁLISE DE PELE - SECA'},
+    {'key': 'drySkinResistant', 'label': 'Resistente?', 'type': 'bool', 'section': 'ANÁLISE DE PELE - SECA'},
+    {'key': 'drySkinPigmented', 'label': 'Pigmentada?', 'type': 'bool', 'section': 'ANÁLISE DE PELE - SECA'},
+    {'key': 'drySkinNonPigmented', 'label': 'Não Pigmentada?', 'type': 'bool', 'section': 'ANÁLISE DE PELE - SECA'},
+    {'key': 'drySkinFirm', 'label': 'Firme?', 'type': 'bool', 'section': 'ANÁLISE DE PELE - SECA'},
+    {'key': 'drySkinWrinkled', 'label': 'Enrugada?', 'type': 'bool', 'section': 'ANÁLISE DE PELE - SECA'},
 
     // ========== PELE MISTA ==========
-    {'key': 'combinationSkinSensitive', 'label': 'Pele Mista Sensível?', 'type': 'bool'},
-    {'key': 'combinationSkinResistant', 'label': 'Pele Mista Resistente?', 'type': 'bool'},
-    {'key': 'combinationSkinPigmented', 'label': 'Pele Mista Pigmentada?', 'type': 'bool'},
-    {'key': 'combinationSkinNonPigmented', 'label': 'Pele Mista Não Pigmentada?', 'type': 'bool'},
-    {'key': 'combinationSkinFirm', 'label': 'Pele Mista Firme?', 'type': 'bool'},
-    {'key': 'combinationSkinWrinkled', 'label': 'Pele Mista Enrugada?', 'type': 'bool'},
+    {'key': 'combinationSkinSensitive', 'label': 'Sensível?', 'type': 'bool', 'section': 'ANÁLISE DE PELE - MISTA'},
+    {'key': 'combinationSkinResistant', 'label': 'Resistente?', 'type': 'bool', 'section': 'ANÁLISE DE PELE - MISTA'},
+    {'key': 'combinationSkinPigmented', 'label': 'Pigmentada?', 'type': 'bool', 'section': 'ANÁLISE DE PELE - MISTA'},
+    {'key': 'combinationSkinNonPigmented', 'label': 'Não Pigmentada?', 'type': 'bool', 'section': 'ANÁLISE DE PELE - MISTA'},
+    {'key': 'combinationSkinFirm', 'label': 'Firme?', 'type': 'bool', 'section': 'ANÁLISE DE PELE - MISTA'},
+    {'key': 'combinationSkinWrinkled', 'label': 'Enrugada?', 'type': 'bool', 'section': 'ANÁLISE DE PELE - MISTA'},
 
     // ========== ANÁLISE DE ACNE ==========
-    {'key': 'hasComedo', 'label': 'Tem Acne Comedônica?', 'type': 'bool'},
-    {'key': 'hasPustule', 'label': 'Tem Acne Pustulosa?', 'type': 'bool'},
-    {'key': 'hasPapule', 'label': 'Tem Acne Papulosa?', 'type': 'bool'},
-    {'key': 'hasNodule', 'label': 'Tem Acne Nodular?', 'type': 'bool'},
-    {'key': 'hasHyperkeratinization', 'label': 'Tem Hiperqueratinização?', 'type': 'bool'},
-    {'key': 'hasMilium', 'label': 'Tem Milium?', 'type': 'bool'},
-    {'key': 'hasMicrocyst', 'label': 'Tem Microcisto?', 'type': 'bool'},
-    {'key': 'hasInflammatoryAcne', 'label': 'Tem Acne Inflamatória?', 'type': 'bool'},
-    {'key': 'hasNonInflammatoryAcne', 'label': 'Tem Acne Não Inflamatória?', 'type': 'bool'},
+    {'key': 'hasComedo', 'label': 'Acne Comedônica?', 'type': 'bool', 'section': 'ANÁLISE DE ACNE'},
+    {'key': 'hasPustule', 'label': 'Acne Pustulosa?', 'type': 'bool', 'section': 'ANÁLISE DE ACNE'},
+    {'key': 'hasPapule', 'label': 'Acne Papulosa?', 'type': 'bool', 'section': 'ANÁLISE DE ACNE'},
+    {'key': 'hasNodule', 'label': 'Acne Nodular?', 'type': 'bool', 'section': 'ANÁLISE DE ACNE'},
+    {'key': 'hasHyperkeratinization', 'label': 'Hiperqueratinização?', 'type': 'bool', 'section': 'ANÁLISE DE ACNE'},
+    {'key': 'hasMilium', 'label': 'Milium?', 'type': 'bool', 'section': 'ANÁLISE DE ACNE'},
+    {'key': 'hasMicrocyst', 'label': 'Microcisto?', 'type': 'bool', 'section': 'ANÁLISE DE ACNE'},
+    {'key': 'hasInflammatoryAcne', 'label': 'Acne Inflamatória?', 'type': 'bool', 'section': 'ANÁLISE DE ACNE'},
+    {'key': 'hasNonInflammatoryAcne', 'label': 'Acne Não Inflamatória?', 'type': 'bool', 'section': 'ANÁLISE DE ACNE'},
 
     // ========== LESÕES DERMATOLÓGICAS ==========
-    {'key': 'hasTelangiectasiaNevus', 'label': 'Tem Nevus Telangiectásico?', 'type': 'bool'},
-    {'key': 'hasActinicKeratosis', 'label': 'Tem Queratose Actínica?', 'type': 'bool'},
-    {'key': 'hasMelanocyticNevus', 'label': 'Tem Nevus Melanocítico?', 'type': 'bool'},
-    {'key': 'hasDermatosisPapulosa', 'label': 'Tem Dermatose Papulosa?', 'type': 'bool'},
-    {'key': 'hasPapilloma', 'label': 'Tem Papiloma?', 'type': 'bool'},
-    {'key': 'hasAcrochordion', 'label': 'Tem Acrocórdio?', 'type': 'bool'},
-    {'key': 'hasOtherLesions', 'label': 'Tem Outras Lesões?', 'type': 'bool'},
+    {'key': 'hasTelangiectasiaNevus', 'label': 'Nevus Telangiectásico?', 'type': 'bool', 'section': 'LESÕES DERMATOLÓGICAS'},
+    {'key': 'hasActinicKeratosis', 'label': 'Queratose Actínica?', 'type': 'bool', 'section': 'LESÕES DERMATOLÓGICAS'},
+    {'key': 'hasMelanocyticNevus', 'label': 'Nevus Melanocítico?', 'type': 'bool', 'section': 'LESÕES DERMATOLÓGICAS'},
+    {'key': 'hasDermatosisPapulosa', 'label': 'Dermatose Papulosa?', 'type': 'bool', 'section': 'LESÕES DERMATOLÓGICAS'},
+    {'key': 'hasPapilloma', 'label': 'Papiloma?', 'type': 'bool', 'section': 'LESÕES DERMATOLÓGICAS'},
+    {'key': 'hasAcrochordion', 'label': 'Acrocórdio?', 'type': 'bool', 'section': 'LESÕES DERMATOLÓGICAS'},
+    {'key': 'hasOtherLesions', 'label': 'Outras Lesões?', 'type': 'bool', 'section': 'LESÕES DERMATOLÓGICAS'},
 
     // ========== DISCROMIAS ==========
-    {'key': 'hasInflammatoryHyperpigmentation', 'label': 'Tem Hiperpigmentação Inflamatória?', 'type': 'bool'},
-    {'key': 'hasPhotoaging', 'label': 'Tem Fotoenvelhecimento?', 'type': 'bool'},
-    {'key': 'hasMelasma', 'label': 'Tem Melasma?', 'type': 'bool'},
-    {'key': 'hasFreckles', 'label': 'Tem Sardas?', 'type': 'bool'},
-    {'key': 'hasOrbicularHyperpigmentation', 'label': 'Tem Hiperpigmentação Orbicular?', 'type': 'bool'},
-    {'key': 'hasHypochromia', 'label': 'Tem Hipocromia?', 'type': 'bool'},
-    {'key': 'chromaticAbnormalityJustification', 'label': 'Observações sobre Discromias', 'type': 'text'},
+    {'key': 'hasInflammatoryHyperpigmentation', 'label': 'Hiperpigmentação Inflamatória?', 'type': 'bool', 'section': 'DISCROMIAS'},
+    {'key': 'hasPhotoaging', 'label': 'Fotoenvelhecimento?', 'type': 'bool', 'section': 'DISCROMIAS'},
+    {'key': 'hasMelasma', 'label': 'Melasma?', 'type': 'bool', 'section': 'DISCROMIAS'},
+    {'key': 'hasFreckles', 'label': 'Sardas?', 'type': 'bool', 'section': 'DISCROMIAS'},
+    {'key': 'hasOrbicularHyperpigmentation', 'label': 'Hiperpigmentação Orbicular?', 'type': 'bool', 'section': 'DISCROMIAS'},
+    {'key': 'hasHypochromia', 'label': 'Hipocromia?', 'type': 'bool', 'section': 'DISCROMIAS'},
+    {'key': 'chromaticAbnormalityJustification', 'label': 'Observações sobre Discromias', 'type': 'text', 'section': 'DISCROMIAS'},
 
     // ========== FOTOTIPO ==========
-    {'key': 'skinPhototype', 'label': 'Fototipo', 'type': 'enum'},
+    {'key': 'skinPhototype', 'label': 'Fototipo', 'type': 'enum', 'section': 'FOTOTIPO', 'defaultValue': 'I'},
 
     // ========== OUTRAS CONDIÇÕES DERMATOLÓGICAS ==========
-    {'key': 'hasDermatitis', 'label': 'Tem Dermatite?', 'type': 'bool'},
-    {'key': 'hasPsoriasis', 'label': 'Tem Psoríase?', 'type': 'bool'},
+    {'key': 'hasDermatitis', 'label': 'Dermatite?', 'type': 'bool', 'section': 'CONDIÇÕES DERMATOLÓGICAS'},
+    {'key': 'hasPsoriasis', 'label': 'Psoríase?', 'type': 'bool', 'section': 'CONDIÇÕES DERMATOLÓGICAS'},
 
     // ========== TRATAMENTO ==========
-    {'key': 'treatmentIndicated', 'label': 'Tratamento Indicado', 'type': 'text'},
+    {'key': 'treatmentIndicated', 'label': 'Tratamento Indicado', 'type': 'text', 'section': 'PLANO TERAPÊUTICO'},
 
     // ========== PRESCRIÇÃO ==========
-    {'key': 'cosmeticPrescription', 'label': 'Prescrição Cosmética', 'type': 'text'},
+    {'key': 'cosmeticPrescription', 'label': 'Prescrição Cosmética', 'type': 'text', 'section': 'PLANO TERAPÊUTICO'},
   ];
 
   /// Remove dados vazios, nulos de formulário, mas mantém checkboxes (true/false)
@@ -442,10 +449,6 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
   /// Retorna as opções de enum para cada campo
   List<String> _getEnumValues(String fieldKey) {
     switch (fieldKey) {
-      // Motivo da Visita
-      case 'visitReasonOption':
-        return AnamnesisFieldSpecs.visitReasonEnumValues;
-      
       // Fumo
       case 'smokingStatus':
         return AnamnesisFieldSpecs.smokingStatusEnumValues;
@@ -484,8 +487,8 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
       'manutencao': 'Manutenção',
       'outro': 'Outro',
       
-      // Fumo
-      'nunca': 'Nunca',
+      // Fumante
+      'nao': 'Não',
       'ex_fumante': 'Ex-Fumante',
       'sim': 'Sim',
       
@@ -495,7 +498,6 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
       'diario': 'Diário',
       
       // Pressão Arterial
-      'nao': 'Não',
       'compensada': 'Compensada',
       'descompensada': 'Descompensada',
       
@@ -509,6 +511,23 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
     };
     
     return translations[value] ?? value;
+  }
+
+  /// Agrupa campos por seção
+  Map<String, List<Map<String, dynamic>>> _groupFieldsBySection() {
+    final grouped = <String, List<Map<String, dynamic>>>{};
+    
+    for (var field in fields) {
+      if (!_shouldShowField(field)) continue;
+      
+      final section = field['section'] as String? ?? 'Outros';
+      if (!grouped.containsKey(section)) {
+        grouped[section] = [];
+      }
+      grouped[section]!.add(field);
+    }
+    
+    return grouped;
   }
 
   /// Retorna o hintText apropriado para cada campo
@@ -560,20 +579,12 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Text(
-              label,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-              ),
-            ),
-            const Text(
-              ' *',
-              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-            ),
-          ],
+        Text(
+          label,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+          ),
         ),
         const SizedBox(height: 8),
         FormField<String>(
@@ -692,6 +703,151 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
     );
   }
 
+  /// Constrói os campos agrupados por seção com visual agradável
+  List<Widget> _buildGroupedFields() {
+    final grouped = _groupFieldsBySection();
+    final widgets = <Widget>[];
+
+    for (final section in grouped.keys) {
+      // Adiciona título da seção
+      widgets.add(
+        Padding(
+          padding: const EdgeInsets.only(top: 24, bottom: 12, left: 4),
+          child: Text(
+            section,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.purple,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+      );
+
+      // Renderiza os campos da seção em um Card
+      widgets.add(
+        Card(
+          elevation: 2,
+          margin: const EdgeInsets.only(bottom: 20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(
+              color: Colors.purple,
+              width: 0.5,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: grouped[section]!.expand((field) {
+                return _buildFieldWidget(field);
+              }).toList(),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return widgets;
+  }
+
+  /// Constrói o widget para um campo individual
+  List<Widget> _buildFieldWidget(Map<String, dynamic> field) {
+    final widgets = <Widget>[];
+
+    if (field['type'] == 'bool') {
+      widgets.add(
+        CheckboxListTile(
+          title: Text(field['label']),
+          value: _checkboxValues[field['key']] ?? false,
+          onChanged: (value) {
+            setState(() {
+              _checkboxValues[field['key']] = value ?? false;
+              _formData[field['key']] = value ?? false;
+            });
+          },
+          contentPadding: EdgeInsets.zero,
+        ),
+      );
+    } else if (field['type'] == 'number') {
+      widgets.add(
+        TextFormField(
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          decoration: _buildInputDecoration(
+            field['label'],
+            _getHintText(field['key']),
+          ),
+          onSaved: (value) {
+            if (value?.isNotEmpty ?? false) {
+              _formData[field['key']] = int.tryParse(value!) ?? 0;
+            }
+          },
+        ),
+      );
+    } else if (field['type'] == 'enum') {
+      final enumValues = _getEnumValues(field['key']);
+
+      widgets.add(
+        _buildEnumDropdownWithValidation(
+          fieldKey: field['key'],
+          label: field['label'],
+          value: _enumValues[field['key']],
+          items: enumValues,
+          onChanged: (value) {
+            setState(() {
+              _enumValues[field['key']] = value;
+              _formData[field['key']] = value;
+            });
+          },
+        ),
+      );
+    } else {
+      bool isPhone = field['key'] == 'phone' || field['key'] == 'whatsapp';
+      bool isEmail = field['key'] == 'email';
+      int maxLines = field['key'] == 'address' ? 2 : 1;
+
+      widgets.add(
+        TextFormField(
+          keyboardType: isEmail
+              ? TextInputType.emailAddress
+              : isPhone
+                  ? TextInputType.phone
+                  : TextInputType.text,
+          maxLines: maxLines,
+          decoration: _buildInputDecoration(
+            field['label'],
+            _getHintText(field['key']),
+          ),
+          validator: isEmail
+              ? (value) {
+                  if (value == null || value.trim().isEmpty) return null;
+                  final email = value.trim();
+                  final emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
+                  if (!emailRegex.hasMatch(email)) {
+                    return 'Email inválido';
+                  }
+                  return null;
+                }
+              : null,
+          onSaved: (value) {
+            if (value?.isNotEmpty ?? false) {
+              _formData[field['key']] = value;
+            }
+          },
+        ),
+      );
+    }
+
+    // Adiciona espaçamento entre campos dentro da seção
+    if (widgets.isNotEmpty) {
+      widgets.add(const SizedBox(height: 12));
+    }
+
+    return widgets;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -731,103 +887,7 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
             ),
             const SizedBox(height: 20),
 
-            ...fields.expand((field) {
-              // Verifica se o campo deve ser exibido baseado em dependências
-              if (!_shouldShowField(field)) {
-                return []; // Não renderiza o campo
-              }
-
-              final widgets = <Widget>[];
-
-              if (field['type'] == 'bool') {
-                widgets.add(
-                  CheckboxListTile(
-                    title: Text(field['label']),
-                    value: _checkboxValues[field['key']] ?? false,
-                    onChanged: (value) {
-                      setState(() {
-                        _checkboxValues[field['key']] = value ?? false;
-                        // Sempre salva true ou false
-                        _formData[field['key']] = value ?? false;
-                      });
-                    },
-                  ),
-                );
-              } else if (field['type'] == 'number') {
-                widgets.add(
-                  TextFormField(
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    decoration: _buildInputDecoration(
-                      field['label'],
-                      _getHintText(field['key']),
-                    ),
-                    onSaved: (value) {
-                      if (value?.isNotEmpty ?? false) {
-                        _formData[field['key']] = int.tryParse(value!) ?? 0;
-                      }
-                    },
-                  ),
-                );
-              } else if (field['type'] == 'enum') {
-                final enumValues = _getEnumValues(field['key']);
-                
-                widgets.add(
-                  _buildEnumDropdownWithValidation(
-                    fieldKey: field['key'],
-                    label: field['label'],
-                    value: _enumValues[field['key']],
-                    items: enumValues,
-                    onChanged: (value) {
-                      setState(() {
-                        _enumValues[field['key']] = value;
-                        _formData[field['key']] = value;
-                      });
-                    },
-                  ),
-                );
-              } else {
-                // Text fields with special handling for phone, email, multiline
-                bool isPhone = field['key'] == 'phone' || 
-                              field['key'] == 'whatsapp';
-                bool isEmail = field['key'] == 'email';
-                int maxLines = field['key'] == 'address' ? 2 : 1;
-
-                widgets.add(
-                  TextFormField(
-                    keyboardType: isEmail 
-                        ? TextInputType.emailAddress
-                        : isPhone 
-                            ? TextInputType.phone 
-                            : TextInputType.text,
-                    maxLines: maxLines,
-                    decoration: _buildInputDecoration(
-                      field['label'],
-                      _getHintText(field['key']),
-                    ),
-                    validator: isEmail ? (value) {
-                      if (value == null || value.trim().isEmpty) return null;
-                      final email = value.trim();
-                      final emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
-                      if (!emailRegex.hasMatch(email)) {
-                        return 'Email inválido';
-                      }
-                      return null;
-                    } : null,
-                    onSaved: (value) {
-                      if (value?.isNotEmpty ?? false) {
-                        _formData[field['key']] = value;
-                      }
-                    },
-                  ),
-                );
-              }
-
-              // Adiciona espaçamento entre campos
-              widgets.add(const SizedBox(height: 20));
-
-              return widgets;
-            }).toList(),
+            ..._buildGroupedFields(),
 
             ElevatedButton(
               onPressed: saveData,
