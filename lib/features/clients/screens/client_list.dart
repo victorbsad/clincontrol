@@ -3,7 +3,10 @@ import 'package:printing/printing.dart';
 import '../../../data/models/client.dart';
 import '../../../data/repositories/client_repository.dart';
 import '../../../data/repositories/session_repository.dart';
+import '../../../data/repositories/anamnesis_repository.dart';
+import '../../../data/repositories/user_repository.dart';
 import '../../../data/services/session_history_pdf_service.dart';
+import '../../../data/services/anamnesis_pdf_service.dart';
 import 'client_register.dart';
 import '../../anamnesis/screens/anamnesis.dart';
 import '../../sessions/screens/session_list.dart';
@@ -23,9 +26,17 @@ class _ClientListState extends State<ClientList> {
   List<Client> _clients = [];
   bool _isLoading = true;
 
+  // Importar o serviço de PDF quando necessário
+  late AnamnesisRepository _anamnesisRepository;
+  late AnamnesisPdfService _anamnesisPdfService;
+  late UserRepository _userRepository;
+
   @override
   void initState() {
     super.initState();
+    _anamnesisRepository = AnamnesisRepository();
+    _anamnesisPdfService = const AnamnesisPdfService();
+    _userRepository = UserRepository();
     _loadClients();
   }
 
@@ -87,6 +98,41 @@ class _ClientListState extends State<ClientList> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Erro ao gerar PDF: $error')));
+    }
+  }
+
+  Future<void> _openAnamneesisPdf(Client client) async {
+    try {
+      final anamneses = await _anamnesisRepository.findByClientId(client.id!);
+      
+      if (anamneses.isEmpty) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Nenhuma anamnese salva para este cliente.'),
+          ),
+        );
+        return;
+      }
+
+      final anamnesis = anamneses.first;
+      final professionalName = (await _userRepository.getCurrentUser())?.name ?? 'Profissional';
+      
+      final bytes = await _anamnesisPdfService.generate(
+        client: client,
+        anamnesis: anamnesis,
+        professionalName: professionalName,
+      );
+
+      await Printing.layoutPdf(
+        onLayout: (format) async => bytes,
+        name: 'anamnese-${client.name}.pdf',
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao gerar PDF: $error')),
+      );
     }
   }
 
@@ -202,6 +248,14 @@ class _ClientListState extends State<ClientList> {
                     ),
                     ListTile(
                       leading: Icon(Icons.picture_as_pdf_outlined),
+                      title: Text('PDF de Anamnese'),
+                      onTap: () {
+                        Navigator.pop(context);
+                        _openAnamneesisPdf(client);
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.receipt_long_outlined),
                       title: Text('PDF de Sessoes'),
                       onTap: () {
                         Navigator.pop(context);
