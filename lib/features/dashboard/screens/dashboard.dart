@@ -3,10 +3,7 @@ import 'package:printing/printing.dart';
 import '../../../core/config/app_environment.dart';
 import '../../../data/dev/mock_models.dart';
 import '../../../data/models/client.dart';
-import '../../../data/repositories/anamnesis_repository.dart';
 import '../../../data/repositories/client_repository.dart';
-import '../../../data/repositories/user_repository.dart';
-import '../../../data/services/anamnesis_pdf_service.dart';
 import '../../../data/repositories/session_repository.dart';
 import '../../../data/services/session_history_pdf_service.dart';
 import '../../clients/screens/client_list.dart';
@@ -24,9 +21,6 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   final ClientRepository _clientRepository = ClientRepository();
-  final AnamnesisRepository _anamnesisRepository = AnamnesisRepository();
-  final UserRepository _userRepository = UserRepository();
-  final AnamnesisPdfService _pdfService = const AnamnesisPdfService();
   final SessionRepository _sessionRepository = SessionRepository();
   final SessionHistoryPdfService _sessionPdfService =
       const SessionHistoryPdfService();
@@ -51,49 +45,6 @@ class _DashboardState extends State<Dashboard> {
       _count = count;
       _isLoading = false;
     });
-  }
-
-  Future<void> _openSeedPdf() async {
-    try {
-      final clients = await _clientRepository.findAll();
-      Client? client;
-      for (final item in clients) {
-        if (DevMockModels.isDevMockClient(item)) {
-          client = item;
-          break;
-        }
-      }
-      final anamneses = client == null
-          ? const []
-          : await _anamnesisRepository.findByClientId(client.id!);
-      final anamnesis = anamneses.isNotEmpty ? anamneses.first : null;
-
-      if (client == null || anamnesis == null) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Seed de anamnese não encontrado.')),
-        );
-        return;
-      }
-
-      final bytes = await _pdfService.generate(
-        client: client,
-        anamnesis: anamnesis,
-        professionalName:
-            (await _userRepository.getCurrentUser())?.name ??
-            AppEnvironment.professionalName,
-      );
-
-      await Printing.layoutPdf(
-        onLayout: (format) async => bytes,
-        name: 'anamnese-cliente-dev.pdf',
-      );
-    } catch (error) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao gerar PDF: $error')));
-    }
   }
 
   Future<void> _openSeedSessionsPdf() async {
@@ -149,12 +100,6 @@ class _DashboardState extends State<Dashboard> {
               MaterialPageRoute(builder: (_) => const UserProfileScreen()),
             ),
           ),
-          if (AppEnvironment.devToolsEnabled)
-            IconButton(
-              tooltip: 'PDF de anamnese (teste)',
-              icon: const Icon(Icons.picture_as_pdf_outlined),
-              onPressed: _openSeedPdf,
-            ),
           if (AppEnvironment.devToolsEnabled)
             IconButton(
               tooltip: 'PDF de sessoes (teste)',
