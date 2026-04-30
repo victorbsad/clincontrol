@@ -551,20 +551,22 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
   InputDecoration _buildInputDecoration(String label, String hint) {
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(fontWeight: FontWeight.w600),
+      labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
       hintText: hint.isNotEmpty ? hint : null,
+      hintStyle: const TextStyle(fontSize: 13),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         borderSide: const BorderSide(color: Colors.grey),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         borderSide: const BorderSide(color: Colors.purple, width: 2),
       ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      isDense: true,
     );
   }
 
@@ -605,7 +607,7 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
                       color: state.hasError ? Colors.red : Colors.grey,
                       width: state.hasError ? 2 : 1,
                     ),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: _buildEnumDropdown(
                     fieldKey: fieldKey,
@@ -651,7 +653,7 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
       hint: Text(
         'Selecione',
         style: TextStyle(
-          fontSize: 16,
+          fontSize: 13,
           color: Colors.grey[700],
         ),
       ),
@@ -661,26 +663,27 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
                 child: Text(
                   _humanizeEnumValue(fieldKey, item),
                   overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 13),
                 ),
               ))
           .toList(),
       onChanged: onChanged,
       buttonStyleData: ButtonStyleData(
-        height: 50,
-        padding: EdgeInsets.zero,
+        height: 40,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
         ),
         elevation: 0,
       ),
       iconStyleData: const IconStyleData(
-        icon: Icon(Icons.expand_more),
-        iconSize: 24,
+        icon: Icon(Icons.expand_more, size: 20),
+        iconSize: 20,
       ),
       dropdownStyleData: DropdownStyleData(
         maxHeight: 300,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
           color: Colors.white,
           boxShadow: [
             BoxShadow(
@@ -697,8 +700,8 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
         offset: const Offset(0, 5),
       ),
       menuItemStyleData: const MenuItemStyleData(
-        height: 45,
-        padding: EdgeInsets.symmetric(horizontal: 16),
+        height: 38,
+        padding: EdgeInsets.symmetric(horizontal: 12),
       ),
     );
   }
@@ -712,7 +715,7 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
       // Adiciona título da seção
       widgets.add(
         Padding(
-          padding: const EdgeInsets.only(top: 24, bottom: 12, left: 4),
+          padding: const EdgeInsets.only(top: 12, bottom: 8, left: 4),
           child: Text(
             section,
             style: const TextStyle(
@@ -729,7 +732,7 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
       widgets.add(
         Card(
           elevation: 2,
-          margin: const EdgeInsets.only(bottom: 20),
+          margin: const EdgeInsets.only(bottom: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
             side: const BorderSide(
@@ -752,14 +755,85 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
     return widgets;
   }
 
+  /// Constrói um checkbox customizado com visual melhorado
+  Widget _buildCustomCheckbox({
+    required String label,
+    required String fieldKey,
+    required bool value,
+    required Function(bool?) onChanged,
+  }) {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        bool isHovering = false;
+        return MouseRegion(
+          onEnter: (_) => setState(() => isHovering = true),
+          onExit: (_) => setState(() => isHovering = false),
+          child: InkWell(
+            onTap: () => onChanged(!value),
+            borderRadius: BorderRadius.circular(8),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              decoration: BoxDecoration(
+                color: isHovering
+                    ? Colors.purple.withValues(alpha: 0.08)
+                    : Colors.transparent,
+                border: Border.all(
+                  color: isHovering
+                      ? Colors.purple.withValues(alpha: 0.3)
+                      : Colors.transparent,
+                  width: 1.5,
+                ),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: Checkbox(
+                      value: value,
+                      onChanged: onChanged,
+                      side: BorderSide(
+                        color: Colors.purple.withValues(alpha: 0.7),
+                        width: 2,
+                      ),
+                      fillColor: WidgetStateProperty.resolveWith((states) {
+                        if (states.contains(WidgetState.selected)) {
+                          return Colors.purple;
+                        }
+                        return Colors.transparent;
+                      }),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      label,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   /// Constrói o widget para um campo individual
   List<Widget> _buildFieldWidget(Map<String, dynamic> field) {
     final widgets = <Widget>[];
 
     if (field['type'] == 'bool') {
       widgets.add(
-        CheckboxListTile(
-          title: Text(field['label']),
+        _buildCustomCheckbox(
+          label: field['label'],
+          fieldKey: field['key'],
           value: _checkboxValues[field['key']] ?? false,
           onChanged: (value) {
             setState(() {
@@ -767,7 +841,6 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
               _formData[field['key']] = value ?? false;
             });
           },
-          contentPadding: EdgeInsets.zero,
         ),
       );
     } else if (field['type'] == 'number') {
@@ -842,7 +915,7 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
 
     // Adiciona espaçamento entre campos dentro da seção
     if (widgets.isNotEmpty) {
-      widgets.add(const SizedBox(height: 12));
+      widgets.add(const SizedBox(height: 4));
     }
 
     return widgets;

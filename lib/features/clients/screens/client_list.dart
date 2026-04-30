@@ -145,106 +145,181 @@ class _ClientListState extends State<ClientList> {
       itemBuilder: (context, index) {
         final client = _clients[index];
 
-        return Material(
-          child: InkWell(
-            onTap: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (context) => Container(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ListTile(
-                        leading: Icon(Icons.edit),
-                        title: Text('Visualizar/Editar'),
-                        onTap: () {
-                          Navigator.pop(context);
-                          //Editar cliente
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  ClientRegister(client: client),
-                            ),
-                          );
-                        },
+        return _ClientCard(
+          client: client,
+          onTap: () {
+            showModalBottomSheet(
+              context: context,
+              builder: (context) => Container(
+                padding: EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ListTile(
+                      leading: Icon(Icons.edit),
+                      title: Text('Visualizar/Editar'),
+                      onTap: () async {
+                        Navigator.pop(context);
+                        //Editar cliente
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                ClientRegister(client: client),
+                          ),
+                        );
+                        _loadClients();
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.description),
+                      title: Text('Ficha de Anamnese'),
+                      onTap: () async {
+                        Navigator.pop(context);
+                        //Abrir ficha de anamnese
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                AnamnesisScreen(client: client),
+                          ),
+                        );
+                        _loadClients();
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.event_note_outlined),
+                      title: Text('Sessoes de Atendimento'),
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => SessionList(client: client),
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.picture_as_pdf_outlined),
+                      title: Text('PDF de Sessoes'),
+                      onTap: () {
+                        Navigator.pop(context);
+                        _openSessionsPdf(client);
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.delete, color: Colors.red),
+                      title: Text(
+                        'Deletar',
+                        style: TextStyle(color: Colors.red),
                       ),
-                      ListTile(
-                        leading: Icon(Icons.description),
-                        title: Text('Ficha de Anamnese'),
-                        onTap: () {
-                          Navigator.pop(context);
-                          //Abrir ficha de anamnese
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  AnamnesisScreen(client: client),
-                            ),
-                          );
-                        },
-                      ),
-                      ListTile(
-                        leading: Icon(Icons.event_note_outlined),
-                        title: Text('Sessoes de Atendimento'),
-                        onTap: () {
-                          Navigator.pop(context);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => SessionList(client: client),
-                            ),
-                          );
-                        },
-                      ),
-                      ListTile(
-                        leading: Icon(Icons.picture_as_pdf_outlined),
-                        title: Text('PDF de Sessoes'),
-                        onTap: () {
-                          Navigator.pop(context);
-                          _openSessionsPdf(client);
-                        },
-                      ),
-                      ListTile(
-                        leading: Icon(Icons.delete, color: Colors.red),
-                        title: Text(
-                          'Deletar',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                        onTap: () {
-                          Navigator.pop(context);
-                          //Deletar cliente
-                          _deleteClient(client.id!);
-                        },
-                      ),
-                    ],
-                  ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        //Deletar cliente
+                        _deleteClient(client.id!);
+                      },
+                    ),
+                  ],
                 ),
-              );
-            },
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class _ClientCard extends StatefulWidget {
+  final Client client;
+  final VoidCallback onTap;
+
+  const _ClientCard({
+    required this.client,
+    required this.onTap,
+  });
+
+  @override
+  State<_ClientCard> createState() => _ClientCardState();
+}
+
+class _ClientCardState extends State<_ClientCard> with TickerProviderStateMixin {
+  bool _isHovering = false;
+  bool _isPressed = false;
+  late AnimationController _scaleController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _scaleController = AnimationController(
+      duration: const Duration(milliseconds: 100),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.98).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _scaleController.dispose();
+    super.dispose();
+  }
+
+  void _onPointerDown(PointerDownEvent event) {
+    setState(() => _isPressed = true);
+    _scaleController.forward();
+  }
+
+  void _onPointerUp(PointerUpEvent event) {
+    setState(() => _isPressed = false);
+    _scaleController.reverse();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Listener(
+      onPointerDown: _onPointerDown,
+      onPointerUp: _onPointerUp,
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovering = true),
+        onExit: (_) => setState(() => _isHovering = false),
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: ScaleTransition(
+            scale: _scaleAnimation,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
               margin: const EdgeInsets.only(bottom: 12),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: _isHovering
+                    ? Colors.grey.shade100
+                    : Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.purple.shade100),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.purple.shade50,
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+                border: Border.all(
+                  color: Colors.purple,
+                  width: 0.5,
+                ),
+                boxShadow: _isHovering
+                    ? []
+                    : [
+                        BoxShadow(
+                          color: Colors.purple.shade50,
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
               ),
               child: Row(
                 children: [
                   CircleAvatar(
                     backgroundColor: Colors.purple,
                     child: Text(
-                      client.name[0].toUpperCase(),
+                      widget.client.name[0].toUpperCase(),
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -257,7 +332,7 @@ class _ClientListState extends State<ClientList> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          client.name,
+                          widget.client.name,
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -265,8 +340,13 @@ class _ClientListState extends State<ClientList> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          client.phone.isEmpty ? 'Sem telefone' : client.phone,
-                          style: const TextStyle(fontSize: 14, color: Colors.grey),
+                          widget.client.phone.isEmpty
+                              ? 'Sem telefone'
+                              : widget.client.phone,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
                         ),
                       ],
                     ),
@@ -275,8 +355,8 @@ class _ClientListState extends State<ClientList> {
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
