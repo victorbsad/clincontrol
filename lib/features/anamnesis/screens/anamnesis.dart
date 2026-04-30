@@ -553,7 +553,7 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
       labelText: label,
       labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
       hintText: hint.isNotEmpty ? hint : null,
-      hintStyle: const TextStyle(fontSize: 13),
+      hintStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.normal),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
       ),
@@ -565,8 +565,9 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
         borderRadius: BorderRadius.circular(8),
         borderSide: const BorderSide(color: Colors.purple, width: 2),
       ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      isDense: true,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      isDense: false,
+      counterText: '',
     );
   }
 
@@ -670,7 +671,7 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
       onChanged: onChanged,
       buttonStyleData: ButtonStyleData(
         height: 40,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
         ),
@@ -732,7 +733,7 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
       widgets.add(
         Card(
           elevation: 2,
-          margin: const EdgeInsets.only(bottom: 12),
+          margin: const EdgeInsets.only(bottom: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
             side: const BorderSide(
@@ -768,12 +769,12 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
         return MouseRegion(
           onEnter: (_) => setState(() => isHovering = true),
           onExit: (_) => setState(() => isHovering = false),
-          child: InkWell(
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
             onTap: () => onChanged(!value),
-            borderRadius: BorderRadius.circular(8),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 150),
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
               decoration: BoxDecoration(
                 color: isHovering
                     ? Colors.purple.withValues(alpha: 0.08)
@@ -879,7 +880,12 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
     } else {
       bool isPhone = field['key'] == 'phone' || field['key'] == 'whatsapp';
       bool isEmail = field['key'] == 'email';
-      int maxLines = field['key'] == 'address' ? 2 : 1;
+      int? maxLines = field['key'] == 'address' ? 3 : null;
+
+      var decoration = _buildInputDecoration(
+        field['label'],
+        _getHintText(field['key']),
+      );
 
       widgets.add(
         TextFormField(
@@ -889,10 +895,24 @@ class _AnamnesisScreenState extends State<AnamnesisScreen> {
                   ? TextInputType.phone
                   : TextInputType.text,
           maxLines: maxLines,
-          decoration: _buildInputDecoration(
-            field['label'],
-            _getHintText(field['key']),
-          ),
+          minLines: 1,
+          maxLength: 500,
+          decoration: decoration,
+          buildCounter: (context, {required currentLength, required isFocused, maxLength}) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                '$currentLength/$maxLength',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: currentLength == maxLength
+                      ? Colors.red
+                      : Colors.grey[600],
+                  fontWeight: currentLength == maxLength ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            );
+          },
           validator: isEmail
               ? (value) {
                   if (value == null || value.trim().isEmpty) return null;
