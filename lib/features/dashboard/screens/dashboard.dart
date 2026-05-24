@@ -10,6 +10,7 @@ import '../../clients/screens/client_list.dart';
 import '../../debug/debug_navigation.dart';
 import '../../sessions/screens/session_form.dart';
 import '../../users/screens/user_profile_screen.dart';
+import '../../schedules/screens/schedules_calendar.dart';
 
 // ─── DASHBOARD ───────────────────────────────────────
 class Dashboard extends StatefulWidget {
@@ -209,6 +210,32 @@ class _DashboardState extends State<Dashboard> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.purple,
                         foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Botão Agendamentos
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const SchedulesCalendar()),
+                        );
+                        _loadData();
+                      },
+                      icon: const Icon(Icons.calendar_month),
+                      label: const Text('Agendamentos'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.purple,
+                        side: const BorderSide(color: Colors.purple),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
