@@ -13,7 +13,8 @@ class SchedulesCalendar extends StatefulWidget {
   State<SchedulesCalendar> createState() => _SchedulesCalendarState();
 }
 
-class _SchedulesCalendarState extends State<SchedulesCalendar> {
+class _SchedulesCalendarState extends State<SchedulesCalendar>
+    with WidgetsBindingObserver {
   final SessionRepository _sessionRepository = SessionRepository();
   final ClientRepository _clientRepository = ClientRepository();
 
@@ -27,7 +28,30 @@ class _SchedulesCalendarState extends State<SchedulesCalendar> {
   void initState() {
     super.initState();
     _currentDate = DateTime.now();
+    WidgetsBinding.instance.addObserver(this);
     _loadData();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      final now = DateTime.now();
+      // Se a data mudou, recarregar o calendário
+      if (_currentDate.year != now.year ||
+          _currentDate.month != now.month ||
+          _currentDate.day != now.day) {
+        setState(() {
+          _currentDate = now;
+          _loadData();
+        });
+      }
+    }
   }
 
   Future<void> _loadData() async {
@@ -576,11 +600,13 @@ class CalendarWidget extends StatefulWidget {
 
 class _CalendarWidgetState extends State<CalendarWidget> {
   late DateTime _currentDate;
+  int _selectedYear = DateTime.now().year;
 
   @override
   void initState() {
     super.initState();
     _currentDate = widget.initialDate;
+    _selectedYear = _currentDate.year;
   }
 
   void _previousMonth() {
@@ -595,166 +621,271 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     });
   }
 
+  Future<void> _showMonthYearPicker() async {
+    final monthNames = [
+      'Jan',
+      'Fev',
+      'Mar',
+      'Abr',
+      'Mai',
+      'Jun',
+      'Jul',
+      'Ago',
+      'Set',
+      'Out',
+      'Nov',
+      'Dez'
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => Container(
+          padding: const EdgeInsets.all(16),
+          height: 300,
+          child: Column(
+            children: [
+              // Header do modal
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.chevron_left),
+                    onPressed: () {
+                      setModalState(() {
+                        _selectedYear--;
+                      });
+                    },
+                  ),
+                  Text(
+                    '$_selectedYear',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.chevron_right),
+                    onPressed: () {
+                      setModalState(() {
+                        _selectedYear++;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              // Grid de meses
+              Expanded(
+                child: GridView.count(
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  children: List.generate(12, (index) {
+                    final monthNum = index + 1;
+                    final isSelected =
+                        _currentDate.month == monthNum &&
+                        _currentDate.year == _selectedYear;
+
+                    return InkWell(
+                      onTap: () {
+                        setState(() {
+                          _currentDate =
+                              DateTime(_selectedYear, monthNum, 1);
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? Colors.purple
+                              : Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Center(
+                          child: Text(
+                            monthNames[index],
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: isSelected
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final firstDay = DateTime(_currentDate.year, _currentDate.month, 1);
     final lastDay = DateTime(_currentDate.year, _currentDate.month + 1, 0);
     final daysInMonth = lastDay.day;
-    final weekdayOfFirstDay = firstDay.weekday;
-
-    // Nomes dos meses e dias da semana em português
+    
+    // weekday: 1=segunda, 2=terça, ..., 7=domingo
+    final firstWeekday = firstDay.weekday;
+    
     final monthNames = [
-      'Janeiro',
-      'Fevereiro',
-      'Março',
-      'Abril',
-      'Maio',
-      'Junho',
-      'Julho',
-      'Agosto',
-      'Setembro',
-      'Outubro',
-      'Novembro',
-      'Dezembro'
+      'JAN',
+      'FEV',
+      'MAR',
+      'ABR',
+      'MAI',
+      'JUN',
+      'JUL',
+      'AGO',
+      'SET',
+      'OUT',
+      'NOV',
+      'DEZ'
     ];
-
-    final weekdayNames = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'];
 
     return Column(
       children: [
-        // Header com navegação de mês
+        // Header com apenas o mês clicável
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.chevron_left),
-                onPressed: _previousMonth,
+          child: InkWell(
+            onTap: _showMonthYearPicker,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 8,
               ),
-              Text(
-                '${monthNames[_currentDate.month - 1]} ${_currentDate.year}',
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.purple, width: 2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '${monthNames[_currentDate.month - 1]}.',
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: Colors.purple,
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.chevron_right),
-                onPressed: _nextMonth,
-              ),
-            ],
+            ),
           ),
         ),
 
-        // Grid do calendário
+        // Grid do calendário 7x5
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Column(
-            children: [
-              // Cabeçalho com nomes dos dias
-              Row(
-                children: weekdayNames
-                    .map((day) => Expanded(
-                          child: Center(
-                            child: Text(
-                              day,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.purple,
-                                fontSize: 12,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 7,
+              mainAxisSpacing: 4,
+              crossAxisSpacing: 4,
+              childAspectRatio: 1.0,
+            ),
+            itemCount: 35,
+            itemBuilder: (context, index) {
+              // index 0-6 = semana 1, 7-13 = semana 2, etc
+              final weekdayIndex = index % 7;
+              final weekNumber = index ~/ 7;
+              
+              // Calcular o dia real
+              int dayOfMonth = weekNumber * 7 + weekdayIndex - (firstWeekday - 1);
+              
+              // Se está antes do primeiro dia ou depois do último
+              bool isOtherMonth = dayOfMonth < 1 || dayOfMonth > daysInMonth;
+              
+              // Se é outro mês, buscar dias do mês anterior ou próximo
+              DateTime dateForDay;
+              int displayDay;
+              
+              if (dayOfMonth < 1) {
+                // Mês anterior
+                final prevMonthLastDay = DateTime(_currentDate.year, _currentDate.month, 0).day;
+                displayDay = prevMonthLastDay + dayOfMonth;
+                dateForDay = DateTime(_currentDate.year, _currentDate.month - 1, displayDay);
+              } else if (dayOfMonth > daysInMonth) {
+                // Próximo mês
+                displayDay = dayOfMonth - daysInMonth;
+                dateForDay = DateTime(_currentDate.year, _currentDate.month + 1, displayDay);
+              } else {
+                displayDay = dayOfMonth;
+                dateForDay = DateTime(_currentDate.year, _currentDate.month, displayDay);
+              }
+              
+              final dateString = '${dateForDay.year}-${dateForDay.month.toString().padLeft(2, '0')}-${dateForDay.day.toString().padLeft(2, '0')}';
+              final sessions = widget.sessionsByDate[dateString] ?? [];
+              
+              // Verificar se é domingo (weekdayIndex 6 em Dart, pois segunda=1)
+              final isSunday = weekdayIndex == 6;
+              
+              return GestureDetector(
+                onTap: isOtherMonth ? null : () => widget.onDateSelected(dateForDay),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isOtherMonth
+                        ? Colors.transparent
+                        : isSunday
+                            ? Colors.red.shade50
+                            : Colors.white,
+                    border: Border.all(
+                      color: isOtherMonth
+                          ? Colors.grey.shade200
+                          : Colors.grey.shade300,
+                    ),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Opacity(
+                    opacity: isOtherMonth ? 0.3 : 1.0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '$displayDay',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: isSunday
+                                  ? Colors.red
+                                  : Colors.black,
+                            ),
+                          ),
+                          if (sessions.isNotEmpty && !isOtherMonth)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2),
+                              child: Text(
+                                sessions.length == 1
+                                    ? sessions[0].procedure.split(' ').first
+                                    : '+${sessions.length}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 8,
+                                  color: Colors.purple,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
-                          ),
-                        ))
-                    .toList(),
-              ),
-              const SizedBox(height: 8),
-
-              // Grid de dias
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
-                  childAspectRatio: 1.0,
-                ),
-                itemCount: (weekdayOfFirstDay - 1) + daysInMonth,
-                itemBuilder: (context, index) {
-                  // Células vazias no início do mês
-                  if (index < weekdayOfFirstDay - 1) {
-                    return const SizedBox();
-                  }
-
-                  final day = index - (weekdayOfFirstDay - 1) + 1;
-                  final date = DateTime(_currentDate.year, _currentDate.month, day);
-                  final dateString =
-                      '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-                  final sessions = widget.sessionsByDate[dateString] ?? [];
-                  final hasSchedules = sessions.isNotEmpty;
-
-                  return GestureDetector(
-                    onTap: () => widget.onDateSelected(date),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey.shade300,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                        color: hasSchedules
-                            ? Colors.purple.withValues(alpha: 0.1)
-                            : Colors.white,
-                      ),
-                      child: Stack(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '$day',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                    color: hasSchedules
-                                        ? Colors.purple
-                                        : Colors.black,
-                                  ),
-                                ),
-                                if (hasSchedules) ...[
-                                  const SizedBox(height: 2),
-                                  Container(
-                                    width: 4,
-                                    height: 4,
-                                    decoration: BoxDecoration(
-                                      color: Colors.purple,
-                                      borderRadius: BorderRadius.circular(2),
-                                    ),
-                                  ),
-                                  if (sessions.length > 1)
-                                    Text(
-                                      '+${sessions.length - 1}',
-                                      style: const TextStyle(
-                                        fontSize: 8,
-                                        color: Colors.purple,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                ]
-                              ],
-                            ),
-                          ),
                         ],
                       ),
                     ),
-                  );
-                },
-              ),
-            ],
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ],

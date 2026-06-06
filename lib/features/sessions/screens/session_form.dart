@@ -115,6 +115,42 @@ class _SessionFormState extends State<SessionForm> {
       final amount = double.parse(_amountController.text.replaceAll(',', '.'));
       final now = DateTime.now();
 
+      // Validar se a data é consistente com a data atual
+      final monthDiff = (now.year - _selectedDate.year) * 12 +
+          (now.month - _selectedDate.month);
+
+      // Se está muito no passado (mais de 3 meses)
+      if (monthDiff > 3) {
+        if (!mounted) return;
+        final confirm = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Data Antiga'),
+            content: Text(
+              'Você está criando sessão em '
+              '${AppDateFormatter.toPtBr(_selectedDate)}, '
+              'mas hoje é ${AppDateFormatter.toPtBr(now)}.\n\n'
+              'Deseja continuar?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancelar'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Continuar'),
+              ),
+            ],
+          ),
+        );
+
+        if (confirm != true) {
+          setState(() => _saving = false);
+          return;
+        }
+      }
+
       if (_isEdit) {
         final current = widget.session!;
         final updated = Session(
