@@ -109,116 +109,69 @@ class _SchedulesCalendarState extends State<SchedulesCalendar>
     );
   }
 
-  Future<void> _addNewSchedule() async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const SessionForm()),
-    );
-    _loadData();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Agendamentos'),
-        backgroundColor: Colors.purple,
+        backgroundColor: const Color(0xFF6A1B9A),
         foregroundColor: Colors.white,
+        elevation: 0,
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              child: Column(
-                children: [
-                  CalendarWidget(
-                    initialDate: _currentDate,
-                    onDateSelected: _onDateSelected,
-                    sessionsByDate: _sessionsByDate,
+              child: Center(
+                child: ConstrainedBox (
+                  constraints: const BoxConstraints(maxWidth: 600),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      CalendarWidget(
+                        initialDate: _currentDate,
+                        onDateSelected: _onDateSelected,
+                        sessionsByDate: _sessionsByDate,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: _buildSchedulesSummary(),
+                      ),
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: _buildSchedulesSummary(),
-                  ),
-                ],
+                ),
               ),
-            ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _addNewSchedule,
-        backgroundColor: Colors.purple,
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
+            ),  
     );
   }
 
   Widget _buildSchedulesSummary() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    final scheduled = _allSessions.where((s) => s.status == Session.statusScheduled).length;
+    final paid = _allSessions.where((s) => s.status == Session.statusPaid).length;
+    final canceled = _allSessions.where((s) => s.status == Session.statusCanceled).length;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        const Text(
-          'Resumo dos Agendamentos',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 12),
-        _buildStatusCard(
-          'Agendados',
-          _allSessions
-              .where((s) => s.status == Session.statusScheduled)
-              .length
-              .toString(),
-          Colors.blue,
-        ),
-        const SizedBox(height: 8),
-        _buildStatusCard(
-          'Pagos',
-          _allSessions.where((s) => s.status == Session.statusPaid).length.toString(),
-          Colors.green,
-        ),
-        const SizedBox(height: 8),
-        _buildStatusCard(
-          'Cancelados',
-          _allSessions
-              .where((s) => s.status == Session.statusCanceled)
-              .length
-              .toString(),
-          Colors.red,
-        ),
+        _buildChip('Agendados', scheduled, Color(0xFF1565C0)),
+        _buildChip('Pagos', paid, Color(0xFF2E7D32)),
+        _buildChip('Cancelados', canceled, Color(0xFFC62828)),
       ],
     );
   }
 
-  Widget _buildStatusCard(String title, String count, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        border: Border.all(color: color.withValues(alpha: 0.3)),
-        borderRadius: BorderRadius.circular(8),
-        color: color.withValues(alpha: 0.05),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              count,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
-          ),
-        ],
-      ),
+  Widget _buildChip(String label, int count, Color color) {
+    return Row(
+      children: [
+        Container(
+          width: 8, height: 8,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 4),
+        Text('$label: $count', style: TextStyle(fontSize: 12, color: color, fontWeight: FontWeight.w600)),
+      ],
     );
   }
+
 }
 
 // ─── SCHEDULE DETAIL MODAL ───────────────────────────────────────
@@ -406,7 +359,7 @@ class _ScheduleDetailModalState extends State<_ScheduleDetailModal> {
                       await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => SessionForm(),
+                          builder: (_) => SessionForm(initialDate: widget.date),
                         ),
                       );
                     },
@@ -600,293 +553,276 @@ class CalendarWidget extends StatefulWidget {
 
 class _CalendarWidgetState extends State<CalendarWidget> {
   late DateTime _currentDate;
-  int _selectedYear = DateTime.now().year;
+  bool _showingMonthPicker = false;
+
+  final List<String> _monthNamesShort = [
+    'Jan','Fev','Mar','Abr','Mai','Jun',
+    'Jul','Ago','Set','Out','Nov','Dez'
+  ];
+
+  final List<String> _monthNamesUpper = [
+    'JAN','FEV','MAR','ABR','MAI','JUN',
+    'JUL','AGO','SET','OUT','NOV','DEZ'
+  ];
 
   @override
   void initState() {
     super.initState();
     _currentDate = widget.initialDate;
-    _selectedYear = _currentDate.year;
   }
 
-  void _previousMonth() {
-    setState(() {
-      _currentDate = DateTime(_currentDate.year, _currentDate.month - 1);
-    });
-  }
-
-  void _nextMonth() {
-    setState(() {
-      _currentDate = DateTime(_currentDate.year, _currentDate.month + 1);
-    });
-  }
-
-  Future<void> _showMonthYearPicker() async {
-    final monthNames = [
-      'Jan',
-      'Fev',
-      'Mar',
-      'Abr',
-      'Mai',
-      'Jun',
-      'Jul',
-      'Ago',
-      'Set',
-      'Out',
-      'Nov',
-      'Dez'
-    ];
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) => Container(
-          padding: const EdgeInsets.all(16),
-          height: 300,
-          child: Column(
-            children: [
-              // Header do modal
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.chevron_left),
-                    onPressed: () {
-                      setModalState(() {
-                        _selectedYear--;
-                      });
-                    },
-                  ),
-                  Text(
-                    '$_selectedYear',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.chevron_right),
-                    onPressed: () {
-                      setModalState(() {
-                        _selectedYear++;
-                      });
-                    },
-                  ),
-                ],
+  // ── Grid dos 12 meses (month picker in-place) ──
+  Widget _buildMonthPickerGrid() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: GridView.count(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: 4,
+        mainAxisSpacing: 8,
+        crossAxisSpacing: 8,
+        childAspectRatio: 1.4,
+        children: List.generate(12, (index) {
+          final isSelected = _currentDate.month == index + 1;
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                _currentDate = DateTime(_currentDate.year, index + 1, 1);
+                _showingMonthPicker = false;
+              });
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: isSelected ? const Color(0xFF6A1B9A) : const Color(0xFFF3E5F5),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: const Color(0xFF6A1B9A).withValues(alpha: 0.3),
+                ),
               ),
-              const SizedBox(height: 16),
-              // Grid de meses
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  children: List.generate(12, (index) {
-                    final monthNum = index + 1;
-                    final isSelected =
-                        _currentDate.month == monthNum &&
-                        _currentDate.year == _selectedYear;
+              child: Center(
+                child: Text(
+                  _monthNamesShort[index],
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: isSelected ? Colors.white : Colors.black87,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
 
-                    return InkWell(
-                      onTap: () {
-                        setState(() {
-                          _currentDate =
-                              DateTime(_selectedYear, monthNum, 1);
-                        });
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? Colors.purple
-                              : Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(8),
+  // ── Grid dos dias do mês ──
+  Widget _buildDaysGrid() {
+    final firstDay = DateTime(_currentDate.year, _currentDate.month, 1);
+    final lastDay = DateTime(_currentDate.year, _currentDate.month + 1, 0);
+    final daysInMonth = lastDay.day;
+    final firstWeekday = firstDay.weekday % 7; // domingo=0, seg=1 ... sab=6
+    final totalCells = ((firstWeekday + daysInMonth) / 7).ceil() * 7;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 7,
+          mainAxisSpacing: 4,
+          crossAxisSpacing: 4,
+          childAspectRatio: 0.75,
+        ),
+        itemCount: totalCells,
+        itemBuilder: (context, index) {
+          final weekdayIndex = index % 7;
+          int dayOfMonth = index - firstWeekday + 1;
+          bool isOtherMonth = dayOfMonth < 1 || dayOfMonth > daysInMonth;
+
+          DateTime dateForDay;
+          int displayDay;
+
+          if (dayOfMonth < 1) {
+            final prevMonthLastDay =
+                DateTime(_currentDate.year, _currentDate.month, 0).day;
+            displayDay = prevMonthLastDay + dayOfMonth;
+            dateForDay = DateTime(
+                _currentDate.year, _currentDate.month - 1, displayDay);
+          } else if (dayOfMonth > daysInMonth) {
+            displayDay = dayOfMonth - daysInMonth;
+            dateForDay = DateTime(
+                _currentDate.year, _currentDate.month + 1, displayDay);
+          } else {
+            displayDay = dayOfMonth;
+            dateForDay =
+                DateTime(_currentDate.year, _currentDate.month, displayDay);
+          }
+
+          final dateString =
+              '${dateForDay.year}-${dateForDay.month.toString().padLeft(2, '0')}-${dateForDay.day.toString().padLeft(2, '0')}';
+          final sessions = widget.sessionsByDate[dateString] ?? [];
+          final isSunday = weekdayIndex == 0; // domingo é índice 0
+
+          return GestureDetector(
+            onTap: isOtherMonth
+                ? null
+                : () => widget.onDateSelected(dateForDay),
+            child: Container(
+              decoration: BoxDecoration(
+                color: isOtherMonth
+                    ? Colors.transparent
+                    : isSunday
+                        ? const Color(0xFFFCE4EC)
+                        : Colors.white,
+                border: Border.all(
+                  color: isOtherMonth
+                      ? Colors.grey.shade200
+                      : Colors.grey.shade300,
+                ),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Opacity(
+                opacity: isOtherMonth ? 0.3 : 1.0,
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '$displayDay',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: isSunday ? Colors.red : Colors.black,
                         ),
-                        child: Center(
+                      ),
+                      if (sessions.isNotEmpty && !isOtherMonth)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
                           child: Text(
-                            monthNames[index],
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: isSelected
-                                  ? Colors.white
-                                  : Colors.black,
+                            sessions.length == 1
+                                ? sessions[0].procedure.split(' ').first
+                                : '+${sessions.length}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 8,
+                              color: Color(0xFF6A1B9A),
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }),
+                    ],
+                  ),
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final firstDay = DateTime(_currentDate.year, _currentDate.month, 1);
-    final lastDay = DateTime(_currentDate.year, _currentDate.month + 1, 0);
-    final daysInMonth = lastDay.day;
-    
-    // weekday: 1=segunda, 2=terça, ..., 7=domingo
-    final firstWeekday = firstDay.weekday;
-    
-    final monthNames = [
-      'JAN',
-      'FEV',
-      'MAR',
-      'ABR',
-      'MAI',
-      'JUN',
-      'JUL',
-      'AGO',
-      'SET',
-      'OUT',
-      'NOV',
-      'DEZ'
-    ];
-
     return Column(
       children: [
-        // Header com apenas o mês clicável
+        // ── Header com setas e botão central ──
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-          child: InkWell(
-            onTap: _showMonthYearPicker,
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 8,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Seta esquerda: mês anterior OU ano anterior
+              IconButton(
+                icon: const Icon(Icons.chevron_left, color: Colors.purple),
+                onPressed: () {
+                  setState(() {
+                    if (_showingMonthPicker) {
+                      _currentDate =
+                          DateTime(_currentDate.year - 1, _currentDate.month);
+                    } else {
+                      _currentDate = DateTime(
+                          _currentDate.year, _currentDate.month - 1);
+                    }
+                  });
+                },
               ),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.purple, width: 2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                '${monthNames[_currentDate.month - 1]}.',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.purple,
+
+              // Botão central: alterna entre calendário e month picker
+              InkWell(
+                onTap: () =>
+                    setState(() => _showingMonthPicker = !_showingMonthPicker),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: const Color(0xFF6A1B9A), width: 1.5),
+                    color: const Color(0xFFF3E5F5),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    _showingMonthPicker
+                        ? '${_currentDate.year}'
+                        : '${_monthNamesUpper[_currentDate.month - 1]} ${_currentDate.year}',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF6A1B9A),
+                    ),
+                  ),
                 ),
               ),
-            ),
+
+              // Seta direita: mês seguinte OU ano seguinte
+              IconButton(
+                icon: const Icon(Icons.chevron_right, color: Color(0xFF6A1B9A)),
+                onPressed: () {
+                  setState(() {
+                    if (_showingMonthPicker) {
+                      _currentDate =
+                          DateTime(_currentDate.year + 1, _currentDate.month);
+                    } else {
+                      _currentDate = DateTime(
+                          _currentDate.year, _currentDate.month + 1);
+                    }
+                  });
+                },
+              ),
+            ],
           ),
         ),
 
-        // Grid do calendário 7x5
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 7,
-              mainAxisSpacing: 4,
-              crossAxisSpacing: 4,
-              childAspectRatio: 1.0,
-            ),
-            itemCount: 35,
-            itemBuilder: (context, index) {
-              // index 0-6 = semana 1, 7-13 = semana 2, etc
-              final weekdayIndex = index % 7;
-              final weekNumber = index ~/ 7;
-              
-              // Calcular o dia real
-              int dayOfMonth = weekNumber * 7 + weekdayIndex - (firstWeekday - 1);
-              
-              // Se está antes do primeiro dia ou depois do último
-              bool isOtherMonth = dayOfMonth < 1 || dayOfMonth > daysInMonth;
-              
-              // Se é outro mês, buscar dias do mês anterior ou próximo
-              DateTime dateForDay;
-              int displayDay;
-              
-              if (dayOfMonth < 1) {
-                // Mês anterior
-                final prevMonthLastDay = DateTime(_currentDate.year, _currentDate.month, 0).day;
-                displayDay = prevMonthLastDay + dayOfMonth;
-                dateForDay = DateTime(_currentDate.year, _currentDate.month - 1, displayDay);
-              } else if (dayOfMonth > daysInMonth) {
-                // Próximo mês
-                displayDay = dayOfMonth - daysInMonth;
-                dateForDay = DateTime(_currentDate.year, _currentDate.month + 1, displayDay);
-              } else {
-                displayDay = dayOfMonth;
-                dateForDay = DateTime(_currentDate.year, _currentDate.month, displayDay);
-              }
-              
-              final dateString = '${dateForDay.year}-${dateForDay.month.toString().padLeft(2, '0')}-${dateForDay.day.toString().padLeft(2, '0')}';
-              final sessions = widget.sessionsByDate[dateString] ?? [];
-              
-              // Verificar se é domingo (weekdayIndex 6 em Dart, pois segunda=1)
-              final isSunday = weekdayIndex == 6;
-              
-              return GestureDetector(
-                onTap: isOtherMonth ? null : () => widget.onDateSelected(dateForDay),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: isOtherMonth
-                        ? Colors.transparent
-                        : isSunday
-                            ? Colors.red.shade50
-                            : Colors.white,
-                    border: Border.all(
-                      color: isOtherMonth
-                          ? Colors.grey.shade200
-                          : Colors.grey.shade300,
-                    ),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Opacity(
-                    opacity: isOtherMonth ? 0.3 : 1.0,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            '$displayDay',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: isSunday
-                                  ? Colors.red
-                                  : Colors.black,
-                            ),
-                          ),
-                          if (sessions.isNotEmpty && !isOtherMonth)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 2),
-                              child: Text(
-                                sessions.length == 1
-                                    ? sessions[0].procedure.split(' ').first
-                                    : '+${sessions.length}',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 8,
-                                  color: Colors.purple,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
+        // ── Conteúdo: meses ou dias ──
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          transitionBuilder: (child, animation) {
+            return FadeTransition(
+              opacity: animation, 
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0, 0.5),
+                  end: Offset.zero,
+                ).animate(CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeOut,
+                )),
+                child: child,
+              ),
+            );
+          },
+          child: _showingMonthPicker
+              ? KeyedSubtree(
+                  key: const ValueKey('months'),
+                  child: _buildMonthPickerGrid(),
+                )
+              : KeyedSubtree(
+                  key: const ValueKey('days'),
+                  child: _buildDaysGrid(),
                 ),
-              );
-            },
-          ),
         ),
       ],
     );
