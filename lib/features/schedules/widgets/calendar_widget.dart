@@ -23,12 +23,12 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   bool _showingYearPicker = false;
 
   final List<String> _monthNamesShort = [
-    'Jan','Fev','Mar','Abr','Mai','Jun',
-    'Jul','Ago','Set','Out','Nov','Dez',
+    'Jan.','Fev.','Mar.','Abr.','Mai.','Jun.',
+    'Jul.','Ago.','Set.','Out.','Nov.','Dez.',
   ];
   final List<String> _monthNamesUpper = [
-    'JAN','FEV','MAR','ABR','MAI','JUN',
-    'JUL','AGO','SET','OUT','NOV','DEZ',
+    'JANEIRO','FEVEVEIRO','MARÇO','ABRIL','MAIO','JUNHO',
+    'JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO',
   ];
 
   @override
@@ -148,8 +148,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         DateTime(_currentDate.year, _currentDate.month + 1, 0);
     final daysInMonth = lastDay.day;
     final firstWeekday = firstDay.weekday % 7;
-    final totalCells =
-        ((firstWeekday + daysInMonth) / 7).ceil() * 7;
+    final totalCells =  42;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -160,7 +159,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           crossAxisCount: 7,
           mainAxisSpacing: 4,
           crossAxisSpacing: 4,
-          childAspectRatio: 0.75,
+          childAspectRatio: 0.72,
         ),
         itemCount: totalCells,
         itemBuilder: (context, index) {
@@ -293,40 +292,44 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                   }
                 }),
               ),
-              InkWell(
-                onTap: () => setState(() {
-                  if (_showingYearPicker) {
-                    _showingYearPicker = false;
-                  } else if (_showingMonthPicker) {
-                    _showingMonthPicker = false;
-                    _showingYearPicker = true;
-                  } else {
-                    _showingMonthPicker = true;
-                  }
-                }),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: const Color(0xFF6A1B9A), width: 1.5),
-                    color: const Color(0xFFF3E5F5),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    _showingYearPicker
-                        ? 'Selecionar ano'
-                        : _showingMonthPicker
-                            ? '${_currentDate.year}'
-                            : '${_monthNamesUpper[_currentDate.month - 1]} ${_currentDate.year}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF6A1B9A),
+              Material(
+                color: const Color(0xFFF3E5F5),
+                borderRadius: BorderRadius.circular(8),
+                child: InkWell(
+                  onTap: () => setState(() {
+                    if (_showingYearPicker) {
+                      _showingYearPicker = false;
+                    } else if (_showingMonthPicker) {
+                      _showingMonthPicker = false;
+                      _showingYearPicker = true;
+                    } else {
+                      _showingMonthPicker = true;
+                    }
+                  }),
+                  borderRadius: BorderRadius.circular(8),
+                  splashColor: const Color(0xFF6A1B9A).withValues(alpha: 0.2),
+                  highlightColor: const Color(0xFF6A1B9A).withValues(alpha: 0.15),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: const Color(0xFF6A1B9A), width: 1.5),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      _showingYearPicker
+                          ? 'Selecionar ano'
+                          : _showingMonthPicker
+                              ? '${_currentDate.year}'
+                              : '${_monthNamesUpper[_currentDate.month - 1]} ${_currentDate.year}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF6A1B9A),
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ),  
               IconButton(
                 icon: const Icon(Icons.chevron_right,
                     color: Color(0xFF6A1B9A)),
@@ -346,9 +349,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             ],
           ),
         ),
-        ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 300),
-          child: AnimatedSwitcher(
+          AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             transitionBuilder: (child, animation) => FadeTransition(
               opacity: animation,
@@ -373,7 +374,6 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                         key: const ValueKey('days'),
                         child: _buildDaysGrid()),
           ),
-        ),
       ],
     );
   }

@@ -31,51 +31,100 @@ class SessionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    final statusColor = _getStatusColor(session.status);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border(
+          left: BorderSide(color: statusColor, width: 4),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: onEdit,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            child: Row(
               children: [
+                // ── Coluna principal ──
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Nome + procedimento na mesma linha
                       Text(
                         client?.name ?? 'Cliente não encontrado',
                         style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: _getStatusColor(session.status)
-                              .withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(4),
+                      const SizedBox(height: 3),
+                      Text(
+                        session.procedure,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey.shade600,
                         ),
-                        child: Text(
-                          session.status,
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: _getStatusColor(session.status),
-                          ),
-                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
                 ),
+
+                const SizedBox(width: 12),
+
+                // ── Coluna direita: valor + status ──
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      'R\$ ${session.amount.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF2E7D32),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: statusColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        session.status,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: statusColor,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                // ── Menu ──
                 PopupMenuButton(
+                  padding: EdgeInsets.zero,
+                  iconSize: 18,
                   itemBuilder: (context) => [
                     PopupMenuItem(
                       onTap: onEdit,
@@ -90,48 +139,7 @@ class SessionCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                const Icon(Icons.medical_services_outlined,
-                    size: 16, color: Color(0xFF6A1B9A)),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(session.procedure,
-                      style: const TextStyle(fontSize: 12),
-                      overflow: TextOverflow.ellipsis),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(Icons.attach_money,
-                    size: 16, color: Color(0xFF2E7D32)),
-                const SizedBox(width: 8),
-                Text(
-                  'R\$ ${session.amount.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                      fontSize: 12, fontWeight: FontWeight.w600),
-                ),
-              ],
-            ),
-            if (session.notes.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  const Icon(Icons.note_outlined,
-                      size: 16, color: Color(0xFFE65100)),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(session.notes,
-                        style: const TextStyle(fontSize: 12),
-                        overflow: TextOverflow.ellipsis),
-                  ),
-                ],
-              ),
-            ],
-          ],
+          ),
         ),
       ),
     );

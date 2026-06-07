@@ -130,8 +130,7 @@ class _ScheduleDetailModalState extends State<ScheduleDetailModal> {
                 Expanded(
                   child: ListView.builder(
                     controller: scrollController,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: _sessions.length,
                     itemBuilder: (context, index) {
                       final session = _sessions[index];
@@ -170,13 +169,15 @@ class _ScheduleDetailModalState extends State<ScheduleDetailModal> {
                   child: ElevatedButton.icon(
                     onPressed: () async {
                       Navigator.pop(context);
-                      await Navigator.push(
+                      final result = await Navigator.push<bool>(
                         context,
                         MaterialPageRoute(
-                          builder: (_) =>
-                              SessionForm(initialDate: widget.date),
+                          builder: (_) => SessionForm(initialDate: widget.date),
                         ),
                       );
+                      if (result == true) {
+                        widget.onScheduleAdded();
+                      }
                     },
                     icon: const Icon(Icons.add),
                     label: const Text('Novo Agendamento'),

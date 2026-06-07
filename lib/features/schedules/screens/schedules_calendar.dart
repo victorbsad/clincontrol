@@ -96,6 +96,8 @@ class _SchedulesCalendarState extends State<SchedulesCalendar>
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       barrierColor: Colors.black.withAlpha(77),
+      isDismissible: true,
+      enableDrag: true,
       builder: (_) => ScheduleDetailModal(
         date: date,
         sessions: sessions,
@@ -104,7 +106,7 @@ class _SchedulesCalendarState extends State<SchedulesCalendar>
         onScheduleEdited: _loadData,
         onScheduleDeleted: _loadData,
       ),
-    );
+    ).whenComplete(_loadData); // Recarrega os dados ao fechar o modal
   }
 
   @override
