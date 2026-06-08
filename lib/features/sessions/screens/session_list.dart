@@ -147,18 +147,25 @@ class _SessionListState extends State<SessionList> {
 
   @override
   Widget build(BuildContext context) {
+    final hasFilters = _statusFilter != null || _dateRangeFilter != null;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sessoes - ${widget.client.name}'),
-        backgroundColor: Colors.purple,
+        title: Text('Sessões · ${widget.client.name}'),
+        backgroundColor: const Color(0xFF6A1B9A),
         foregroundColor: Colors.white,
+        elevation: 0,
       ),
+      backgroundColor: const Color(0xFFF8F4FF),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(color: Color(0xFF6A1B9A)))
           : Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                // ── Filtros ──
+                Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
                   child: Column(
                     children: [
                       Row(
@@ -167,29 +174,36 @@ class _SessionListState extends State<SessionList> {
                             child: DropdownButtonFormField<String?>(
                               decoration: InputDecoration(
                                 labelText: 'Status',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
+                                labelStyle: const TextStyle(
+                                    color: Color(0xFF6A1B9A)),
+                                filled: true,
+                                fillColor: const Color(0xFFF3E5F5),
                                 isDense: true,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                      color: Color(0xFFCE93D8)),
+                                ),
                               ),
-                              initialValue: _statusFilter,
+                              value: _statusFilter,
+                              isExpanded: true,
+                              borderRadius: BorderRadius.circular(10),
                               items: const [
-                                DropdownMenuItem<String?>(
-                                  value: null,
-                                  child: Text('Todos'),
-                                ),
-                                DropdownMenuItem<String?>(
-                                  value: Session.statusScheduled,
-                                  child: Text('AGENDADO'),
-                                ),
-                                DropdownMenuItem<String?>(
-                                  value: Session.statusPaid,
-                                  child: Text('PAGO'),
-                                ),
-                                DropdownMenuItem<String?>(
-                                  value: Session.statusCanceled,
-                                  child: Text('CANCELADO'),
-                                ),
+                                DropdownMenuItem(
+                                    value: null, child: Text('Todos')),
+                                DropdownMenuItem(
+                                    value: Session.statusScheduled,
+                                    child: Text('Agendado')),
+                                DropdownMenuItem(
+                                    value: Session.statusPaid,
+                                    child: Text('Pago')),
+                                DropdownMenuItem(
+                                    value: Session.statusCanceled,
+                                    child: Text('Cancelado')),
                               ],
                               onChanged: _setStatusFilter,
                             ),
@@ -197,84 +211,189 @@ class _SessionListState extends State<SessionList> {
                           const SizedBox(width: 8),
                           OutlinedButton.icon(
                             onPressed: _pickDateRange,
-                            icon: const Icon(Icons.date_range),
-                            label: const Text('Periodo'),
+                            icon: const Icon(Icons.date_range,
+                                color: Color(0xFF6A1B9A), size: 18),
+                            label: const Text('Período',
+                                style: TextStyle(color: Color(0xFF6A1B9A))),
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(
+                                  color: Color(0xFF6A1B9A)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                            ),
                           ),
-                          const SizedBox(width: 8),
-                          IconButton(
-                            tooltip: 'Limpar filtros',
-                            onPressed: (_statusFilter == null &&
-                                    _dateRangeFilter == null)
-                                ? null
-                                : _clearFilters,
-                            icon: const Icon(Icons.clear),
-                          ),
+                          if (hasFilters) ...[
+                            const SizedBox(width: 4),
+                            IconButton(
+                              tooltip: 'Limpar filtros',
+                              onPressed: _clearFilters,
+                              icon: const Icon(Icons.close,
+                                  color: Color(0xFFC62828), size: 20),
+                            ),
+                          ],
                         ],
                       ),
                       if (_dateRangeFilter != null)
                         Padding(
                           padding: const EdgeInsets.only(top: 8),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Periodo: ${AppDateFormatter.toPtBr(_dateRangeFilter!.start)} ate ${AppDateFormatter.toPtBr(_dateRangeFilter!.end)}',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.black54,
+                          child: Row(
+                            children: [
+                              const Icon(Icons.info_outline,
+                                  size: 14, color: Colors.black45),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${AppDateFormatter.toPtBr(_dateRangeFilter!.start)} → ${AppDateFormatter.toPtBr(_dateRangeFilter!.end)}',
+                                style: const TextStyle(
+                                    fontSize: 12, color: Colors.black54),
                               ),
-                            ),
+                            ],
                           ),
                         ),
                     ],
                   ),
                 ),
+
+                // ── Lista ──
                 Expanded(
                   child: _sessions.isEmpty
-                      ? const Center(
-                          child: Text(
-                            'Nenhuma sessao encontrada para os filtros selecionados.',
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.event_busy_outlined,
+                                  size: 52,
+                                  color: Colors.grey.shade300),
+                              const SizedBox(height: 12),
+                              Text(
+                                'Nenhuma sessão encontrada',
+                                style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 15),
+                              ),
+                            ],
                           ),
                         )
                       : ListView.builder(
-                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 88),
+                          padding:
+                              const EdgeInsets.fromLTRB(16, 12, 16, 88),
                           itemCount: _sessions.length,
                           itemBuilder: (context, index) {
                             final session = _sessions[index];
                             final date = _parseDate(session.date);
+                            final statusColor =
+                                _statusColor(session.status);
 
-                            return Card(
+                            return Container(
                               margin: const EdgeInsets.only(bottom: 10),
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  backgroundColor: Colors.purple.shade100,
-                                  child: Text(
-                                    '${index + 1}a',
-                                    style: const TextStyle(color: Colors.purple),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border(
+                                  left: BorderSide(
+                                      color: statusColor, width: 4),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color:
+                                        Colors.black.withValues(alpha: 0.05),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 2),
                                   ),
-                                ),
-                                title: Text(session.procedure),
-                                subtitle: Text(
-                                  '${AppDateFormatter.toPtBr(date)}  •  R\$ ${_formatMoney(session.amount)}  •  ${session.status}\n${session.notes}',
-                                ),
-                                isThreeLine: true,
-                                trailing: PopupMenuButton<String>(
-                                  onSelected: (action) {
-                                    if (action == 'edit') {
-                                      _openForm(session);
-                                    } else if (action == 'delete') {
-                                      _delete(session);
-                                    }
-                                  },
-                                  itemBuilder: (context) => const [
-                                    PopupMenuItem(
-                                      value: 'edit',
-                                      child: Text('Editar'),
+                                ],
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(12),
+                                  onTap: () => _openForm(session),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 14, vertical: 12),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                session.procedure,
+                                                style: const TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                AppDateFormatter.toPtBr(date),
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  color: Colors.grey.shade500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              'R\$ ${_formatMoney(session.amount)}',
+                                              style: const TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w700,
+                                                color: Color(0xFF2E7D32),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 2),
+                                              decoration: BoxDecoration(
+                                                color: statusColor
+                                                    .withValues(alpha: 0.12),
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: Text(
+                                                session.status,
+                                                style: TextStyle(
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: statusColor,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        PopupMenuButton<String>(
+                                          padding: EdgeInsets.zero,
+                                          iconSize: 18,
+                                          onSelected: (action) {
+                                            if (action == 'edit') {
+                                              _openForm(session);
+                                            } else if (action == 'delete') {
+                                              _delete(session);
+                                            }
+                                          },
+                                          itemBuilder: (_) => const [
+                                            PopupMenuItem(
+                                                value: 'edit',
+                                                child: Text('Editar')),
+                                            PopupMenuItem(
+                                                value: 'delete',
+                                                child: Text('Excluir',
+                                                    style: TextStyle(
+                                                        color: Colors.red))),
+                                          ],
+                                        ),
+                                      ],
                                     ),
-                                    PopupMenuItem(
-                                      value: 'delete',
-                                      child: Text('Excluir'),
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ),
                             );
@@ -285,9 +404,23 @@ class _SessionListState extends State<SessionList> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: _openForm,
-        backgroundColor: Colors.purple,
+        backgroundColor: const Color(0xFF6A1B9A),
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
+  }
+
+  // Helper de cor por status
+  Color _statusColor(String status) {
+    switch (status) {
+      case Session.statusScheduled:
+        return const Color(0xFF1565C0);
+      case Session.statusPaid:
+        return const Color(0xFF2E7D32);
+      case Session.statusCanceled:
+        return const Color(0xFFC62828);
+      default:
+        return Colors.grey;
+    }
   }
 }

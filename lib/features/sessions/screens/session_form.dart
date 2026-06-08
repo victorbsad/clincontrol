@@ -79,12 +79,23 @@ class _SessionFormState extends State<SessionForm> {
       firstDate: DateTime(2024),
       lastDate: DateTime.now().add(const Duration(days: 3650)),
       locale: const Locale('pt', 'BR'),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+            primary: Color(0xFF6A1B9A), // Cor roxa para o header
+            onPrimary: Colors.white, // Cor do
+            surface: Colors.white,
+            onSurface: Colors.black87,    
+            ),
+          ),
+          child: child!,
+        );
+      },  
     );
 
     if (!mounted) return;
-    if (picked != null) {
-      setState(() => _selectedDate = picked);
-    }
+    if (picked != null) setState(() => _selectedDate = picked);
   }
 
   Future<void> _loadClients() async {
@@ -194,13 +205,47 @@ class _SessionFormState extends State<SessionForm> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { 
+    InputDecoration fieldDeco(String label, {Widget? prefixIcon, String? hintText}) {
+      return InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.black54),
+        hintText: hintText,
+        hintStyle: const TextStyle(color: Colors.black38),
+        prefixIcon: prefixIcon,
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFFCE93D8), width: 1), 
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFF6A1B9A), width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFFC62828), width: 1),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFFC62828), width: 2),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEdit ? 'Editar Sessao' : 'Nova Sessao'),
-        backgroundColor: Colors.purple,
+        title: Text(_isEdit ? 'Editar Sessão' : 'Nova Sessão'),
+        backgroundColor: const Color(0xFF6A1B9A),
         foregroundColor: Colors.white,
+        elevation: 0,
       ),
+      backgroundColor: const Color.fromARGB(255, 253, 247, 255),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -208,155 +253,175 @@ class _SessionFormState extends State<SessionForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+
+              // ── Loading clientes ──
               if (_loadingClients)
                 const Padding(
-                  padding: EdgeInsets.only(bottom: 20),
-                  child: LinearProgressIndicator(),
+                  padding: EdgeInsets.only(bottom: 16),
+                  child: LinearProgressIndicator(
+                    color: Color(0xFF6A1B9A),
+                    backgroundColor: Color.fromARGB(255, 255, 255, 255),
+                  ),
                 ),
+
+              // ── Cliente ──
               if (widget.clientId == null) ...[
-                DropdownButtonFormField<int>(
-                  decoration: InputDecoration(
-                    labelText: 'Cliente',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                Theme(
+                  data: Theme.of(context).copyWith(
+                    inputDecorationTheme: const InputDecorationTheme(
+                      constraints:BoxConstraints(maxHeight: 48),
                     ),
                   ),
-                  initialValue: _selectedClientId,
-                  items: _clients
-                      .map(
-                        (client) => DropdownMenuItem<int>(
-                          value: client.id,
-                          child: Text(client.name),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() => _selectedClientId = value);
-                  },
-                ),
-                const SizedBox(height: 20),
+                
+                  child: DropdownButtonFormField<int>(
+                    decoration: fieldDeco('Cliente',
+                      prefixIcon: const Icon(Icons.person_outline, color: Colors.black54),
+                      hintText: 'Selecione o cliente'),
+                    initialValue: _selectedClientId,
+                    isExpanded: true,
+                    menuMaxHeight: 250,
+                    borderRadius: BorderRadius.circular(12),
+                    items: _clients.map((c) => DropdownMenuItem(
+                      value: c.id,
+                      child: Text(c.name, overflow: TextOverflow.ellipsis),
+                    )).toList(),
+                    onChanged: (v) => setState(() => _selectedClientId = v),
+                  ),
+                ),  
+                const SizedBox(height: 16),
               ],
-              GestureDetector(
+
+              // ── Data ──
+              InkWell(
                 onTap: _selectDate,
+                borderRadius: BorderRadius.circular(12),
                 child: InputDecorator(
-                  decoration: InputDecoration(
-                    labelText: 'Data',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.calendar_today, color: Colors.purple),
-                      const SizedBox(width: 12),
-                      Text(AppDateFormatter.toPtBr(_selectedDate)),
-                    ],
+                  decoration: fieldDeco('Data', 
+                    prefixIcon: const Icon(Icons.calendar_today, color: Colors.black54)),
+                  child: Text(
+                    AppDateFormatter.toPtBr(_selectedDate),
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
+
+              // ── Procedimento ──
               TextFormField(
                 controller: _procedureController,
-                decoration: InputDecoration(
-                  labelText: 'Procedimento',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                decoration: fieldDeco('Procedimento',
+                  prefixIcon: const Icon(Icons.medical_services_outlined, color: Colors.black54),
+                  hintText: 'Ex: Massagem Relaxante',
                 ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Informe o procedimento';
-                  }
-                  return null;
-                },
+                validator: (v) => (v == null || v.trim().isEmpty) ? 'Informe o procedimento' : null,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
+
+              // ── Observações ──
               TextFormField(
                 controller: _notesController,
                 maxLines: 3,
-                decoration: InputDecoration(
-                  labelText: 'Observacoes',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                decoration: fieldDeco('Observações',
+                  prefixIcon: const Icon(Icons.note_outlined, color: Colors.black54),
+                  hintText: 'Ex: Cliente apresentou sintomas de gripe',
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
+
+              // ── Valor ──
               TextFormField(
                 controller: _amountController,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9,.]'))],
+                decoration: fieldDeco('Valor cobrado',
+                  prefixIcon: const Icon(Icons.attach_money, color: Colors.black54),
+                  hintText: 'Ex: 150,00',
                 ),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9,.]')),
-                ],
-                decoration: InputDecoration(
-                  labelText: 'Valor cobrado (R\$)',
-                  prefixText: 'R\$',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Informe o valor';
-                  }
-                  final amount = double.tryParse(value.replaceAll(',', '.'));
-                  if (amount == null || amount < 0) {
-                    return 'Valor invalido';
-                  }
+                validator: (v) {
+                  if (v == null || v.trim().isEmpty) return 'Informe o valor';
+                  final amount = double.tryParse(v.replaceAll(',', '.'));
+                  if (amount == null || amount < 0) return 'Valor inválido';
+                  if (amount > 10000) return 'Valor máximo: R\$ 10.000,00';
                   return null;
                 },
               ),
               const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  labelText: 'Status',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+
+              // ── Status ──
+              Theme(
+                data: Theme.of(context).copyWith(
+                  inputDecorationTheme: const InputDecorationTheme(
+                    constraints:BoxConstraints(maxHeight: 48),
                   ),
                 ),
-                initialValue: _status,
-                items: const [
-                  DropdownMenuItem(
-                    value: Session.statusScheduled,
-                    child: Text('AGENDADO'),
+                child: DropdownButtonFormField<String>(
+                  decoration: fieldDeco('Status',
+                    prefixIcon: const Icon(Icons.flag_outlined, color: Colors.black54),
+                    hintText: 'Selecione o status',
                   ),
-                  DropdownMenuItem(
-                    value: Session.statusPaid,
-                    child: Text('PAGO'),
-                  ),
-                  DropdownMenuItem(
-                    value: Session.statusCanceled,
-                    child: Text('CANCELADO'),
-                  ),
-                ],
-                onChanged: (value) {
-                  if (value == null) return;
-                  setState(() => _status = value);
-                },
-              ),
+                  initialValue: _status,
+                  isExpanded: true,
+                  menuMaxHeight: 180,
+                  borderRadius: BorderRadius.circular(12),
+                  items: [
+                    _statusItem(Session.statusScheduled, 'Agendado', const Color(0xFF1565C0)),
+                    _statusItem(Session.statusPaid, 'Pago', const Color(0xFF2E7D32)),
+                    _statusItem(Session.statusCanceled, 'Cancelado', const Color(0xFFC62828)),
+                  ],
+                  onChanged: (v) {
+                    if (v == null) return;
+                    setState(() => _status = v);
+                  },
+                ),
+              ),  
               const SizedBox(height: 32),
+
+              // ── Botão salvar ──
               SizedBox(
                 width: double.infinity,
+                height: 52,
                 child: ElevatedButton(
                   onPressed: _saving ? null : _save,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple,
+                    backgroundColor: const Color(0xFF6A1B9A),
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: _saving
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : Text(_isEdit ? 'Atualizar' : 'Salvar'),
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                        )
+                      : Text(
+                          _isEdit ? 'Atualizar Sessão' : 'Salvar Sessão',
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  // Helper para os itens coloridos do status
+  DropdownMenuItem<String> _statusItem(
+      String value, String label, Color color) {
+    return DropdownMenuItem(
+      value: value,
+      child: Row(
+        children: [
+          Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
+          const SizedBox(width: 8),
+          Text(label, style: TextStyle(color: color, fontWeight: FontWeight.w600)),
+        ],
       ),
     );
   }
