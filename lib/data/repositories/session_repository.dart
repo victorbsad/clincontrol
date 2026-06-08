@@ -23,4 +23,7 @@ class SessionRepository {
       _db.fetchSessionsMonthlyCount(month, year);
   Future<int> update(Session session) => _db.updateSession(session);
   Future<int> delete(int id) => _db.deleteSession(id);
+  
+  Future<List<Session>> findByDateRange(String startDate, String endDate) =>
+      _db.fetchSessionsByDateRange(startDate, endDate);
 }

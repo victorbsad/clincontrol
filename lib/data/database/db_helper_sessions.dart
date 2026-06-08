@@ -140,4 +140,19 @@ extension DbHelperSessionOperations on DbHelper {
 
     return result.first['count'] as int? ?? 0;
   }
+
+  Future<List<Session>> fetchSessionsByDateRange(
+    String startDate,
+    String endDate,
+  ) async {
+    final db = await database;
+    final rows = await db.query(
+      'sessions',
+      where: 'date >= ? AND date <= ?',
+      whereArgs: [startDate, endDate],
+      orderBy: 'date ASC, id ASC',
+    );
+
+    return rows.map(_sessionFromDbRow).toList();
+  }
 }

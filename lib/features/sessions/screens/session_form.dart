@@ -10,8 +10,9 @@ import '../../../data/repositories/session_repository.dart';
 class SessionForm extends StatefulWidget {
   final int? clientId;
   final Session? session;
+  final DateTime? initialDate;
 
-  const SessionForm({super.key, this.clientId, this.session});
+  const SessionForm({super.key, this.clientId, this.session, this.initialDate});
 
   @override
   State<SessionForm> createState() => _SessionFormState();
@@ -26,7 +27,7 @@ class _SessionFormState extends State<SessionForm> {
   final _notesController = TextEditingController();
   final _amountController = TextEditingController();
 
-  DateTime _selectedDate = DateTime.now();
+  late DateTime _selectedDate;
   String _status = Session.statusScheduled;
   bool _saving = false;
   bool _loadingClients = false;
@@ -38,6 +39,7 @@ class _SessionFormState extends State<SessionForm> {
   @override
   void initState() {
     super.initState();
+    _selectedDate = widget.initialDate ?? DateTime.now();
     _selectedClientId = widget.clientId;
     final session = widget.session;
     if (session != null) {
@@ -88,16 +90,18 @@ class _SessionFormState extends State<SessionForm> {
   Future<void> _loadClients() async {
     if (!mounted) return;
     setState(() => _loadingClients = true);
-    final clients = await _clientRepository.findAll();
-
-    if (!mounted) return;
-    setState(() {
-      _clients = clients;
-      _loadingClients = false;
-      if (_selectedClientId == null && clients.length == 1) {
-        _selectedClientId = clients.first.id;
-      }
-    });
+    try {
+      final clients = await _clientRepository.findAll();
+      if (!mounted) return;
+      setState(() {
+        _clients = clients;
+        if (_selectedClientId == null && clients.length == 1) {
+          _selectedClientId = clients.first.id;
+        }
+      });
+    } finally {
+      if (mounted) setState(() => _loadingClients = false);
+    }
   }
 
   Future<void> _save() async {
@@ -112,8 +116,45 @@ class _SessionFormState extends State<SessionForm> {
 
     setState(() => _saving = true);
     try {
+      // Considera tanto vírgula quanto ponto como separador decimal
       final amount = double.parse(_amountController.text.replaceAll(',', '.'));
       final now = DateTime.now();
+
+      // Validar se a data é consistente com a data atual
+      final monthDiff = (now.year - _selectedDate.year) * 12 +
+          (now.month - _selectedDate.month);
+
+      // Se está muito no passado (mais de 3 meses)
+      if (monthDiff > 3) {
+        if (!mounted) return;
+        final confirm = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Data Antiga'),
+            content: Text(
+              'Você está criando sessão em '
+              '${AppDateFormatter.toPtBr(_selectedDate)}, '
+              'mas hoje é ${AppDateFormatter.toPtBr(now)}.\n\n'
+              'Deseja continuar?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancelar'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Continuar'),
+              ),
+            ],
+          ),
+        );
+
+        if (confirm != true) {
+          setState(() => _saving = false);
+          return;
+        }
+      }
 
       if (_isEdit) {
         final current = widget.session!;
